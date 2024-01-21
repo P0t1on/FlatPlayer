@@ -1,0 +1,59 @@
+import type { World, Renderer } from "./Game";
+import type { Vector3, Vector2, Entity } from "$lib/types"
+
+type PlayerData = {
+  position: Vector3;
+} & Entity;
+
+export type { PlayerData };
+
+class PlayerManager {
+  public world: World;
+  public playerData: PlayerData;
+  public render: Renderer;
+
+  public constructor(world: World, startPos: Vector3, render: Renderer) {
+    this.playerData = {
+      name: "player",
+      position: { ...startPos },
+      static: false,
+      sprite: "player",
+      module: false,
+      config: {
+        moveable: false,
+      },
+    };
+    this.world = world;
+    this.render = render;
+  }
+
+  public move(
+    { x, y }: Vector2,
+    mode: "absolute" | "relative" = "relative"
+  ): void {
+    const { playerData, world } = this;
+    const position = playerData.position,
+      targetEntity = world.getEntity({
+        x: position.x + x,
+        y: position.y + y,
+        z: position.z,
+      });
+    if (targetEntity && !targetEntity.config.moveable) return;
+
+    if (mode == "relative") {
+      world.setEntity(position, "blank");
+      position.x += x;
+      position.y += y;
+      world.setEntity(position, playerData);
+    } else {
+    }
+  }
+
+  public join(world: World) {
+    const { playerData } = this;
+
+    world.setEntity(playerData.position, playerData);
+  }
+}
+
+export { PlayerManager }
