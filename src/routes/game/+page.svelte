@@ -34,7 +34,6 @@
   onMount(async () => {
     // 게임 데이터 초기화
     {
-      console.log(`${assets}/FlatMaps/flat.json`)
       await game.loadWorld(await getJson<MapFormat>(`${assets}/FlatMaps/flat.json`));
       if (canvas) canvas = canvas;
     }

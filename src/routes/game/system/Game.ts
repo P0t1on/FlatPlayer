@@ -109,7 +109,6 @@ export class CanvasRenderer implements Renderer {
           resizeWidth: cellSize,
           resizeQuality: quality,
         });
-        console.log({name: sources[i]?.src, img})
 
         if (i < m) img.src = sources[i += 1]?.src as string;
         else {
