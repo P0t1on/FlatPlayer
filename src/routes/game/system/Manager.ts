@@ -1,7 +1,7 @@
 import { createKeyPressEvent } from "$lib";
 import { CanvasRenderer, World } from "./Game";
 import { PlayerManager } from "./Player";
-import type { MapFormat } from "$lib/types";
+import type { MapFormat, Vector3 } from "$lib/types";
 import type { KeyboardEventHandler } from "svelte/elements";
 
 class GameManager {
@@ -68,8 +68,8 @@ class GameManager {
     if (this.canvas) this.reload();
   }
 
-  public reload() {
-    const pos = this.player?.playerData.position,
+  public reload(targetPos?: Vector3) {
+    const pos = targetPos ? targetPos : this.player?.playerData.position,
       world = this.world;
     if (pos && world) {
       const { render, width: rw, height: rh } = this.renderer,

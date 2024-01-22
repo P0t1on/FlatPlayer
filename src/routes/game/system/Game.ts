@@ -139,11 +139,12 @@ export class CanvasRenderer implements Renderer {
     const { width: rw, height: rh, cellSize, ctx2d: ctx, spriteMap } = this;
     const { layer } = world;
     const chunk = world.getChunkData({ x: tx, y: ty }, { x: rw + 1, y: rh });
+    const blankImg = spriteMap["blank"] as ImageBitmap;
 
-    const prevLine = ty !== 0 ? world.getChunkData(
-      { x: tx, y: ty - 1 },
-      { x: rw + 1, y: 1 }
-    ) : [];
+    const prevLine =
+      ty !== 0
+        ? world.getChunkData({ x: tx, y: ty - 1 }, { x: rw + 1, y: 1 })
+        : [];
 
     if (!ctx) throw new ReferenceError("캔버스가 초기화되지 않았습니다.");
 
@@ -151,18 +152,18 @@ export class CanvasRenderer implements Renderer {
 
     for (let li = layer - 1; li > -1; li--) {
       const eLayer = chunk[li] as Entity[];
-      if (ty !== 0) {
-        const eLayerT = prevLine[li] as Entity[];
+      const eLayerT = ty !== 0 ? (prevLine[li] as Entity[]) : [];
 
-        for (let cx = 0; cx < rw + 1; cx++) {
+      for (let cx = 0; cx < rw + 1; cx++) {
+        if(ty !== 0) {
           const { sprite } = eLayerT[cx] as Entity;
           const img =
             typeof sprite === "string"
               ? (spriteMap[sprite] as ImageBitmap)
               : sprite;
-
+  
           if (img) ctx.drawImage(img, cx * cellSize, rh * cellSize);
-        }
+        } else ctx.drawImage(blankImg, cx * cellSize, rh * cellSize);
       }
 
       for (let cy = 0; cy < rh; cy++) {

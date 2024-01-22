@@ -34,8 +34,16 @@
   onMount(async () => {
     // 게임 데이터 초기화
     {
-      await game.loadWorld(await getJson<MapFormat>(`https://raw.githubusercontent.com/P0t1on/Title/main/flat.json`));
+      await game.loadWorld(
+        await getJson<MapFormat>(`${assets}/FlatMaps/flat.json`)
+      );
       if (canvas) canvas = canvas;
+      if (game.player) {
+        game.player.hooks.onMove = (pos) => {
+          playerPosition = JSON.stringify(pos);
+          game.reload(pos);
+        };
+      }
     }
     // test
     {
