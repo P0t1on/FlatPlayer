@@ -69,9 +69,20 @@ class GameManager {
   }
 
   public reload() {
-    const pos = this.player?.playerData.position;
-    if (pos && this.world) {
-      this.renderer.render(pos, this.world);
+    const pos = this.player?.playerData.position,
+      world = this.world;
+    if (pos && world) {
+      const { render, width: rw, height: rh } = this.renderer,
+        { x: px, y: py } = pos,
+        { width: mw, height: mh } = world;
+
+      render(
+        {
+          x: px < rw / 2 ? 0 : px < mw - rw / 2 ? px - rw / 2 : mw - rw,
+          y: py < rh / 2 ? 0 : py < mh - rh / 2 ? py - rh / 2 : mh - rh,
+        },
+        world
+      );
     }
   }
 }
