@@ -17,7 +17,7 @@ export class CanvasRenderer implements Renderer {
 
   // cache
   private cellSize = 0;
-  private prevRenderPosition: Vector2 = { x: 0, y: 0 };
+  private prevRenderPosition: Vector2 = { x: -1, y: -1 };
 
   // document
   private canvas?: HTMLCanvasElement;
@@ -146,6 +146,23 @@ export class CanvasRenderer implements Renderer {
     const { width: rw, height: rh, cellSize, ctx2d: ctx, spriteMap } = this,
       { layer, width: ww } = world,
       renderWidth = tx < ww - rw ? rw + 1 : rw;
+    if (!ctx) throw new ReferenceError("캔버스가 초기화되지 않았습니다.");
+
+    if (
+      !full &&
+      px < tx + rw &&
+      px > tx - rw &&
+      py < ty + rh &&
+      py > ty - rh &&
+      px !== -1 &&
+      py !== -1
+    ) {
+      const movementVector = {
+        x: tx - px,
+        y: ty - py,
+      };
+      ctx.getImageData(1, 1, 1, 1)
+    }
 
     const chunk = world.getChunkData(
         { x: tx, y: ty },
@@ -156,8 +173,6 @@ export class CanvasRenderer implements Renderer {
         ty !== 0
           ? world.getChunkData({ x: tx, y: ty - 1 }, { x: renderWidth, y: 1 })
           : [];
-
-    if (!ctx) throw new ReferenceError("캔버스가 초기화되지 않았습니다.");
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
@@ -187,12 +202,9 @@ export class CanvasRenderer implements Renderer {
 
           if (img) ctx.drawImage(img, cx * cellSize, (rh - cy - 1) * cellSize);
         }
-        if (renderWidth === rw){
-          ctx.drawImage(
-            blankImg,
-            (rw) * cellSize,
-            (rh - cy - 1) * cellSize
-          );}
+        if (renderWidth === rw) {
+          ctx.drawImage(blankImg, rw * cellSize, (rh - cy - 1) * cellSize);
+        }
       }
     }
 
