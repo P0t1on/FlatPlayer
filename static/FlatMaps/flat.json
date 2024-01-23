@@ -2,8 +2,8 @@
     "name": "Title",
     "domain": "http://hmfile.synology.me:8443/proxy/4000/proxy/4000/FlatMaps",
     "layer": 3,
-    "width": 50,
-    "height": 50,
+    "width": 30,
+    "height": 30,
     "baseTile" : "blank",
     "sprites": [
         {

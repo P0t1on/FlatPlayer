@@ -68,7 +68,7 @@ class GameManager {
     if (this.canvas) this.reload();
   }
 
-  public reload(targetPos?: Vector3) {
+  public reload(targetPos?: Vector3, fullRerendering: boolean = false) {
     const pos = targetPos ? targetPos : this.player?.playerData.position,
       world = this.world;
     if (pos && world) {
@@ -81,7 +81,8 @@ class GameManager {
           x: px < rw / 2 ? 0 : px < mw - rw / 2 ? px - rw / 2 : mw - rw,
           y: py < rh / 2 ? 0 : py < mh - rh / 2 ? py - rh / 2 : mh - rh,
         },
-        world
+        world,
+        fullRerendering
       );
     }
   }

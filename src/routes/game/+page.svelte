@@ -18,7 +18,7 @@
         const sprites = game.world?.sprites;
         if (sprites) await game.renderer.loadSprites("high", ...sprites);
 
-        game.reload();
+        game.reload(undefined, true);
 
         playerPosition = JSON.stringify(game.player?.playerData.position);
       });
