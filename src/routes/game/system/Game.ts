@@ -31,7 +31,9 @@ export class CanvasRenderer implements Renderer {
   // 캔버스 변경시 호출
   public async setup(canvas: HTMLCanvasElement) {
     const { width, height } = this;
-    const ctx = (this.ctx2d = (this.canvas = canvas).getContext("2d"));
+    const ctx = (this.ctx2d = (this.canvas = canvas).getContext("2d", {
+      willReadFrequently: true,
+    }));
     if (!ctx) return;
 
     // 캔버스 사이즈 설정
@@ -157,11 +159,25 @@ export class CanvasRenderer implements Renderer {
       px !== -1 &&
       py !== -1
     ) {
-      const movementVector = {
-        x: tx - px,
-        y: ty - py,
-      };
-      ctx.getImageData(1, 1, 1, 1)
+      const mx = tx - px,
+        my = ty - py,
+        { width, height } = ctx.canvas,
+        prevScene = ctx.getImageData(0, 0, width, height);
+
+      ctx.clearRect(0, 0, width, height);
+      
+      if (mx > 0) {
+        const chunk = world.getChunkData({x: 1, y: ty}, {x: 1, y: rh - Math.abs(my)});
+      } else if (mx < 0) {
+      }
+
+      if (my > 0) {
+      } else if (my < 0) {
+      }
+
+      ctx.putImageData(prevScene, cellSize * -mx, cellSize * my);
+      this.prevRenderPosition = { x: tx, y: ty };
+      return;
     }
 
     const chunk = world.getChunkData(
