@@ -12,5 +12,8 @@
 		"noUncheckedIndexedAccess": true,
 		"resolveJsonModule": true,
 		"allowSyntheticDefaultImports": true
-	}
+	},
+	"exclude": [
+		"./static/FlatMaps/**"
+	]
 }

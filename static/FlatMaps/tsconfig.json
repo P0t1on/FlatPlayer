@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+        "rootDir": "./scripts/**",
+		"strict": true,
+        "moduleResolution": "node",
+        "ignoreDeprecations": "5.0",
+        "importsNotUsedAsValues": "error"
+	},
+    "include": [
+        "ambient.d.ts"
+    ],
+    "exclude": []
+}

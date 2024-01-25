@@ -19,22 +19,23 @@
         {
             "name": "wall",
             "sprite": "wall",
-            "module": "/scripts/Wall.js",
+            "module": "/scripts/Wall.ts",
             "config": {
                 "moveable": false
             }
         }
     ],
+    "eventSystem": "/scripts/index.js",
     "buildScripts": [
         {
             "method": "fill",
             "shape": "rect",
             "entity": "wall",
-            "position": {"x": 6, "y": 6, "z": 2},
+            "position": {"x": 6, "y": 6, "z": 0},
             "size": {"x": 2, "y": 4}
         }
     ],
     "startPoint": {
-        "x": 5, "y": 5, "z": 2
+        "x": 5, "y": 5, "z": 0
     }
 }
