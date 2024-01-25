@@ -14,12 +14,6 @@
   $: {
     if (canvas && game.world) {
       game.setupRenderer(canvas).then(async () => {
-        // env setup
-        const sprites = game.world?.sprites;
-        if (sprites) await game.renderer.loadSprites("high", ...sprites);
-
-        game.reload(undefined, true);
-
         playerPosition = JSON.stringify(game.player?.playerData.position);
       });
     }

@@ -41,8 +41,14 @@ class GameManager {
 
   public async setupRenderer(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    if (!this.world || !canvas || !this.player) return;
+    const { world, player } = this;
+
+    if (!world || !canvas || !player) return;
     await this.renderer.setup(canvas);
+
+    await this.renderer.loadSprites("high", ...world.sprites);
+
+    this.reload(player.playerData.position, true);
   }
 
   public getHooks() {
@@ -69,8 +75,8 @@ class GameManager {
   }
 
   public reload(targetPos?: Vector3, fullRerendering: boolean = false) {
-    const pos = targetPos ? targetPos : this.player?.playerData.position,
-      world = this.world;
+    const { world } = this,
+      pos = targetPos ? targetPos : this.player?.playerData.position;
     if (pos && world) {
       const { render, width: rw, height: rh } = this.renderer,
         { x: px, y: py } = pos,
