@@ -8,11 +8,16 @@ type Renderer = {
   height: number;
 };
 
+const PreRenderDirection = {
+  IOS: "iOS",
+  Android: "Android",
+} as const;
+type PreRenderDirection =
+  (typeof PreRenderDirection)[keyof typeof PreRenderDirection];
+
 export type { Renderer };
 
 export class CanvasRenderer implements Renderer {
-  public readonly width: Renderer["width"];
-  public readonly height: Renderer["height"];
   public spriteMap: { [key: string]: ImageBitmap } = {};
 
   // cache
@@ -23,10 +28,10 @@ export class CanvasRenderer implements Renderer {
   private canvas?: HTMLCanvasElement;
   private ctx2d?: CanvasRenderingContext2D | null;
 
-  public constructor(width: Renderer["width"], height: Renderer["height"]) {
-    this.width = width;
-    this.height = height;
-  }
+  public constructor(
+    public width: Renderer["width"],
+    public height: Renderer["height"]
+  ) {}
 
   // 캔버스 변경시 호출
   public async setup(canvas: HTMLCanvasElement) {
@@ -143,13 +148,15 @@ export class CanvasRenderer implements Renderer {
     full = false
   ) => {
     const { x: px, y: py } = this.prevRenderPosition;
-    if(px === -1 && py === -1) this.prevRenderPosition = {x: tx, y: ty};
+    if (px === -1 && py === -1) this.prevRenderPosition = { x: tx, y: ty };
     if (!full && px === tx && py === ty) return;
 
     const { width: rw, height: rh, cellSize, ctx2d: ctx, spriteMap } = this,
       { layer, width: ww, height: wh } = world,
-      preXDir = px < tx + 1 && tx < ww - rw ? 1 : px > tx - 1 && tx > 1 ? -1 : 0, renderWidth = preXDir === 0 ? rw : rw + 1,
-      preYDir = py < ty + 1 && ty < wh - rh ? 1 : py > ty - 1 && ty > 1 ? -1 : 0;
+      preXDir =
+        px < tx + 1 && tx < ww - rw ? 1 : px > tx - 1 && tx > 1 ? -1 : 0,
+      preYDir =
+        py < ty + 1 && ty < wh - rh ? 1 : py > ty - 1 && ty > 1 ? -1 : 0;
 
     if (!ctx) throw new ReferenceError("캔버스가 초기화되지 않았습니다.");
 
@@ -168,15 +175,21 @@ export class CanvasRenderer implements Renderer {
         prevScene = ctx.getImageData(0, 0, width, height);
 
       ctx.clearRect(0, 0, width, height);
-      
+
       if (mx > 0) {
-        const cWidth = Math.abs(mx), cHeight = rh - Math.abs(my),
-        chunk = world.getChunkData({x: px + rw, y: ty}, {x: cWidth, y: cHeight});
+        const cWidth = Math.abs(mx),
+          cHeight = rh - Math.abs(my),
+          chunk = world.getChunkData(
+            { x: px + rw, y: ty },
+            { x: cWidth, y: cHeight }
+          ),
+          startPos = {
+            x: 1,
+            y: ty,
+          };
 
-        for(let i = layer - 1; i > -1; i--) {
+        for (let i = layer - 1; i > -1; i--) {
           const eLayer = chunk[i] as Entity[];
-
-
         }
       } else if (mx < 0) {
       }
@@ -190,10 +203,9 @@ export class CanvasRenderer implements Renderer {
       return;
     }
 
-    const chunk = world.getChunkData(
-        { x: tx, y: ty },
-        { x: renderWidth, y: rh }
-      ),
+    // full rendering sequence
+    const renderWidth = preXDir === 0 ? rw : rw + 1,
+      chunk = world.getChunkData({ x: tx, y: ty }, { x: renderWidth, y: rh }),
       blankImg = spriteMap["blank"] as ImageBitmap,
       prevLine =
         ty !== 0

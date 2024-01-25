@@ -1,13 +1,8 @@
-export type Vector3 = {
-  x: number;
-  y: number;
-  z: number;
-};
+import { Vector3, Vector2 } from "./types";
 
-export type Vector2 = {
-  x: number;
-  y: number;
-};
+export { Vector3, Vector2 };
+
+
 
 export type Entity = {
   name: string;
