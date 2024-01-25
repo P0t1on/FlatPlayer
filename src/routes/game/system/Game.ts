@@ -143,11 +143,14 @@ export class CanvasRenderer implements Renderer {
     full = false
   ) => {
     const { x: px, y: py } = this.prevRenderPosition;
+    if(px === -1 && py === -1) this.prevRenderPosition = {x: tx, y: ty};
     if (!full && px === tx && py === ty) return;
 
     const { width: rw, height: rh, cellSize, ctx2d: ctx, spriteMap } = this,
-      { layer, width: ww } = world,
-      renderWidth = tx < ww - rw ? rw + 1 : rw;
+      { layer, width: ww, height: wh } = world,
+      preXDir = px < tx + 1 && tx < ww - rw ? 1 : px > tx - 1 && tx > 1 ? -1 : 0, renderWidth = preXDir === 0 ? rw : rw + 1,
+      preYDir = py < ty + 1 && ty < wh - rh ? 1 : py > ty - 1 && ty > 1 ? -1 : 0;
+
     if (!ctx) throw new ReferenceError("캔버스가 초기화되지 않았습니다.");
 
     if (
@@ -167,7 +170,14 @@ export class CanvasRenderer implements Renderer {
       ctx.clearRect(0, 0, width, height);
       
       if (mx > 0) {
-        const chunk = world.getChunkData({x: 1, y: ty}, {x: 1, y: rh - Math.abs(my)});
+        const cWidth = Math.abs(mx), cHeight = rh - Math.abs(my),
+        chunk = world.getChunkData({x: px + rw, y: ty}, {x: cWidth, y: cHeight});
+
+        for(let i = layer - 1; i > -1; i--) {
+          const eLayer = chunk[i] as Entity[];
+
+
+        }
       } else if (mx < 0) {
       }
 
@@ -192,9 +202,9 @@ export class CanvasRenderer implements Renderer {
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    for (let li = layer - 1; li > -1; li--) {
-      const eLayer = chunk[li] as Entity[];
-      const eLayerT = ty !== 0 ? (prevLine[li] as Entity[]) : [];
+    for (let i = layer - 1; i > -1; i--) {
+      const eLayer = chunk[i] as Entity[];
+      const eLayerT = ty !== 0 ? (prevLine[i] as Entity[]) : [];
 
       for (let cx = 0; cx < renderWidth; cx++) {
         if (ty !== 0) {
