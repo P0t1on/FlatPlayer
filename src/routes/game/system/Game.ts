@@ -1,5 +1,5 @@
 import { getSource } from "$lib";
-import type { Vector2, Vector3, MapFormat, Entity } from "$lib/types";
+import { type Vector2, type Vector3, type MapFormat, type Entity, EntityConfig } from "$lib/types";
 
 type Renderer = {
   render: (position: Vector2, world: World, fullRerendering?: boolean) => void;
@@ -8,12 +8,21 @@ type Renderer = {
   height: number;
 };
 
-const PreRenderDirection = {
-  IOS: "iOS",
-  Android: "Android",
+/**
+ * PreRenderDirection flags
+ * UP 1 << 0
+ * DOWN 1 << 1
+ * LEFT 1 << 2
+ * RIGHT 1 << 3
+ */
+const DIR = {
+  NONE: 0b0000,
+  UP: 0b0001,
+  DOWN: 0b0010,
+  LEFT: 0b0100,
+  RIGHT: 0b1000,
 } as const;
-type PreRenderDirection =
-  (typeof PreRenderDirection)[keyof typeof PreRenderDirection];
+type DIR = (typeof DIR)[keyof typeof DIR];
 
 export type { Renderer };
 
@@ -153,12 +162,23 @@ export class CanvasRenderer implements Renderer {
 
     const { width: rw, height: rh, cellSize, ctx2d: ctx, spriteMap } = this,
       { layer, width: ww, height: wh } = world,
-      preXDir =
-        px < tx + 1 && tx < ww - rw ? 1 : px > tx - 1 && tx > 1 ? -1 : 0,
-      preYDir =
-        py < ty + 1 && ty < wh - rh ? 1 : py > ty - 1 && ty > 1 ? -1 : 0;
+      preRenderDir =
+        (tx > 1 ? DIR.LEFT : 0) |
+        (tx < ww - rw ? DIR.RIGHT : 0) |
+        (ty < wh - rh ? DIR.UP : 0) |
+        (ty > 1 ? DIR.DOWN : 0);
 
     if (!ctx) throw new ReferenceError("캔버스가 초기화되지 않았습니다.");
+
+    const drawEntity = (entity: Entity, rx: number, ry: number) => {
+      const sprite = entity.sprite;
+      const img =
+        typeof sprite === "string"
+          ? (spriteMap[sprite] as ImageBitmap)
+          : sprite;
+
+      if (img) ctx.drawImage(img, rx * cellSize, ry * cellSize);
+    };
 
     if (
       !full &&
@@ -183,13 +203,19 @@ export class CanvasRenderer implements Renderer {
             { x: px + rw, y: ty },
             { x: cWidth, y: cHeight }
           ),
-          startPos = {
-            x: 1,
-            y: ty,
+          preRendConfig = {
+            x: (rw - mx) * cellSize,
+            y: 0,
           };
 
         for (let i = layer - 1; i > -1; i--) {
           const eLayer = chunk[i] as Entity[];
+
+          for (let y = cHeight - 1; y > -1; y--) {
+            for (let x = 0; x < mx; x++) {
+              drawEntity(eLayer[y * mx + x] as Entity, rw - mx + x, y);
+            }
+          }
         }
       } else if (mx < 0) {
       }
@@ -204,7 +230,7 @@ export class CanvasRenderer implements Renderer {
     }
 
     // full rendering sequence
-    const renderWidth = preXDir === 0 ? rw : rw + 1,
+    const renderWidth = preRenderDir & DIR.RIGHT ? rw : rw + 1,
       chunk = world.getChunkData({ x: tx, y: ty }, { x: renderWidth, y: rh }),
       blankImg = spriteMap["blank"] as ImageBitmap,
       prevLine =
@@ -334,13 +360,10 @@ export class World {
     // 정적 엔티티 로딩
     {
       this.staticEntities["blank"] = {
-        static: true,
         name: "blank",
         sprite: "blank",
         module: false,
-        config: {
-          moveable: true,
-        },
+        config: EntityConfig.STATIC | EntityConfig.MOVEABLE,
       };
 
       this.scriptLoadStatus.max = entityDef.length;
@@ -349,13 +372,10 @@ export class World {
         const moveable = config?.moveable ?? true;
 
         const entity = (this.staticEntities[name] = {
-          static: true,
           name: name,
           sprite: sprite,
           module: false,
-          config: {
-            moveable,
-          },
+          config: EntityConfig.STATIC | (moveable ? EntityConfig.MOVEABLE : 0b0),
         });
 
         if (module) {

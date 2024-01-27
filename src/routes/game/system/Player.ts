@@ -1,3 +1,5 @@
+import { EntityConfig } from "$lib/types";
+
 import type { World, Renderer } from "./Game";
 import type { Vector3, Vector2, Entity } from "$lib/types";
 
@@ -18,12 +20,9 @@ class PlayerManager {
     this.playerData = {
       name: "player",
       position: { ...startPos },
-      static: false,
       sprite: "player",
       module: false,
-      config: {
-        moveable: false,
-      },
+      config: EntityConfig.NONE,
     };
     this.world = world;
     this.render = render;
@@ -41,7 +40,14 @@ class PlayerManager {
         y: position.y + y,
         z: position.z,
       });
-    if ((targetEntity && !targetEntity.config.moveable) || (position.x + x === 0 || position.x + x > width) || (position.y + y === 0 || position.y + y > height)) return;
+    if (
+      (targetEntity && targetEntity.config & EntityConfig.MOVEABLE) ||
+      position.x + x === 0 ||
+      position.x + x > width ||
+      position.y + y === 0 ||
+      position.y + y > height
+    )
+      return;
 
     if (mode == "relative") {
       world.setEntity(position, "blank");

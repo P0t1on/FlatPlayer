@@ -5,28 +5,28 @@ export type Vector3 = {
 };
 
 export type Vector2 = {
-    x: number;
-    y: number;
-  };
+  x: number;
+  y: number;
+};
 
 export const Vector2 = {
   up: { x: 0, y: 1 } as const,
   down: { x: 0, y: -1 } as const,
   left: { x: -1, y: 0 } as const,
-  right: { x: 1, y: 0 } as const,
-  toBinary: (vector: Vector2) => {
+  right: { x: 1, y: 0 } as const
+} as const;
 
-  }
+export const EntityConfig = {
+  NONE: 0b00,
+  STATIC: 0b01,
+  MOVEABLE: 0b10
 } as const;
 
 export type Entity = {
   name: string;
-  static: boolean;
   sprite: string | ImageBitmap;
   module: any;
-  config: {
-    moveable: boolean;
-  };
+  config: number
 };
 
 // build shape
