@@ -14,15 +14,6 @@ type Renderer = {
   height: number;
 };
 
-const DIR = {
-  NONE: 0b0000,
-  UP: 0b0001,
-  DOWN: 0b0010,
-  LEFT: 0b0100,
-  RIGHT: 0b1000,
-} as const;
-type DIR = (typeof DIR)[keyof typeof DIR];
-
 export type { Renderer };
 
 export class CanvasRenderer implements Renderer {
@@ -92,7 +83,7 @@ export class CanvasRenderer implements Renderer {
     // 빈 셀 이미지 저장
 
     this.spriteMap["blank"] = await createImageBitmap(
-      ctx.getImageData(1, 1, cellSize, cellSize),
+      ctx.getImageData(0, 0, cellSize, cellSize),
       {
         resizeQuality: "pixelated",
         resizeHeight: cellSize,
@@ -182,13 +173,8 @@ export class CanvasRenderer implements Renderer {
     if (px === -1 && py === -1) this.prevRenderPosition = { x: tx, y: ty };
     if (!full && px === tx && py === ty) return;
 
-    const { width: rw, height: rh, cellSize, ctx2d: ctx, spriteMap } = this,
-      { layer, width: ww, height: wh } = world,
-      preRenderDir =
-        (tx > 1 ? DIR.LEFT : 0) |
-        (tx < ww - rw ? DIR.RIGHT : 0) |
-        (ty < wh - rh ? DIR.UP : 0) |
-        (ty > 1 ? DIR.DOWN : 0);
+    const { width: rw, height: rh, ctx2d: ctx, spriteMap } = this,
+      { layer } = world;
 
     if (!ctx) throw new ReferenceError("캔버스가 초기화되지 않았습니다.");
 
@@ -249,12 +235,11 @@ export class CanvasRenderer implements Renderer {
     */
 
     // full rendering sequence
-    const renderWidth = preRenderDir & DIR.RIGHT ? rw : rw + 1,
-      chunk = world.getChunkData({ x: tx, y: ty }, { x: renderWidth, y: rh }),
+    const chunk = world.getChunkData({ x: tx, y: ty }, { x: rw, y: rh }),
       blankImg = spriteMap["blank"] as ImageBitmap,
       prevLine =
         ty !== 0
-          ? world.getChunkData({ x: tx, y: ty - 1 }, { x: renderWidth, y: 1 })
+          ? world.getChunkData({ x: tx, y: ty - 1 }, { x: rw, y: 1 })
           : [];
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -263,27 +248,22 @@ export class CanvasRenderer implements Renderer {
       const eLayer = chunk[i] as Entity[];
       const eLayerT = ty !== 0 ? (prevLine[i] as Entity[]) : [];
 
-      for (let cx = 0; cx < renderWidth; cx++) {
+      for (let cx = 0; cx < rw; cx++) {
         if (ty !== 0) {
           this.drawEntity(eLayerT[cx] as Entity, cx, rh);
         } else this.drawImage(blankImg, cx, rh);
       }
 
       for (let cy = 0; cy < rh; cy++) {
-        for (let cx = 0; cx < renderWidth; cx++) {
+        for (let cx = 0; cx < rw; cx++) {
           this.drawEntity(
-            eLayer[cy * renderWidth + cx] as Entity,
+            eLayer[cy * rw + cx] as Entity,
             cx,
             rh - cy - 1
           );
         }
-        if (renderWidth === rw) {
-          this.drawImage(blankImg, rw, rh - cy - 1);
-        }
       }
     }
-
-    console.log(rw * this.cellSize);
 
     this.prevRenderPosition = { x: tx, y: ty };
   };
@@ -440,9 +420,13 @@ export class World {
     (() => {
       getSource(`${domain ? domain : ""}${eventSystem}`).then((source) => {
         try {
-          new Function("setEntity", `'use strict'; ${source}`)(
+          new Function("setEntity", "world", `'use strict'; ${source}`)(
             (entityname: string, x: number, y: number, z?: number) => {
-              this.setEntity({x, y, z: z ?? 0}, entityname)
+              this.setEntity({ x, y, z: z ?? 0 }, entityname);
+            }, 
+            {
+              width,
+              height
             }
           );
         } catch (e) {
