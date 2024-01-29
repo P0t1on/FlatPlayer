@@ -192,6 +192,7 @@ export class CanvasRenderer implements Renderer {
 
     if (!ctx) throw new ReferenceError("캔버스가 초기화되지 않았습니다.");
 
+    /* TODO 이거 구현만 하면 성능개선 ㅆㄱㄴ인데 방법을 몰?루
     if (
       !full &&
       px < tx + rw &&
@@ -245,6 +246,7 @@ export class CanvasRenderer implements Renderer {
       this.prevRenderPosition = { x: tx, y: ty };
       return;
     }
+    */
 
     // full rendering sequence
     const renderWidth = preRenderDir & DIR.RIGHT ? rw : rw + 1,
