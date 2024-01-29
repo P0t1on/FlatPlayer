@@ -76,6 +76,7 @@ export type MapFormat = {
       moveable?: boolean;
     };
   }[];
+  /* URL */ eventSystem: string;
   buildScripts: buildScriptType[];
   startPoint: Vector3;
 };
