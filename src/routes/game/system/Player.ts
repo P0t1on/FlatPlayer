@@ -41,7 +41,7 @@ class PlayerManager {
         z: position.z,
       });
     if (
-      (targetEntity && targetEntity.config & EntityConfig.MOVEABLE) ||
+      (targetEntity && (targetEntity.config & EntityConfig.MOVEABLE) === 0) ||
       position.x + x === 0 ||
       position.x + x > width ||
       position.y + y === 0 ||

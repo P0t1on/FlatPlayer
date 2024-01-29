@@ -1,5 +1,11 @@
 import { getSource } from "$lib";
-import { type Vector2, type Vector3, type MapFormat, type Entity, EntityConfig } from "$lib/types";
+import {
+  type Vector2,
+  type Vector3,
+  type MapFormat,
+  type Entity,
+  EntityConfig,
+} from "$lib/types";
 
 type Renderer = {
   render: (position: Vector2, world: World, fullRerendering?: boolean) => void;
@@ -8,13 +14,6 @@ type Renderer = {
   height: number;
 };
 
-/**
- * PreRenderDirection flags
- * UP 1 << 0
- * DOWN 1 << 1
- * LEFT 1 << 2
- * RIGHT 1 << 3
- */
 const DIR = {
   NONE: 0b0000,
   UP: 0b0001,
@@ -93,7 +92,12 @@ export class CanvasRenderer implements Renderer {
     // 빈 셀 이미지 저장
 
     this.spriteMap["blank"] = await createImageBitmap(
-      ctx.getImageData(cellSize, cellSize, cellSize, cellSize)
+      ctx.getImageData(1, 1, cellSize, cellSize),
+      {
+        resizeQuality: "pixelated",
+        resizeHeight: cellSize,
+        resizeWidth: cellSize,
+      }
     );
     // putImageData | createImageData
 
@@ -150,8 +154,26 @@ export class CanvasRenderer implements Renderer {
     this.spriteMap = { blank, ...holder };
   }
 
+  private drawEntity(entity: Entity, rx: number, ry: number) {
+    const sprite = entity.sprite;
+    const img =
+      typeof sprite === "string"
+        ? (this.spriteMap[sprite] as ImageBitmap)
+        : sprite;
+
+    this.drawImage(img, rx, ry);
+  }
+
+  private drawImage(img: ImageBitmap, rx: number, ry: number) {
+    (this.ctx2d as CanvasRenderingContext2D).drawImage(
+      img,
+      rx * this.cellSize,
+      ry * this.cellSize
+    );
+  }
+
   // 캔버스 전체 다시 렌더링
-  public readonly render: Renderer["render"] = (
+  public readonly render: Renderer["render"] = async (
     { x: tx, y: ty },
     world,
     full = false
@@ -170,16 +192,6 @@ export class CanvasRenderer implements Renderer {
 
     if (!ctx) throw new ReferenceError("캔버스가 초기화되지 않았습니다.");
 
-    const drawEntity = (entity: Entity, rx: number, ry: number) => {
-      const sprite = entity.sprite;
-      const img =
-        typeof sprite === "string"
-          ? (spriteMap[sprite] as ImageBitmap)
-          : sprite;
-
-      if (img) ctx.drawImage(img, rx * cellSize, ry * cellSize);
-    };
-
     if (
       !full &&
       px < tx + rw &&
@@ -192,39 +204,44 @@ export class CanvasRenderer implements Renderer {
       const mx = tx - px,
         my = ty - py,
         { width, height } = ctx.canvas,
-        prevScene = ctx.getImageData(0, 0, width, height);
+        prevScene = await createImageBitmap(
+          ctx.getImageData(0, 0, width, height),
+          {
+            resizeQuality: "pixelated",
+          }
+        );
 
       ctx.clearRect(0, 0, width, height);
 
-      if (mx > 0) {
-        const cWidth = Math.abs(mx),
-          cHeight = rh - Math.abs(my),
+      if (mx !== 0) {
+        const cWidth = mx > 0 ? mx : -mx,
+          cHeight = rh - (my > 0 ? my : -my),
           chunk = world.getChunkData(
-            { x: px + rw, y: ty },
+            { x: mx > 0 ? px + rw : px - 1, y: ty },
             { x: cWidth, y: cHeight }
-          ),
-          preRendConfig = {
-            x: (rw - mx) * cellSize,
-            y: 0,
-          };
+          );
 
         for (let i = layer - 1; i > -1; i--) {
           const eLayer = chunk[i] as Entity[];
 
           for (let y = cHeight - 1; y > -1; y--) {
-            for (let x = 0; x < mx; x++) {
-              drawEntity(eLayer[y * mx + x] as Entity, rw - mx + x, y);
+            for (let x = 0; x < cWidth; x++) {
+              this.drawEntity(
+                eLayer[y * cWidth + x] as Entity,
+                mx > 0 ? rw - cWidth + x : x,
+                cHeight - y - 1
+              );
             }
           }
         }
-      } else if (mx < 0) {
       }
 
       if (my > 0) {
       } else if (my < 0) {
       }
 
-      ctx.putImageData(prevScene, cellSize * -mx, cellSize * my);
+      ctx.drawImage(prevScene, cellSize * -mx, cellSize * my);
+      console.log(cellSize * -mx);
       this.prevRenderPosition = { x: tx, y: ty };
       return;
     }
@@ -246,31 +263,25 @@ export class CanvasRenderer implements Renderer {
 
       for (let cx = 0; cx < renderWidth; cx++) {
         if (ty !== 0) {
-          const { sprite } = eLayerT[cx] as Entity;
-          const img =
-            typeof sprite === "string"
-              ? (spriteMap[sprite] as ImageBitmap)
-              : sprite;
-
-          if (img) ctx.drawImage(img, cx * cellSize, rh * cellSize);
-        } else ctx.drawImage(blankImg, cx * cellSize, rh * cellSize);
+          this.drawEntity(eLayerT[cx] as Entity, cx, rh);
+        } else this.drawImage(blankImg, cx, rh);
       }
 
       for (let cy = 0; cy < rh; cy++) {
         for (let cx = 0; cx < renderWidth; cx++) {
-          const { sprite } = eLayer[cy * renderWidth + cx] as Entity;
-          const img =
-            typeof sprite === "string"
-              ? (spriteMap[sprite] as ImageBitmap)
-              : sprite;
-
-          if (img) ctx.drawImage(img, cx * cellSize, (rh - cy - 1) * cellSize);
+          this.drawEntity(
+            eLayer[cy * renderWidth + cx] as Entity,
+            cx,
+            rh - cy - 1
+          );
         }
         if (renderWidth === rw) {
-          ctx.drawImage(blankImg, rw * cellSize, (rh - cy - 1) * cellSize);
+          this.drawImage(blankImg, rw, rh - cy - 1);
         }
       }
     }
+
+    console.log(rw * this.cellSize);
 
     this.prevRenderPosition = { x: tx, y: ty };
   };
@@ -290,11 +301,6 @@ export class CanvasRenderer implements Renderer {
     if (tx < 0 || ty > height || !ctx) return;
 
     ctx.clearRect(tx * cellSize, ty * cellSize, cellSize, cellSize);
-    ctx.drawImage(
-      spriteMap["blank"] as ImageBitmap,
-      tx * cellSize,
-      ty * cellSize
-    );
 
     for (const entity of entities) {
       if (!entity) continue;
@@ -302,7 +308,7 @@ export class CanvasRenderer implements Renderer {
       const { sprite } = entity;
       const img = typeof sprite === "string" ? spriteMap[sprite] : sprite;
       if (img) {
-        ctx.drawImage(img, tx * cellSize, ty * cellSize);
+        this.drawImage(img, tx, ty);
       }
     }
   };
@@ -337,6 +343,7 @@ export class World {
       sprites,
       entityDef,
       buildScripts,
+      eventSystem,
     } = data;
 
     // 기초 데이터 할당
@@ -375,7 +382,8 @@ export class World {
           name: name,
           sprite: sprite,
           module: false,
-          config: EntityConfig.STATIC | (moveable ? EntityConfig.MOVEABLE : 0b0),
+          config:
+            EntityConfig.STATIC | (moveable ? EntityConfig.MOVEABLE : 0b0),
         });
 
         if (module) {
@@ -426,6 +434,21 @@ export class World {
         }
       }
     }
+
+    (() => {
+      getSource(`${domain ? domain : ""}${eventSystem}`).then((source) => {
+        try {
+          new Function("setEntity", `'use strict'; ${source}`)(
+            (entityname: string, x: number, y: number, z?: number) => {
+              this.setEntity({x, y, z: z ?? 0}, entityname)
+            }
+          );
+        } catch (e) {
+          console.log(`world (${name}) loading error.`);
+          console.log(e);
+        }
+      });
+    })();
   }
 
   /**
