@@ -1,6 +1,6 @@
 {
     "name": "Title",
-    "domain": "http://hmfile.synology.me:8443/proxy/4000/proxy/4000/FlatMaps",
+    "domain": "https://raw.githubusercontent.com/P0t1on/Flat-Survival/master/static/FlatMaps",
     "layer": 3,
     "width": 30,
     "height": 30,
