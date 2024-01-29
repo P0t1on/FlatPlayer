@@ -1,0 +1,1 @@
+// setEntity("wall", 1, 1, 0)

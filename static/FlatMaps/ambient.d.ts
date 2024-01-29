@@ -1,1 +1,4 @@
-declare const entity = 1;
+export {}
+declare global {
+    export function setEntity(entityName: string, x: number, y: number, z: number): void
+}
