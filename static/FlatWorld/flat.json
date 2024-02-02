@@ -1,0 +1,75 @@
+{
+  "name": "Title",
+  "domain": "http://hmfile.synology.me:8443/proxy/4000/proxy/4000/FlatWorld",
+  "layer": 3,
+  "width": 30,
+  "height": 30,
+  "baseTile": "blank",
+  "sprites": [
+    {
+      "name": "player",
+      "src": "/sprites/player.svg"
+    },
+    {
+      "name": "wall",
+      "src": "/sprites/wall.svg"
+    },
+    {
+      "name": "blank",
+      "src": "/sprites/blank.svg"
+    }
+  ],
+  "entityDef": [
+    {
+      "name": "wall",
+      "sprite": "wall",
+      "module": "/scripts/Wall.ts",
+      "config": {
+        "moveable": false
+      }
+    }
+  ],
+  "status": [
+    {
+      "name": "health",
+      "color": "red",
+      "max": 100,
+      "start": 100,
+      "config": {
+        "deathOnZero": true,
+        "visible": true
+      }
+    },
+    {
+      "name": "stamina",
+      "color": "brown",
+      "max": 100,
+      "start": 100,
+      "config": {
+        "visible": true
+      }
+    },
+    {
+      "name": "gold",
+      "color": "yellow",
+      "config": {
+        "visible": true
+      }
+    }
+  ],
+  "eventSystem": "/scripts/index.ts",
+  "buildScripts": [
+    {
+      "method": "fill",
+      "shape": "rect",
+      "entity": "wall",
+      "position": { "x": 6, "y": 6, "z": 0 },
+      "size": { "x": 2, "y": 4 }
+    }
+  ],
+  "startPoint": {
+    "x": 5,
+    "y": 5,
+    "z": 0
+  }
+}

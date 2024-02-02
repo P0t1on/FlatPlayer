@@ -15,6 +15,6 @@
 		"experimentalDecorators": true
 	},
 	"exclude": [
-		"./static/FlatMaps/**"
+		"static/FlatWorld/**"
 	]
 }
