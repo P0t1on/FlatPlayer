@@ -1,8 +1,12 @@
+import type { KeyboardEventHandler } from "svelte/elements";
+import type { Writable } from "svelte/store";
+
 import { createKeyPressEvent } from "$lib";
+import { StatusConfig, type MapFormat, type Vector3 } from "$lib/types";
+
 import { CanvasRenderer, World } from "./Game";
 import { PlayerManager } from "./Player";
-import type { MapFormat, Vector3 } from "$lib/types";
-import type { KeyboardEventHandler } from "svelte/elements";
+import Status from "../components/Status.svelte";
 
 class GameManager {
   public renderer: CanvasRenderer;
@@ -39,16 +43,46 @@ class GameManager {
     };
   }
 
-  public async setupRenderer(canvas: HTMLCanvasElement) {
+  public async setupRenderer({
+    canvas,
+    statusBar,
+  }: {
+    canvas: HTMLCanvasElement;
+    statusBar: HTMLUListElement;
+  }) {
     this.canvas = canvas;
-    const { world, player } = this;
-
+    const { world, player, renderer } = this;
     if (!world || !canvas || !player) return;
-    await this.renderer.setup(canvas);
 
-    await this.renderer.loadSprites("high", ...world.sprites);
+    await renderer.setup(canvas);
+    renderer.clearSpriteCache();
+    await renderer.loadSprites("high", ...world.sprites);
 
     this.reload(player.playerData.position, true);
+
+    {
+      const status = player.status;
+
+      for (const name in status) {
+        const { color, max, value, config } = status[name] as {
+          color: string;
+          max: number;
+          value: Writable<number>;
+          config: number;
+        };
+
+        if (!(config & StatusConfig.VISIBLE)) return;
+        else
+          new Status({
+            target: statusBar,
+            props: {
+              statusValue: value,
+              color: color,
+              max: max
+            },
+          });
+      }
+    }
   }
 
   public getHooks() {
@@ -58,20 +92,21 @@ class GameManager {
   }
 
   public async loadWorld(mapData: MapFormat) {
-    if (this.canvas) await this.setupRenderer(this.canvas);
-
-    const { startPoint } = mapData;
+    const { startPoint, status } = mapData;
 
     const world = (this.world = new World(mapData, this.renderer));
     const player = (this.player = new PlayerManager(
       world,
       startPoint,
-      this.renderer
+      this.renderer,
+      status
     ));
 
     world.setEntity(startPoint, player.playerData);
 
-    if (this.canvas) this.reload();
+    if (this.canvas) {
+      this.reload();
+    }
   }
 
   public reload(targetPos?: Vector3, fullRerendering: boolean = false) {

@@ -1,7 +1,10 @@
-import { EntityConfig } from "$lib/types";
+import { writable } from "svelte/store";
 
+import { EntityConfig, StatusConfig } from "$lib/types";
+
+import type { Writable } from "svelte/store";
 import type { World, Renderer } from "./Game";
-import type { Vector3, Vector2, Entity } from "$lib/types";
+import type { Vector3, Vector2, Entity, StatusFormat } from "$lib/types";
 
 type PlayerData = {
   position: Vector3;
@@ -13,10 +16,23 @@ class PlayerManager {
   public world: World;
   public playerData: PlayerData;
   public render: Renderer;
+  public status: {
+    [key: string]: {
+      color: string;
+      max: number;
+      value: Writable<number>;
+      config: number;
+    };
+  } = {};
 
   public readonly hooks = new PlayerHooks();
 
-  public constructor(world: World, startPos: Vector3, render: Renderer) {
+  public constructor(
+    world: World,
+    startPos: Vector3,
+    render: Renderer,
+    status: StatusFormat[]
+  ) {
     this.playerData = {
       name: "player",
       position: { ...startPos },
@@ -26,6 +42,18 @@ class PlayerManager {
     };
     this.world = world;
     this.render = render;
+
+    for (const { name, color, max, start, config } of status) {
+      this.status[name] = {
+        color: color,
+        max: max ?? 0,
+        value: writable(start ?? 0),
+        config: config
+          ? (config.deathOnZero ? StatusConfig.DEATHONZERO : 0) ^
+            (config.visible ? StatusConfig.VISIBLE : 0)
+          : StatusConfig.NONE,
+      };
+    }
   }
 
   public move(

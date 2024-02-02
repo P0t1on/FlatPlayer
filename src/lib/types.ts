@@ -13,20 +13,20 @@ export const Vector2 = {
   up: { x: 0, y: 1 } as const,
   down: { x: 0, y: -1 } as const,
   left: { x: -1, y: 0 } as const,
-  right: { x: 1, y: 0 } as const
+  right: { x: 1, y: 0 } as const,
 } as const;
 
 export const EntityConfig = {
   NONE: 0b00,
   STATIC: 0b01,
-  MOVEABLE: 0b10
+  MOVEABLE: 0b10,
 } as const;
 
 export type Entity = {
   name: string;
   sprite: string | ImageBitmap;
   module: any;
-  config: number
+  config: number;
 };
 
 // build shape
@@ -57,6 +57,23 @@ type BuildMethod = {
 export type buildScriptType = BuildMethod["fill"] &
   (BuildShape["line"] | BuildShape["rect"]);
 
+export type StatusFormat = {
+  name: string;
+  color: string;
+  max?: number;
+  start?: number;
+  config?: {
+    deathOnZero?: boolean;
+    visible?: boolean;
+  };
+}
+
+export const StatusConfig = {
+  NONE: 0b000,
+  DEATHONZERO: 0b001,
+  VISIBLE: 0b010
+} as const;
+
 export type MapFormat = {
   name: string;
   /* URL domain */ domain: string;
@@ -76,6 +93,7 @@ export type MapFormat = {
       moveable?: boolean;
     };
   }[];
+  status: StatusFormat[];
   /* URL */ eventSystem: string;
   buildScripts: buildScriptType[];
   startPoint: Vector3;

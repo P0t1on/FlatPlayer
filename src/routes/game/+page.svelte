@@ -10,12 +10,16 @@
   // 요소 바인딩
   let playerPosition: string;
 
-  let canvas: HTMLCanvasElement;
+  let canvas: HTMLCanvasElement,
+    statusBar: HTMLUListElement;
+
   $: {
     if (canvas && game.world) {
-      game.setupRenderer(canvas).then(async () => {
-        playerPosition = JSON.stringify(game.player?.playerData.position);
-      });
+      game
+        .setupRenderer({ canvas, statusBar })
+        .then(() => {
+          playerPosition = JSON.stringify(game.player?.playerData.position);
+        });
     }
   }
 
@@ -29,7 +33,7 @@
     // 게임 데이터 초기화
     {
       await game.loadWorld(
-        await getJson<MapFormat>(`${assets}/FlatMaps/flat.json`)
+        await getJson<MapFormat>(`${assets}/FlatWorld/flat.json`)
       );
       if (canvas) canvas = canvas;
       if (game.player) {
@@ -82,6 +86,10 @@
 <svelte:document on:keydown={keydownHook} on:keyup={keyupHook} />
 
 <section id="camper">
+  <header>
+    <ul id="statusBar" bind:this={statusBar}>
+    </ul>
+  </header>
   <div class="playerPos">{playerPosition}</div>
   <canvas id="renderer" bind:this={canvas}></canvas>
 </section>
@@ -90,9 +98,21 @@
   section#camper {
     height: 100vh;
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+
+    header ul#statusBar {
+      padding: 0;
+      position: absolute;
+      list-style: none;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+    }
   }
 
   div.playerPos {
