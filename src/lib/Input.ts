@@ -20,3 +20,9 @@ export function createKeyPressEvent<T extends EventTarget>(
     },
   };
 }
+
+export function toStyleVariables(vars: {[key: string]: any}) {
+  return Object.keys(vars).map(key => {
+    return `--${key}:${vars[key]};`
+  }).join("")
+}
