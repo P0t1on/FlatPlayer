@@ -58,7 +58,9 @@ export type buildScriptType = BuildMethod["fill"] &
   (BuildShape["line"] | BuildShape["rect"]);
 
 export type StatusFormat = {
-  name: string;
+  displayName?: string;
+  id: string;
+  unit?: string;
   color: string;
   max?: number;
   start?: number;
@@ -75,6 +77,7 @@ export const StatusConfig = {
 } as const;
 
 export type MapFormat = {
+  version: "1.0"
   name: string;
   /* URL domain */ domain: string;
   layer: number;

@@ -18,9 +18,11 @@ class PlayerManager {
   public render: Renderer;
   public status: {
     [key: string]: {
-      color: string;
-      max: number;
+      displayName: Writable<string> | undefined;
+      color: Writable<string>;
+      max: Writable<number>;
       value: Writable<number>;
+      unit: string | undefined;
       config: number;
     };
   } = {};
@@ -43,11 +45,13 @@ class PlayerManager {
     this.world = world;
     this.render = render;
 
-    for (const { name, color, max, start, config } of status) {
-      this.status[name] = {
-        color: color,
-        max: max ?? 0,
+    for (const { id, displayName, color, max, start, config, unit } of status) {
+      this.status[id] = {
+        displayName: displayName ? writable(displayName) : undefined,
+        color: writable(color),
+        max: writable(max ?? 0),
         value: writable(start ?? 0),
+        unit,
         config: config
           ? (config.deathOnZero ? StatusConfig.DEATHONZERO : 0) ^
             (config.visible ? StatusConfig.VISIBLE : 0)

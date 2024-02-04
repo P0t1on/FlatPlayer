@@ -1,25 +1,23 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { assets } from "$app/paths";
-  import "./style.scss";
 
   import { GameManager } from "./system/Manager";
-  import { getJson } from "$lib";
+  import { getJson, toStyleVariables } from "$lib";
   import type { MapFormat } from "$lib/types";
+
+  import "./style.scss";
 
   // 요소 바인딩
   let playerPosition: string;
 
-  let canvas: HTMLCanvasElement,
-    statusBar: HTMLUListElement;
+  let canvas: HTMLCanvasElement, statusBar: HTMLUListElement;
 
   $: {
     if (canvas && game.world) {
-      game
-        .setupRenderer({ canvas, statusBar })
-        .then(() => {
-          playerPosition = JSON.stringify(game.player?.playerData.position);
-        });
+      game.setupRenderer({ canvas, statusBar }).then(() => {
+        playerPosition = JSON.stringify(game.player?.playerData.position);
+      });
     }
   }
 
@@ -81,14 +79,31 @@
       }
     }
   });
+  
+  // css 변수
+  let statusBarWidth = window.innerWidth / 6;
+
+  // test
+  const temp = (val: number) => {
+    const stat = game.player?.status["hp"];
+    if(stat) {
+      stat.value.update(v => v + val)
+    }
+  }
 </script>
 
-<svelte:document on:keydown={keydownHook} on:keyup={keyupHook} />
+<svelte:document on:keydown={keydownHook} on:keyup={keyupHook}/>
 
-<section id="camper">
+<section 
+  id="camper" 
+  style={toStyleVariables({
+    statusBarWidth
+  })}
+>
+<button on:click={() => temp(10)}>+10</button>
+<button on:click={() => temp(-10)}>-10</button>
   <header>
-    <ul id="statusBar" bind:this={statusBar}>
-    </ul>
+    <ul id="statusBar" bind:this={statusBar}></ul>
   </header>
   <div class="playerPos">{playerPosition}</div>
   <canvas id="renderer" bind:this={canvas}></canvas>
@@ -103,15 +118,19 @@
     justify-content: center;
     align-items: center;
 
-    header ul#statusBar {
-      padding: 0;
-      position: absolute;
-      list-style: none;
-      top: 0;
-      left: 0;
-      width: 100vw;
+    header {
       display: flex;
       justify-content: center;
+      
+      ul#statusBar {
+        position: absolute;
+        left: 16px;
+        width: calc(var(--statusBarWidth) * 1px);
+        padding: 0;
+
+        display: flex;
+        flex-direction: column;
+      }
     }
   }
 

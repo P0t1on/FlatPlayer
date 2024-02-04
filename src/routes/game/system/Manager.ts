@@ -63,23 +63,17 @@ class GameManager {
     {
       const status = player.status;
 
-      for (const name in status) {
-        const { color, max, value, config } = status[name] as {
-          color: string;
-          max: number;
-          value: Writable<number>;
-          config: number;
-        };
+      for (const id in status) {
+        const stat = status[id];
+        if (!stat) continue;
+
+        const { displayName, color, max, value, unit, config } = stat;
 
         if (!(config & StatusConfig.VISIBLE)) return;
         else
           new Status({
             target: statusBar,
-            props: {
-              statusValue: value,
-              color: color,
-              max: max
-            },
+            props: { value, color, max, name: displayName, unit },
           });
       }
     }
