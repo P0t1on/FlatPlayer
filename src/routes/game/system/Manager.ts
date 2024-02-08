@@ -4,7 +4,8 @@ import type { Writable } from "svelte/store";
 import { createKeyPressEvent } from "$lib";
 import { StatusConfig, type MapFormat, type Vector3 } from "$lib/types";
 
-import { CanvasRenderer, World } from "./Game";
+import { CanvasRenderer } from "./Game";
+import { World } from "./World";
 import { PlayerManager } from "./Player";
 import Status from "../components/Status.svelte";
 

@@ -16,17 +16,18 @@ export const Vector2 = {
   right: { x: 1, y: 0 } as const,
 } as const;
 
-export const EntityConfig = {
-  NONE: 0b00,
-  STATIC: 0b01,
-  MOVEABLE: 0b10,
+export const EntityOption = {
+  NONE: 0b000,
+  STATIC: 0b001,
+  MOVEABLE: 0b010,
+  INTERACTABLE: 0b100
 } as const;
 
 export type Entity = {
   name: string;
   sprite: string | ImageBitmap;
   module: any;
-  config: number;
+  option: number;
 };
 
 // build shape
@@ -64,13 +65,13 @@ export type StatusFormat = {
   color: string;
   max?: number;
   start?: number;
-  config?: {
+  option?: {
     deathOnZero?: boolean;
     visible?: boolean;
   };
 }
 
-export const StatusConfig = {
+export const StatusOption = {
   NONE: 0b000,
   DEATHONZERO: 0b001,
   VISIBLE: 0b010
@@ -91,9 +92,11 @@ export type MapFormat = {
   entityDef: {
     name: string;
     sprite: string;
-    /* URL */ module: string;
-    config?: {
+    static?: boolean;
+    /* URL */ module?: string;
+    option?: {
       moveable?: boolean;
+      interactable?: boolean;
     };
   }[];
   status: StatusFormat[];

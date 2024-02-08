@@ -1,9 +1,10 @@
 import { writable } from "svelte/store";
 
-import { EntityConfig, StatusConfig } from "$lib/types";
+import { EntityOption, StatusOption } from "$lib/types";
 
 import type { Writable } from "svelte/store";
-import type { World, Renderer } from "./Game";
+import type { Renderer } from "./Game";
+import type { World } from "./World";
 import type { Vector3, Vector2, Entity, StatusFormat } from "$lib/types";
 
 type PlayerData = {
@@ -23,7 +24,7 @@ class PlayerManager {
       max: Writable<number>;
       value: Writable<number>;
       unit: string | undefined;
-      config: number;
+      option: number;
     };
   } = {};
 
@@ -40,22 +41,22 @@ class PlayerManager {
       position: { ...startPos },
       sprite: "player",
       module: false,
-      config: EntityConfig.NONE,
+      option: EntityOption.NONE,
     };
     this.world = world;
     this.render = render;
 
-    for (const { id, displayName, color, max, start, config, unit } of status) {
+    for (const { id, displayName, color, max, start, option, unit } of status) {
       this.status[id] = {
         displayName: displayName ? writable(displayName) : undefined,
         color: writable(color),
         max: writable(max ?? 0),
         value: writable(start ?? 0),
         unit,
-        config: config
-          ? (config.deathOnZero ? StatusConfig.DEATHONZERO : 0) ^
-            (config.visible ? StatusConfig.VISIBLE : 0)
-          : StatusConfig.NONE,
+        option: option
+          ? (option.deathOnZero ? StatusOption.DEATHONZERO : 0) ^
+            (option.visible ? StatusOption.VISIBLE : 0)
+          : StatusOption.NONE,
       };
     }
   }
@@ -73,7 +74,7 @@ class PlayerManager {
         z: position.z,
       });
     if (
-      (targetEntity && (targetEntity.config & EntityConfig.MOVEABLE) === 0) ||
+      (targetEntity && (targetEntity.option & EntityOption.MOVEABLE) === 0) ||
       position.x + x === 0 ||
       position.x + x > width ||
       position.y + y === 0 ||

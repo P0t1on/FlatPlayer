@@ -25,7 +25,7 @@
       "name": "wall",
       "sprite": "wall",
       "module": "/scripts/Wall.ts",
-      "config": {
+      "option": {
         "moveable": false
       }
     }
@@ -37,7 +37,7 @@
       "color": "red",
       "max": 100,
       "start": 100,
-      "config": {
+      "option": {
         "deathOnZero": true,
         "visible": true
       }
@@ -48,7 +48,7 @@
       "color": "brown",
       "max": 100,
       "start": 100,
-      "config": {
+      "option": {
         "visible": true
       }
     },
@@ -57,7 +57,7 @@
       "id": "gold",
       "unit": "g",
       "color": "yellow",
-      "config": {
+      "option": {
         "visible": true
       }
     }
