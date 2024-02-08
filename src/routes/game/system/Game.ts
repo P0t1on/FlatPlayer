@@ -1,4 +1,3 @@
-import { getSource } from "$lib";
 import type { Vector2, Entity } from "$lib/types";
 import type { World } from "./World";
 

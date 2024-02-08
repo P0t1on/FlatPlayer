@@ -1,8 +1,7 @@
 import type { KeyboardEventHandler } from "svelte/elements";
-import type { Writable } from "svelte/store";
 
 import { createKeyPressEvent } from "$lib";
-import { StatusConfig, type MapFormat, type Vector3 } from "$lib/types";
+import { StatusOption, type MapFormat, type Vector3 } from "$lib/types";
 
 import { CanvasRenderer } from "./Game";
 import { World } from "./World";
@@ -68,9 +67,9 @@ class GameManager {
         const stat = status[id];
         if (!stat) continue;
 
-        const { displayName, color, max, value, unit, config } = stat;
+        const { displayName, color, max, value, unit, option } = stat;
 
-        if (!(config & StatusConfig.VISIBLE)) return;
+        if (!(option & StatusOption.VISIBLE)) return;
         else
           new Status({
             target: statusBar,

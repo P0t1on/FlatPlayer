@@ -1,4 +1,3 @@
-import { cloneDeep } from "lodash";
 
 const ProfileStorage = {
   indexedDB: {
@@ -37,12 +36,12 @@ export class Profile {
       const [name] = args as [string];
 
       this.name = name;
-      this.data = cloneDeep(Profile.DefaultProfile.data);
+      this.data = JSON.parse(JSON.stringify(Profile.DefaultProfile.data));
     } else if (args.length == 2) {
       const [name, baseProfile] = args as [string, Profile];
 
       this.name = name;
-      this.data = cloneDeep(baseProfile.data);
+      this.data = JSON.parse(JSON.stringify(baseProfile.data));
     } else {
       const [name, baseData, storageType] = args as [string, any, StorageType];
 
