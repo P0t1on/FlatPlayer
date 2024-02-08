@@ -172,6 +172,7 @@ export class CanvasRenderer implements Renderer {
 
     if (!ctx) throw new ReferenceError("캔버스가 초기화되지 않았습니다.");
 
+    // 현재 오류는 렌더링된 구역을 밀어서 재렌더링시 필요이상으로 밀어지는데 이게 어디서 오는 차이인건지 모르겠음.
     /* TODO 이거 구현만 하면 성능개선 ㅆㄱㄴ인데 방법을 몰?루
     if (
       !full &&
