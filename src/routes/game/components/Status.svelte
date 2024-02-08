@@ -10,25 +10,21 @@
 </script>
 
 {#if $max === 0}
-  <div
-    class={"status" + (name !== undefined ? " nolimit" : "")}
-    style={toStyleVariables({ color: $color })}
-  >
+  <div class="status" style={toStyleVariables({ color: $color })}>
     {#if name !== undefined}
-      <div>&nbsp;{$name}</div>
-      <div>{$value + (unit ? unit : "")}&nbsp;</div>
+      <div class="name">&nbsp;{$name}&nbsp;</div>
+      <div class="value">&nbsp;{$value + (unit ? unit : "")}&nbsp;</div>
     {:else}
       {$value + (unit ? unit : "")}&nbsp;
     {/if}
   </div>
 {:else}
   <div
-    class="status limit"
-    style={toStyleVariables({ color: $color }) +
-      `--fill: ${($value * 100) / $max};`}
+    class="status"
+    style={toStyleVariables({ color: $color, fill: ($value * 100) / $max })}
   >
     {#if name !== undefined}
-      <div class="name">&nbsp;{$name}</div>
+      <div class="name">&nbsp;{$name}&nbsp;</div>
       <div class="progress">&nbsp;{$value + (unit ? unit : "")}&nbsp;</div>
     {:else}
       <div class="progress">&nbsp;{$value + (unit ? unit : "")}&nbsp;</div>
@@ -37,32 +33,41 @@
 {/if}
 
 <style lang="scss">
+  @mixin status-value {
+    padding: 1px;
+    background-color: var(--color);
+    border-radius: 16px;
+  }
+
   div.status {
     text-align: right;
     user-select: none;
 
-    background-color: var(--color);
-    border: 4px solid #0000004d;
+    background-color: color-mix(in srgb, var(--color), #000 40%);
+    border: 3px solid #0000004d;
     border-radius: 16px;
     margin-bottom: 4px;
+    padding: 3px;
 
-    &.nolimit {
-      display: flex;
-      justify-content: space-around;
-    }
-
-    &.limit {
-      background-color: color-mix(in srgb, var(--color), #000 40%);
-
-      div.name {
-        text-align: left;
-      }
+    div.value {
+      @include status-value;
+      width: 100%;
     }
 
     div.progress {
-      background-color: var(--color);
-      border-radius: 16px;
+      @include status-value;
       width: calc(var(--fill) * 1%);
+    }
+
+    div.name {
+      margin-bottom: 3px;
+      padding: 2px;
+      text-align: left;
+      border-radius: 16px;
+      width: min-content;
+      background-color: color-mix(in srgb, var(--color), #ffffff 40%);
+      font-weight: bold;
+      font-size: smaller;
     }
   }
 </style>
