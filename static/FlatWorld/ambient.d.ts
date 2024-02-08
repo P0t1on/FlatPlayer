@@ -1,3 +1,5 @@
+// World generation type defination
+
 declare function setEntity(
   entityName: string,
   x: number,
@@ -9,6 +11,8 @@ declare const world: {
   width: number;
   height: number;
 };
+
+// Entity generation type defination
 
 declare type EntityConfig = {
   NONE: 0b00;
