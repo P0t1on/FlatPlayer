@@ -158,7 +158,7 @@ export class CanvasRenderer implements Renderer {
   }
 
   // 캔버스 전체 다시 렌더링
-  public readonly render: Renderer["render"] = async (
+  public readonly render = (async (
     { x: tx, y: ty },
     world,
     full = false
@@ -257,9 +257,9 @@ export class CanvasRenderer implements Renderer {
     }
 
     this.prevRenderPosition = { x: tx, y: ty };
-  };
+  }) satisfies Renderer["render"];
 
-  public readonly reloadTile: Renderer["reloadTile"] = (x, y, entities) => {
+  public readonly reloadTile = ((x, y, entities) => {
     const {
       prevRenderPosition: { x: sx, y: sy },
       width,
@@ -284,5 +284,5 @@ export class CanvasRenderer implements Renderer {
         this.drawImage(img, tx, ty);
       }
     }
-  };
+  }) satisfies Renderer["reloadTile"];
 }
