@@ -14,3 +14,4 @@ export const load: PageLoad = (params) => {
 
 // https://kit.svelte.dev/docs/page-options#ssr
 export const ssr = false;
+export const csr = true;
