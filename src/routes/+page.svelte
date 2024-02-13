@@ -10,23 +10,21 @@
   // menu 구현
   const menuList: [HTMLLIElement, HTMLDivElement][] = [],
     onMenuClick = (id: string) => (e: MouseEvent) => {
-      for(const [li, div] of menuList) {
-        if(div.id === id) {
-          li.classList.add('selected');
-          div.classList.remove('hide');
+      for (const [li, div] of menuList) {
+        if (div.id === id) {
+          li.classList.add("selected");
+          div.classList.remove("hide");
         } else {
-          li.classList.remove('selected');
-          div.classList.add('hide');
+          li.classList.remove("selected");
+          div.classList.add("hide");
         }
       }
-
-      console.log(id)
     };
 
   onMount(() => {
     // open("./game", "_self")
     for (const doc of div_doc.children) {
-      const menu = document.createElement("li")
+      const menu = document.createElement("li");
       li_menu.appendChild(menu);
 
       menu.innerHTML = doc.id;
@@ -43,8 +41,7 @@
 
 <section>
   <header>
-    <ul id="menu" bind:this={li_menu}>
-    </ul>
+    <ul id="menu" bind:this={li_menu}></ul>
   </header>
   <div id="document" bind:this={div_doc}>
     <div id="test1">test1</div>
@@ -62,25 +59,11 @@
       background-color: #191331;
 
       ul#menu {
+        margin: 0;
         display: flex;
         justify-content: space-evenly;
 
         list-style: none;
-
-        :global(li) {
-          margin: 8px;
-          padding: 4px;
-
-          background-color: #2d2d2d;
-          font-size: large;
-          user-select: none;
-          cursor: pointer;
-
-          &.selected {
-            background-color: #13062b;
-            cursor: default;
-          }
-        }
       }
     }
   }

@@ -1,7 +1,22 @@
 .clickable {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .hide {
-    display: hide;
+  display: none;
+}
+
+header ul#menu li {
+  margin: 8px;
+  padding: 4px;
+
+  background-color: #2d2d2d;
+  font-size: large;
+  user-select: none;
+  cursor: pointer;
+
+  &.selected {
+    background-color: #13062b;
+    cursor: default;
+  }
 }
