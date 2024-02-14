@@ -2,9 +2,9 @@
 
 </script>
 
-<section id="explorer">
+<article id="explorer">
 
-</section>
+</article>
 
 <style lang="scss">
     

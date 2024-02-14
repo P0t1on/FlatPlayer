@@ -2,9 +2,9 @@
 
 </script>
 
-<section id="mypage">
+<article id="mypage">
 
-</section>
+</article>
 
 <style lang="scss">
     
