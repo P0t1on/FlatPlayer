@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
+
+  import { Explorer, Hub, MyPage } from "./documents";
   // import type { PageData } from "./$types";
 
   // export let data: PageData;
@@ -8,7 +10,7 @@
   let li_menu: HTMLUListElement, div_doc: HTMLDivElement;
 
   // menu 구현
-  const menuList: [HTMLLIElement, HTMLDivElement][] = [],
+  const menuList: [HTMLLIElement, Element][] = [],
     onMenuClick = (id: string) => (e: MouseEvent) => {
       for (const [li, div] of menuList) {
         if (div.id === id) {
@@ -22,7 +24,7 @@
     };
 
   onMount(() => {
-    // open("./game", "_self")
+    open("./game", "_self")
     for (const doc of div_doc.children) {
       const menu = document.createElement("li");
       li_menu.appendChild(menu);
@@ -30,7 +32,7 @@
       menu.innerHTML = doc.id;
       menu.onclick = onMenuClick(doc.id);
 
-      menuList.push([menu, doc as HTMLDivElement]);
+      menuList.push([menu, doc]);
     }
 
     menuList[0]?.[0].click();
@@ -39,19 +41,19 @@
 
 <svelte:head />
 
-<section>
+<div>
   <header>
     <ul id="menu" bind:this={li_menu}></ul>
   </header>
   <div id="document" bind:this={div_doc}>
-    <div id="test1">test1</div>
-    <div id="test2">test2</div>
-    <div id="test3">test3</div>
+    <Explorer/>
+    <Hub/>
+    <MyPage/>
   </div>
-</section>
+</div>
 
 <style lang="scss">
-  section {
+  div {
     height: 100%;
     background-color: #9c95dc;
 
