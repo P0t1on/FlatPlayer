@@ -9,28 +9,23 @@
     unit: string | undefined;
 </script>
 
-{#if $max === 0}
-  <div class="status" style={toStyleVariables({ color: $color })}>
+<div class="status" style={toStyleVariables({ color: $color })}>
+  {#if $max === 0}
     {#if name !== undefined}
-      <div class="name">&nbsp;{$name}&nbsp;</div>
-      <div class="value">&nbsp;{$value + (unit ? unit : "")}&nbsp;</div>
+      <div class="name"><div class="textWrapper">{$name}</div></div>
+      <div class="value"><div class="textWrapper">{$value + (unit ? unit : "")}</div></div>
     {:else}
-      {$value + (unit ? unit : "")}&nbsp;
+      <div class="textWrapper">{$value + (unit ? unit : "")}</div>
     {/if}
-  </div>
-{:else}
-  <div
-    class="status"
-    style={toStyleVariables({ color: $color, fill: ($value * 100) / $max })}
-  >
+  {:else}
     {#if name !== undefined}
-      <div class="name">&nbsp;{$name}&nbsp;</div>
-      <div class="progress">&nbsp;{$value + (unit ? unit : "")}&nbsp;</div>
-    {:else}
-      <div class="progress">&nbsp;{$value + (unit ? unit : "")}&nbsp;</div>
+      <div class="name"><div class="textWrapper">{$name}</div></div>
     {/if}
-  </div>
-{/if}
+    <div class="progress" style={`width: ${($value * 100) / $max}%;`}>
+      <div class="textWrapper">{$value + (unit ? unit : "")}</div>
+    </div>
+  {/if}
+</div>
 
 <style lang="scss">
   @mixin status-value {
@@ -56,7 +51,6 @@
 
     div.progress {
       @include status-value;
-      width: calc(var(--fill) * 1%);
     }
 
     div.name {
@@ -68,6 +62,10 @@
       background-color: color-mix(in srgb, var(--color), #ffffff 40%);
       font-weight: bold;
       font-size: smaller;
+    }
+
+    div.textWrapper {
+      padding: 0 4px 0 4px;
     }
   }
 </style>
