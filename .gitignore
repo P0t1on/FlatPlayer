@@ -1,6 +1,6 @@
 .DS_Store
 node_modules
-memo
+memo.md
 /build
 /.svelte-kit
 /package
