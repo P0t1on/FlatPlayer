@@ -112,7 +112,8 @@
     />
   </header>
   <div class="playerPos">{playerPosition}</div>
-  <canvas id="renderer" bind:this={canvas}/>
+  <canvas id="renderer" bind:this={canvas} />
+  <Battle width={canvas?.width * (3 / 4)} height={canvas?.height * (3 / 4)} />
 </section>
 
 <style lang="scss">
