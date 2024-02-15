@@ -1,5 +1,5 @@
 // setEntity("wall", 1, 1, 0)
-console.log(world);
+//console.log(world);
 
 for (let y = 1; y < world.height + 1; y++) {
   for (let x = 1; x < world.width + 1; x++) {

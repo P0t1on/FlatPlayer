@@ -41,8 +41,8 @@ export class CanvasRenderer implements Renderer {
         ? (window.innerWidth * screenRatio) / width
         : (window.innerHeight * screenRatio) / height);
 
-    canvas.width = cellSize * (width + 0.1);
-    canvas.height = cellSize * (height + 0.1);
+    canvas.width = cellSize * width;
+    canvas.height = cellSize * height;
 
     // 스케일링
     // TODO) 이거 어캐하는건지 모르겠음. - 현재 적용하면 오히려 스케일링이 이상하게됨
