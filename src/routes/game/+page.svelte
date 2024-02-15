@@ -2,8 +2,10 @@
   import { onMount } from "svelte";
   import { assets } from "$app/paths";
 
-  import { GameManager } from "./system/Manager";
+  import Battle from "./components/Battle.svelte";
+
   import { getJson } from "$lib";
+  import { GameManager } from "./system/Manager";
   import type { MapFormat } from "$lib/types";
 
   import "./style.scss";
@@ -80,6 +82,14 @@
     }
   });
 
+  let sbw1: number, sbw2: number, statusBarWidth: number;
+
+  $: {
+    sbw1 = ((window.innerWidth - canvas?.width) / 2 - 16) / 3;
+    sbw2 = (window.innerWidth - canvas?.width) / 2 - 32;
+    statusBarWidth = window.innerWidth / 5 < sbw2 ? sbw1 : sbw2;
+  }
+
   // test
   const temp = (val: number) => {
     const stat = game.player?.status["hp"];
@@ -98,11 +108,11 @@
     <ul
       id="statusBar"
       bind:this={statusBar}
-      style={`width:${(window.innerWidth - canvas?.width) / 2 - 32}px;`}
+      style={`width:${statusBarWidth}px;`}
     />
   </header>
   <div class="playerPos">{playerPosition}</div>
-  <canvas id="renderer" bind:this={canvas}></canvas>
+  <canvas id="renderer" bind:this={canvas}/>
 </section>
 
 <style lang="scss">
@@ -126,6 +136,11 @@
         display: flex;
         flex-direction: column;
       }
+    }
+
+    canvas#renderer,
+    ul#statusBar {
+      z-index: 1;
     }
   }
 
