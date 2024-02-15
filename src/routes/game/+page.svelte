@@ -3,7 +3,7 @@
   import { assets } from "$app/paths";
 
   import { GameManager } from "./system/Manager";
-  import { getJson, toStyleVariables } from "$lib";
+  import { getJson } from "$lib";
   import type { MapFormat } from "$lib/types";
 
   import "./style.scss";
@@ -79,31 +79,27 @@
       }
     }
   });
-  
-  // css 변수
-  let statusBarWidth = window.innerWidth / 6;
 
   // test
   const temp = (val: number) => {
     const stat = game.player?.status["hp"];
-    if(stat) {
-      stat.value.update(v => v + val)
+    if (stat) {
+      stat.value.update((v) => v + val);
     }
-  }
+  };
 </script>
 
-<svelte:document on:keydown={keydownHook} on:keyup={keyupHook}/>
+<svelte:document on:keydown={keydownHook} on:keyup={keyupHook} />
 
-<section 
-  id="camper" 
-  style={toStyleVariables({
-    statusBarWidth
-  })}
->
-<button on:click={() => temp(10)}>+10</button>
-<button on:click={() => temp(-10)}>-10</button>
+<section id="camper">
+  <button on:click={() => temp(10)}>+10</button>
+  <button on:click={() => temp(-10)}>-10</button>
   <header>
-    <ul id="statusBar" bind:this={statusBar}></ul>
+    <ul
+      id="statusBar"
+      bind:this={statusBar}
+      style={`width:${(window.innerWidth - canvas?.width) / 2 - 32}px;`}
+    />
   </header>
   <div class="playerPos">{playerPosition}</div>
   <canvas id="renderer" bind:this={canvas}></canvas>
@@ -121,11 +117,10 @@
     header {
       display: flex;
       justify-content: center;
-      
+
       ul#statusBar {
         position: absolute;
         left: 16px;
-        width: calc(var(--statusBarWidth) * 1px);
         padding: 0;
 
         display: flex;
