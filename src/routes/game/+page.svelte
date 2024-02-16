@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { assets } from "$app/paths";
+  import { onMount } from 'svelte';
+  import { assets } from '$app/paths';
 
-  import Battle from "./components/Battle.svelte";
+  import Battle from './components/Battle.svelte';
 
-  import { getJson } from "$lib";
-  import { GameManager } from "./system/Manager";
-  import type { MapFormat } from "$lib/types";
+  import { getJson } from '$lib';
+  import { GameManager } from './system/Manager';
+  import type { MapFormat } from '$lib/types';
 
-  import "./style.scss";
+  import './style.scss';
 
   // 요소 바인딩
   let playerPosition: string;
@@ -51,22 +51,22 @@
       if (!window.indexedDB) {
         alert("This browser doesn't support IndexedDB");
       } else {
-        const idb = indexedDB.open("camper", 1);
+        const idb = indexedDB.open('camper', 1);
 
         idb.onupgradeneeded = (e) => {
           const db = (e.target as IDBOpenDBRequest).result;
-          dataSet = idb.result.createObjectStore("DataSet", {
+          dataSet = idb.result.createObjectStore('DataSet', {
             autoIncrement: true,
           });
 
-          dataSet.createIndex("id", "id", { unique: true });
-          dataSet.createIndex("data", "data");
+          dataSet.createIndex('id', 'id', { unique: true });
+          dataSet.createIndex('data', 'data');
         };
 
         idb.onsuccess = (e) => {
           dataSet = idb.result
-            .transaction("DataSet", "readwrite")
-            .objectStore("DataSet");
+            .transaction('DataSet', 'readwrite')
+            .objectStore('DataSet');
 
           for (let i = 0; i < 10; i++) {
             dataSet.add(
@@ -92,7 +92,7 @@
 
   // test
   const temp = (val: number) => {
-    const stat = game.player?.status["hp"];
+    const stat = game.player?.status['hp'];
     if (stat) {
       stat.value.update((v) => v + val);
     }
@@ -113,7 +113,11 @@
   </header>
   <div class="playerPos">{playerPosition}</div>
   <canvas id="renderer" bind:this={canvas} />
-  <Battle width={canvas?.width * (3 / 4)} height={canvas?.height * (3 / 4)} />
+  <Battle
+    width={canvas?.width * (3 / 4)}
+    height={canvas?.height * (3 / 4)}
+    on:test123={() => console.log('H')}
+  />
 </section>
 
 <style lang="scss">
