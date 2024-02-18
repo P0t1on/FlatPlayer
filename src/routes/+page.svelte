@@ -34,10 +34,11 @@
   <header>
     <ul id="menu">
       {#each menuList as { name }, i}
-        <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
         <li
           class={i == selectedMenu ? 'selected' : ''}
           on:click={() => (selectedMenu = i)}
+          on:keydown
+          role="menuitem"
         >
           {name}
         </li>
