@@ -1,11 +1,7 @@
 <script lang="ts">
-
 </script>
 
-<article id="hub">
-
-</article>
+<article id="hub">ex)hub</article>
 
 <style lang="scss">
-    
 </style>

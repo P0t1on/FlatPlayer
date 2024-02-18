@@ -1,11 +1,7 @@
 <script lang="ts">
-
 </script>
 
-<article id="explorer">
-
-</article>
+<article id="explorer">ex) explorer</article>
 
 <style lang="scss">
-    
 </style>
