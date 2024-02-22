@@ -114,9 +114,8 @@
   <div class="playerPos">{playerPosition}</div>
   <canvas id="renderer" bind:this={canvas} />
   <Battle
-    width={canvas?.width * (9 / 10)}
-    height={canvas?.height * (9 / 10)}
-    on:test123={() => console.log('H')}
+    width={canvas?.width * (9 / 10) + 'px'}
+    height={canvas?.height * (9 / 10) + 'px'}
   />
 </section>
 
