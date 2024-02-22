@@ -106,4 +106,22 @@ class PlayerHooks {
   };
 }
 
+class SkillSlot {
+  public constructor(public readonly index: number) {
+
+  }
+
+  public active() {
+
+  }
+
+  public set() {
+
+  }
+
+  public dispose() {
+    
+  }
+}
+
 export { PlayerManager };
