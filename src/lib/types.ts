@@ -101,7 +101,8 @@ export type MapFormat = {
     };
   }[];
   status: StatusFormat[];
-  /* URL */ eventSystem: string;
+  /* URL */ generator: string;
+  /* URL */ playerSystem: string;
   buildScripts: buildScriptType[];
   startPoint: Vector3;
 };

@@ -62,7 +62,8 @@
       }
     }
   ],
-  "eventSystem": "/scripts/index.ts",
+  "generator": "/scripts/Generator.ts",
+  "playerSystem": "/scripts/Player.ts",
   "define": "/defines/",
   "buildScripts": [
     {

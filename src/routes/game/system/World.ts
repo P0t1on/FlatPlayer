@@ -18,7 +18,6 @@ export class World {
   
     public readonly sprites: { name: string; src: string }[];
     public readonly staticEntities: { [key: string]: Entity } = {};
-    private readonly entityBuilders: {[key: string]: (config?: any) => Entity} = {};
   
     public scriptLoadStatus = {
       max: 1,
@@ -39,7 +38,7 @@ export class World {
         sprites,
         entityDef,
         buildScripts,
-        eventSystem,
+        generator,
       } = data;
   
       // 기초 데이터 할당
@@ -132,7 +131,7 @@ export class World {
       }
   
       (() => {
-        getSource(`${domain ? domain : ""}${eventSystem}`).then((source) => {
+        getSource(`${domain ? domain : ""}${generator}`).then((source) => {
           try {
             new Function("setEntity", "world", `'use strict'; ${source}`)(
               (entityname: string, x: number, y: number, z?: number) => {

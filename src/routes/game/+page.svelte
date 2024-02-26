@@ -14,6 +14,7 @@
   let playerPosition: string;
 
   let canvas: HTMLCanvasElement, statusBar: HTMLUListElement;
+  let activeBattleScene: boolean = false;
 
   $: {
     if (canvas && game.world) {
@@ -95,13 +96,14 @@
     const stat = game.player?.status['hp'];
     if (stat) {
       stat.value.update((v) => v + val);
+      activeBattleScene = !activeBattleScene;
     }
   };
 </script>
 
 <svelte:document on:keydown={keydownHook} on:keyup={keyupHook} />
 
-<section id="camper">
+<section id="game">
   <button on:click={() => temp(10)}>+10</button>
   <button on:click={() => temp(-10)}>-10</button>
   <header>
@@ -113,14 +115,18 @@
   </header>
   <div class="playerPos">{playerPosition}</div>
   <canvas id="renderer" bind:this={canvas} />
-  <Battle
-    width={canvas?.width * (9 / 10) + 'px'}
-    height={canvas?.height * (9 / 10) + 'px'}
-  />
+  {#if game.player}
+    <Battle
+      width={canvas?.width * (9 / 10) + 'px'}
+      height={canvas?.height * (9 / 10) + 'px'}
+      skills={game.player?.skills}
+      bind:active={activeBattleScene}
+    />
+  {/if}
 </section>
 
 <style lang="scss">
-  section#camper {
+  section#game {
     height: 100vh;
     display: flex;
     flex-direction: column;

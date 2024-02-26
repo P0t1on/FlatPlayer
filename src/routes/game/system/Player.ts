@@ -14,9 +14,11 @@ type PlayerData = {
 export type { PlayerData };
 
 class PlayerManager {
-  public world: World;
   public playerData: PlayerData;
-  public render: Renderer;
+  public readonly skills: [SkillSlot, SkillSlot, SkillSlot, SkillSlot, SkillSlot, SkillSlot, SkillSlot, SkillSlot, SkillSlot] = [
+    new SkillSlot(0), new SkillSlot(1), new SkillSlot(2),
+    new SkillSlot(3), new SkillSlot(4), new SkillSlot(5),
+    new SkillSlot(6), new SkillSlot(7), new SkillSlot(8)];
   public status: {
     [key: string]: {
       displayName: Writable<string> | undefined;
@@ -31,9 +33,9 @@ class PlayerManager {
   public readonly hooks = new PlayerHooks();
 
   public constructor(
-    world: World,
+    public world: World,
     startPos: Vector3,
-    render: Renderer,
+    public render: Renderer,
     status: StatusFormat[]
   ) {
     this.playerData = {
@@ -43,8 +45,6 @@ class PlayerManager {
       module: false,
       option: EntityOption.NONE,
     };
-    this.world = world;
-    this.render = render;
 
     for (const { id, displayName, color, max, start, option, unit } of status) {
       this.status[id] = {
@@ -124,4 +124,4 @@ class SkillSlot {
   }
 }
 
-export { PlayerManager };
+export { PlayerManager, SkillSlot };

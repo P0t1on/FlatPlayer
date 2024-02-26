@@ -1,7 +1,9 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
   import { writable } from 'svelte/store';
-  import SkillSlot from './SkillSlot.svelte';
+  import type { SkillSlot } from '../system/Player';
+
+  type Slot = SkillSlot | undefined;
 
   // props
   export let width = '100px',
@@ -11,13 +13,13 @@
     hpColor1 = 'red';
   export let name2 = 'Actor2',
     hpColor2 = 'green';
+  export let skills: [Slot, Slot, Slot, Slot, Slot, Slot, Slot, Slot, Slot];
 
   // bindings
   export let hpProgress = writable(50),
-    skillSlots: [[any, any, any], [any, any, any], [any, any, any]];
+    active = false;
 
   // element bind
-  let actions: HTMLDivElement;
 
   // styles
   let hpP1: string, hpP2: string;
@@ -28,34 +30,33 @@
 
   const dispatch = createEventDispatcher();
 
-  onMount(() => {
-    const createSlot = (index: number) =>
-      new SkillSlot({ props: { index }, target: actions });
-
-    skillSlots = [
-      [createSlot(1), createSlot(2), createSlot(3)],
-      [createSlot(4), createSlot(5), createSlot(6)],
-      [createSlot(7), createSlot(8), createSlot(9)],
-    ];
-  });
+  onMount(() => {});
 </script>
 
-<article id="battle">
-  <slot name="health">
-    <div id="health">
-      <div class="hp hp1">{name1}</div>
-      <div class="hp hp2">{name2}</div>
+{#if active}
+  <article id="battle">
+    <slot name="health">
+      <div id="health">
+        <div class="hp hp1">{name1}</div>
+        <div class="hp hp2">{name2}</div>
+      </div>
+    </slot>
+    <div id="field"></div>
+    <slot name="actions">
+      <div id="actions">
+        {#each skills as slot}
+          {#if slot}
+            <div class={`slot_${slot.index}`}></div>
+          {/if}
+        {/each}
+      </div>
+    </slot>
+    <div id="etc">
+      <div id="specials"></div>
+      <div id="consumes"></div>
     </div>
-  </slot>
-  <div id="field"></div>
-  <slot name="actions">
-    <div id="actions" bind:this={actions}></div>
-  </slot>
-  <div id="etc">
-    <div id="specials"></div>
-    <div id="consumes"></div>
-  </div>
-</article>
+  </article>
+{/if}
 
 <style module lang="scss">
   $borderColor: bind(borderColor);
