@@ -74,7 +74,8 @@ export type StatusFormat = {
 export const StatusOption = {
   NONE: 0b000,
   DEATHONZERO: 0b001,
-  VISIBLE: 0b010
+  VISIBLE: 0b010,
+  BASIS: 0b100
 } as const;
 
 export type MapFormat = {

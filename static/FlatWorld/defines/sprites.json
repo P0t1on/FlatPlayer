@@ -1,0 +1,14 @@
+[
+  {
+    "name": "player",
+    "src": "/sprites/player.svg"
+  },
+  {
+    "name": "wall",
+    "src": "/sprites/wall.svg"
+  },
+  {
+    "name": "blank",
+    "src": "/sprites/blank.svg"
+  }
+]

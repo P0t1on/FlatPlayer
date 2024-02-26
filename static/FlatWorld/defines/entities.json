@@ -1,0 +1,10 @@
+[
+  {
+    "name": "wall",
+    "sprite": "wall",
+    "module": "/scripts/Wall.ts",
+    "option": {
+      "moveable": false
+    }
+  }
+]

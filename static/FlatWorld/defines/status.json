@@ -1,0 +1,35 @@
+[
+  {
+    "displayName": "Hp",
+    "id": "hp",
+    "color": "red",
+    "max": 100,
+    "start": 100,
+    "option": {
+      "deathOnZero": true,
+      "visible": true,
+      "basis": true
+    }
+  },
+  {
+    "displayName": "Stamina",
+    "id": "sta",
+    "color": "brown",
+    "max": 100,
+    "start": 100,
+    "option": {
+      "visible": true,
+      "basis": true
+    }
+  },
+  {
+    "displayName": "Gold",
+    "id": "gold",
+    "unit": "g",
+    "color": "yellow",
+    "option": {
+      "visible": true,
+      "basis": true
+    }
+  }
+]

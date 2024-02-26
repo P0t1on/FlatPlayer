@@ -63,6 +63,7 @@
     }
   ],
   "eventSystem": "/scripts/index.ts",
+  "define": "/defines/",
   "buildScripts": [
     {
       "method": "fill",
