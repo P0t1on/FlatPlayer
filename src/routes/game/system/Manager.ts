@@ -86,14 +86,15 @@ class GameManager {
   }
 
   public async loadWorld(mapData: MapFormat) {
-    const { startPoint, status } = mapData;
+    const { domain, startPoint, status, playerSystem } = mapData;
 
     const world = (this.world = new World(mapData, this.renderer));
     const player = (this.player = new PlayerManager(
       world,
       startPoint,
       this.renderer,
-      status
+      status,
+      (domain ? domain : "") + playerSystem
     ));
 
     world.setEntity(startPoint, player.playerData);

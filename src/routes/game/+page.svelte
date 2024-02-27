@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { assets } from '$app/paths';
 
-  import Battle from './components/Battle.svelte';
+  import Interaction from './components/Interaction.svelte';
 
   import { getJson } from '$lib';
   import { GameManager } from './system/Manager';
@@ -38,10 +38,10 @@
       );
       if (canvas) canvas = canvas;
       if (game.player) {
-        game.player.hooks.onMove = (pos) => {
+        game.player.hooks.onMove.push((pos) => {
           playerPosition = JSON.stringify(pos);
           game.reload(pos);
-        };
+        });
       }
     }
     // test
@@ -116,10 +116,10 @@
   <div class="playerPos">{playerPosition}</div>
   <canvas id="renderer" bind:this={canvas} />
   {#if game.player}
-    <Battle
+    <Interaction
       width={canvas?.width * (9 / 10) + 'px'}
       height={canvas?.height * (9 / 10) + 'px'}
-      skills={game.player?.skills}
+      skills={game.player.skills}
       bind:active={activeBattleScene}
     />
   {/if}

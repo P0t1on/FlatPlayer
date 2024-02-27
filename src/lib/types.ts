@@ -20,7 +20,6 @@ export const EntityOption = {
   NONE: 0b000,
   STATIC: 0b001,
   MOVEABLE: 0b010,
-  INTERACTABLE: 0b100
 } as const;
 
 export type Entity = {
@@ -97,7 +96,6 @@ export type MapFormat = {
     /* URL */ module?: string;
     option?: {
       moveable?: boolean;
-      interactable?: boolean;
     };
   }[];
   status: StatusFormat[];

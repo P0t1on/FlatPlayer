@@ -1,11 +1,12 @@
-import { writable } from "svelte/store";
+import { writable } from 'svelte/store';
 
-import { EntityOption, StatusOption } from "$lib/types";
+import { EntityOption, StatusOption } from '$lib/types';
 
-import type { Writable } from "svelte/store";
-import type { Renderer } from "./Game";
-import type { World } from "./World";
-import type { Vector3, Vector2, Entity, StatusFormat } from "$lib/types";
+import type { Writable } from 'svelte/store';
+import type { Renderer } from './Game';
+import type { World } from './World';
+import type { Vector3, Vector2, Entity, StatusFormat } from '$lib/types';
+import { getSource } from '$lib';
 
 type PlayerData = {
   position: Vector3;
@@ -15,10 +16,27 @@ export type { PlayerData };
 
 class PlayerManager {
   public playerData: PlayerData;
-  public readonly skills: [SkillSlot, SkillSlot, SkillSlot, SkillSlot, SkillSlot, SkillSlot, SkillSlot, SkillSlot, SkillSlot] = [
-    new SkillSlot(0), new SkillSlot(1), new SkillSlot(2),
-    new SkillSlot(3), new SkillSlot(4), new SkillSlot(5),
-    new SkillSlot(6), new SkillSlot(7), new SkillSlot(8)];
+  public readonly skills: [
+    SkillSlot,
+    SkillSlot,
+    SkillSlot,
+    SkillSlot,
+    SkillSlot,
+    SkillSlot,
+    SkillSlot,
+    SkillSlot,
+    SkillSlot
+  ] = [
+    new SkillSlot(0),
+    new SkillSlot(1),
+    new SkillSlot(2),
+    new SkillSlot(3),
+    new SkillSlot(4),
+    new SkillSlot(5),
+    new SkillSlot(6),
+    new SkillSlot(7),
+    new SkillSlot(8),
+  ];
   public status: {
     [key: string]: {
       displayName: Writable<string> | undefined;
@@ -36,12 +54,13 @@ class PlayerManager {
     public world: World,
     startPos: Vector3,
     public render: Renderer,
-    status: StatusFormat[]
+    status: StatusFormat[],
+    scriptSrc: string
   ) {
     this.playerData = {
-      name: "player",
+      name: 'player',
       position: { ...startPos },
-      sprite: "player",
+      sprite: 'player',
       module: false,
       option: EntityOption.NONE,
     };
@@ -59,11 +78,31 @@ class PlayerManager {
           : StatusOption.NONE,
       };
     }
+
+    getSource(scriptSrc).then((source) => {
+      try {
+        const events = {
+          on: (eventName: 'move', handler: any) => {
+            switch (eventName) {
+              case 'move': {
+                const method = handler as (position: Vector3) => void;
+                this.hooks.onMove.push(method);
+                break;
+              }
+            }
+          },
+        };
+        new Function('events', `'use strict'; ${source}`)(events);
+      } catch (e) {
+        console.log(`PlayerSystem (${scriptSrc}) loading error.`);
+        console.log(e);
+      }
+    });
   }
 
   public move(
     { x, y }: Vector2,
-    mode: "absolute" | "relative" = "relative"
+    mode: 'absolute' | 'relative' = 'relative'
   ): void {
     const { playerData, world } = this,
       { width, height } = world;
@@ -82,8 +121,8 @@ class PlayerManager {
     )
       return;
 
-    if (mode == "relative") {
-      world.setEntity(position, "blank");
+    if (mode == 'relative') {
+      world.setEntity(position, 'blank');
       position.x += x;
       position.y += y;
       world.setEntity(position, playerData);
@@ -100,28 +139,22 @@ class PlayerManager {
 }
 
 class PlayerHooks {
-  public onMove = (position: Vector3) => {};
+  public onMove: ((position: Vector3) => void)[] = [];
   public readonly playerMove = (position: Vector3) => {
-    this.onMove(position);
+    for (const handler of this.onMove) {
+      handler(position);
+    }
   };
 }
 
 class SkillSlot {
-  public constructor(public readonly index: number) {
+  public constructor(public readonly index: number) {}
 
-  }
+  public active() {}
 
-  public active() {
+  public set() {}
 
-  }
-
-  public set() {
-
-  }
-
-  public dispose() {
-    
-  }
+  public dispose() {}
 }
 
 export { PlayerManager, SkillSlot };
