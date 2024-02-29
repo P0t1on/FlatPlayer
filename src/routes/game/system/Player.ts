@@ -85,14 +85,42 @@ class PlayerManager {
           on: (eventName: 'move', handler: any) => {
             switch (eventName) {
               case 'move': {
-                const method = handler as (position: Vector3) => void;
-                this.hooks.onMove.push(method);
+                this.hooks.onMove.push(handler);
                 break;
               }
             }
           },
         };
-        new Function('events', `'use strict'; ${source}`)(events);
+
+        const registerTool = (type: 'skill', target: any) => {
+          switch (type) {
+            case 'skill': {
+              const { name, runner } = target as {
+                name: string;
+                runner: () => void;
+              };
+
+              SkillSlot.skills[name] = runner;
+              break;
+            }
+          }
+        };
+
+        if (source.includes('document'))
+          throw new EvalError(
+            '소스에 존재하면 안되는 키워드 document가 있습니다.'
+          );
+
+        new Function(
+          'events',
+          'getEntity',
+          'register',
+          `'use strict'; ${source}`
+        )(
+          events,
+          (position: Vector3) => world.getEntity(position),
+          registerTool
+        );
       } catch (e) {
         console.log(`PlayerSystem (${scriptSrc}) loading error.`);
         console.log(e);
@@ -107,26 +135,28 @@ class PlayerManager {
     const { playerData, world } = this,
       { width, height } = world;
     const position = playerData.position,
+      targetPosition = { x: position.x + x, y: position.y + y, z: position.z },
       targetEntity = world.getEntity({
         x: position.x + x,
         y: position.y + y,
         z: position.z,
-      });
-    if (
-      (targetEntity && (targetEntity.option & EntityOption.MOVEABLE) === 0) ||
-      position.x + x === 0 ||
-      position.x + x > width ||
-      position.y + y === 0 ||
-      position.y + y > height
-    )
-      return;
+      }),
+      moveable =
+        (targetEntity && (targetEntity.option & EntityOption.MOVEABLE) === 0) ||
+        position.x + x === 0 ||
+        position.x + x > width ||
+        position.y + y === 0 ||
+        position.y + y > height;
+
+    const moveCanceled = this.hooks.playerMove(targetPosition, moveable);
+
+    if (moveable || moveCanceled) return;
 
     if (mode == 'relative') {
       world.setEntity(position, 'blank');
       position.x += x;
       position.y += y;
       world.setEntity(position, playerData);
-      this.hooks.playerMove(position);
     } else {
     }
   }
@@ -139,15 +169,26 @@ class PlayerManager {
 }
 
 class PlayerHooks {
-  public onMove: ((position: Vector3) => void)[] = [];
-  public readonly playerMove = (position: Vector3) => {
+  public onMove: ((
+    position: Vector3,
+    moveable: boolean,
+    cancelMove: () => void
+  ) => void)[] = [];
+  public playerMove(position: Vector3, moveable: boolean): boolean {
+    let moveCanceled = false;
+    const cancelMove = () => (moveCanceled = true);
+
     for (const handler of this.onMove) {
-      handler(position);
+      handler(position, moveable, cancelMove);
     }
-  };
+
+    return moveCanceled;
+  }
 }
 
 class SkillSlot {
+  public static readonly skills: { [key: string]: () => void } = {};
+
   public constructor(public readonly index: number) {}
 
   public active() {}

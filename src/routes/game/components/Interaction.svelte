@@ -1,7 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
   import { writable } from 'svelte/store';
-  import type { SkillSlot } from '../system/Player';
+  import Slot from './SkillSlot.svelte';
+  import type { PlayerManager, SkillSlot } from '../system/Player';
 
   type Slot = SkillSlot | undefined;
 
@@ -13,7 +14,7 @@
     hpColor1 = 'red';
   export let name2 = 'Actor2',
     hpColor2 = 'green';
-  export let skills: [Slot, Slot, Slot, Slot, Slot, Slot, Slot, Slot, Slot];
+  export let player: PlayerManager | undefined;
 
   // bindings
   export let hpProgress = writable(50),
@@ -33,7 +34,7 @@
   onMount(() => {});
 </script>
 
-{#if active}
+{#if active && player}
   <article id="battle">
     <slot name="health">
       <div id="health">
@@ -44,9 +45,9 @@
     <div id="field"></div>
     <slot name="actions">
       <div id="actions">
-        {#each skills as slot}
+        {#each player.skills as slot}
           {#if slot}
-            <div class={`slot_${slot.index}`}></div>
+            <Slot></Slot>
           {/if}
         {/each}
       </div>

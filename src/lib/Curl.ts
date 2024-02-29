@@ -2,7 +2,7 @@ export async function getJson<T>(url: string): Promise<T> {
   return JSON.parse(await (await fetch(url)).text());
 }
 
-export async function getSource<T = any>(url: string): Promise<T> {
+export async function getSource<T = string>(url: string): Promise<T> {
   return (await (await fetch(url)).text()) as T;
 }
 
@@ -32,7 +32,7 @@ export type GithubRepoSearchResponse = {
       repos_url: string;
       events_url: string;
       received_events_url: string;
-      type: "User";
+      type: 'User';
       site_admin: boolean;
     };
     html_url: string;
@@ -42,12 +42,12 @@ export type GithubRepoSearchResponse = {
 };
 
 export async function searchMap(page = 1, per_page = 30) {
-  const json = await (await fetch(
-    `https://api.github.com/search/repositories?per_page=${per_page}&page=${page}&q=topic%3Aflat-survival+topic%3Amap`,
-    { method: "GET" }
-  )).json() as GithubRepoSearchResponse;
-
-  
+  const json = (await (
+    await fetch(
+      `https://api.github.com/search/repositories?per_page=${per_page}&page=${page}&q=topic%3Aflat-survival+topic%3Amap`,
+      { method: 'GET' }
+    )
+  ).json()) as GithubRepoSearchResponse;
 
   return json;
 }

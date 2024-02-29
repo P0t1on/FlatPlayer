@@ -115,14 +115,12 @@
   </header>
   <div class="playerPos">{playerPosition}</div>
   <canvas id="renderer" bind:this={canvas} />
-  {#if game.player}
-    <Interaction
-      width={canvas?.width * (9 / 10) + 'px'}
-      height={canvas?.height * (9 / 10) + 'px'}
-      skills={game.player.skills}
-      bind:active={activeBattleScene}
-    />
-  {/if}
+  <Interaction
+    width={canvas?.width * (9 / 10) + 'px'}
+    height={canvas?.height * (9 / 10) + 'px'}
+    player={game.player}
+    bind:active={activeBattleScene}
+  />
 </section>
 
 <style lang="scss">
