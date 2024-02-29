@@ -1,13 +1,11 @@
 {
-    "recommendations": [
-        "idleberg.svg-icons",
-        "fivethree.vscode-svelte-snippets",
-        "ibm.output-colorizer",
-        "equinusocio.vsc-material-theme-icons",
-        "usernamehw.errorlens",
-        "bierner.docs-view",
-        "antfu.browse-lite",
-        "sitrusy.90s-anime",
-        "eamodio.gitlens"
-    ]
+  "recommendations": [
+    "idleberg.svg-icons",
+    "fivethree.vscode-svelte-snippets",
+    "ibm.output-colorizer",
+    "equinusocio.vsc-material-theme-icons",
+    "usernamehw.errorlens",
+    "sitrusy.90s-anime",
+    "eamodio.gitlens"
+  ]
 }
