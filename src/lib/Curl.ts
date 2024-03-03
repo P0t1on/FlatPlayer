@@ -41,10 +41,17 @@ export type GithubRepoSearchResponse = {
   }[];
 };
 
-export async function searchMap(page = 1, per_page = 30) {
+const baseTopic = ['flat-survival', 'map'];
+
+export async function searchMap(page = 1, per_page = 30, ...topics: string[]) {
   const json = (await (
     await fetch(
-      `https://api.github.com/search/repositories?per_page=${per_page}&page=${page}&q=topic%3Aflat-survival+topic%3Amap`,
+      `https://api.github.com/search/repositories?per_page=${per_page}&page=${page}&q=${(topics.push(
+        ...baseTopic
+      ),
+      baseTopic)
+        .map((v) => `topic%3A${v}`)
+        .join('+')}`,
       { method: 'GET' }
     )
   ).json()) as GithubRepoSearchResponse;
