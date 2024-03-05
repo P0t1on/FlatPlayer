@@ -14,6 +14,8 @@ export type GithubRepoSearchResponse = {
     node_id: string;
     name: string;
     full_name: string;
+    score: 1;
+    watchers: number;
     private: boolean;
     owner: {
       login: string;
@@ -36,22 +38,31 @@ export type GithubRepoSearchResponse = {
       site_admin: boolean;
     };
     html_url: string;
+    url: string;
     description: string | null;
     fork: boolean;
+    topics: string[];
+    stargazers_count: number;
+    stargazers_url: string;
   }[];
 };
 
 const baseTopic = ['flat-survival', 'map'];
 
-export async function searchMap(page = 1, per_page = 30, ...topics: string[]) {
+export async function searchMap(
+  word?: string,
+  page = 1,
+  per_page = 30,
+  ...topics: string[]
+) {
   const json = (await (
     await fetch(
       `https://api.github.com/search/repositories?per_page=${per_page}&page=${page}&q=${(topics.push(
         ...baseTopic
       ),
-      baseTopic)
+      topics)
         .map((v) => `topic%3A${v}`)
-        .join('+')}`,
+        .join('+')}${word ? '+' : ''}${word}`,
       { method: 'GET' }
     )
   ).json()) as GithubRepoSearchResponse;
