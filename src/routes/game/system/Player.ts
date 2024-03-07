@@ -6,7 +6,7 @@ import type { Writable } from 'svelte/store';
 import type { Renderer } from './Game';
 import type { World } from './World';
 import type { Vector3, Vector2, Entity, StatusFormat } from '$lib/types';
-import { getSource } from '$lib';
+import { getSource } from '$lib/Curl';
 
 type PlayerData = {
   position: Vector3;

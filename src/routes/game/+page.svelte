@@ -4,7 +4,7 @@
 
   import Interaction from './components/Interaction.svelte';
 
-  import { getJson } from '$lib';
+  import { getJson } from '$lib/Curl';
   import { GameManager } from './system/Manager';
   import type { MapFormat } from '$lib/types';
 

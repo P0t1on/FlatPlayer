@@ -1,9 +1,15 @@
 <script lang="ts">
-  import { searchMap, type GithubRepoSearchResponse } from '$lib/Curl';
+  import {
+    searchMap,
+    type GithubRepoSearchResponse,
+    type GithubRepoSearchResponseHeaderType,
+  } from '$lib/Curl';
   import { onMount } from 'svelte';
 
   let searchString = '';
-  let searchProcess: Promise<GithubRepoSearchResponse>;
+  let searchProcess:
+    | Promise<[GithubRepoSearchResponse, GithubRepoSearchResponseHeaderType]>
+    | undefined;
 
   const searchTrigger = async () => {
     searchProcess = searchMap(searchString);
@@ -48,10 +54,14 @@
       {#await searchProcess}
         loading
       {:then result}
-        {#each result.items as info}
+        {#each result[0].items as info}
           <div class="item">
-            <span class="border"
-              >&lt;{info.owner.login} - {info.name}&gt;
+            <span class="bolder">
+              &lt;<a target="_blank" href={info.owner.html_url}
+                >{info.owner.login}</a
+              >
+              -
+              <a target="_blank" href={info.html_url}>{info.name}</a>&gt;
             </span>
             <!-- {JSON.stringify(info)} -->
           </div>
@@ -121,16 +131,26 @@
       margin-top: 20px;
       display: flex;
       flex-direction: column;
-      background-color: gray;
+      align-items: center;
 
       div.item {
         outline-style: double;
-        // outline-color: #9c95dc;
+        background-color: gray;
+        margin: 5px 0 5px 0;
+        width: 100%;
         user-select: none;
 
         &:hover {
           outline-style: auto;
-          cursor: pointer;
+        }
+
+        a {
+          color: black;
+          text-decoration: none;
+
+          &:hover {
+            color: white;
+          }
         }
       }
     }

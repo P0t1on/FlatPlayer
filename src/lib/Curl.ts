@@ -47,6 +47,18 @@ export type GithubRepoSearchResponse = {
   }[];
 };
 
+export type GithubRepoSearchResponseHeaderType = {
+  'cache-control': string;
+  'content-type': string;
+  'x-github-media-type': string;
+  'x-github-request-id': string;
+  'x-ratelimit-limit': string;
+  'x-ratelimit-remaining': string;
+  'x-ratelimit-reset': string;
+  'x-ratelimit-resource': string;
+  'x-ratelimit-used': string;
+};
+
 const baseTopic = ['flat-survival', 'map'];
 
 export async function searchMap(
@@ -54,18 +66,24 @@ export async function searchMap(
   page = 1,
   per_page = 30,
   ...topics: string[]
-) {
-  const json = (await (
-    await fetch(
-      `https://api.github.com/search/repositories?per_page=${per_page}&page=${page}&q=${(topics.push(
-        ...baseTopic
-      ),
-      topics)
-        .map((v) => `topic%3A${v}`)
-        .join('+')}${word ? '+' : ''}${word}`,
-      { method: 'GET' }
-    )
-  ).json()) as GithubRepoSearchResponse;
+): Promise<[GithubRepoSearchResponse, GithubRepoSearchResponseHeaderType]> {
+  const response = await fetch(
+    `https://api.github.com/search/repositories?per_page=${per_page}&page=${page}&q=${(topics.push(
+      ...baseTopic
+    ),
+    topics)
+      .map((v) => `topic%3A${v}`)
+      .join('+')}${word ? '+' : ''}${word}`,
+    { method: 'GET' }
+  );
 
-  return json;
+  const headers: { [key: string]: string } = {};
+
+  for (const k of response.headers.entries()) {
+    headers[k[0]] = k[1];
+  }
+
+  const json = await response.json();
+
+  return [json, headers as GithubRepoSearchResponseHeaderType];
 }

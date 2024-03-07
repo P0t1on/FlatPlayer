@@ -1,12 +1,12 @@
-import type { KeyboardEventHandler } from "svelte/elements";
+import type { KeyboardEventHandler } from 'svelte/elements';
 
-import { createKeyPressEvent } from "$lib";
-import { StatusOption, type MapFormat, type Vector3 } from "$lib/types";
+import { createKeyPressEvent } from '$lib/Input';
+import { StatusOption, type MapFormat, type Vector3 } from '$lib/types';
 
-import { CanvasRenderer } from "./Game";
-import { World } from "./World";
-import { PlayerManager } from "./Player";
-import Status from "../components/Status.svelte";
+import { CanvasRenderer } from './Game';
+import { World } from './World';
+import { PlayerManager } from './Player';
+import Status from '../components/Status.svelte';
 
 class GameManager {
   public renderer: CanvasRenderer;
@@ -56,7 +56,7 @@ class GameManager {
 
     await renderer.setup(canvas);
     renderer.clearSpriteCache();
-    await renderer.loadSprites("high", ...world.sprites);
+    await renderer.loadSprites('high', ...world.sprites);
 
     this.reload(player.playerData.position, true);
 
@@ -94,7 +94,7 @@ class GameManager {
       startPoint,
       this.renderer,
       status,
-      (domain ? domain : "") + playerSystem
+      (domain ? domain : '') + playerSystem
     ));
 
     world.setEntity(startPoint, player.playerData);

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { toStyleVariables } from "$lib";
-  import type { Writable } from "svelte/store";
+  import { toStyleVariables } from '$lib/Input';
+  import type { Writable } from 'svelte/store';
 
   export let value: Writable<number>,
     color: Writable<string>,
@@ -13,16 +13,18 @@
   {#if $max === 0}
     {#if name !== undefined}
       <div class="name"><div class="textWrapper">{$name}</div></div>
-      <div class="value"><div class="textWrapper">{$value + (unit ? unit : "")}</div></div>
+      <div class="value">
+        <div class="textWrapper">{$value + (unit ? unit : '')}</div>
+      </div>
     {:else}
-      <div class="textWrapper">{$value + (unit ? unit : "")}</div>
+      <div class="textWrapper">{$value + (unit ? unit : '')}</div>
     {/if}
   {:else}
     {#if name !== undefined}
       <div class="name"><div class="textWrapper">{$name}</div></div>
     {/if}
     <div class="progress" style={`width: ${($value * 100) / $max}%;`}>
-      <div class="textWrapper">{$value + (unit ? unit : "")}</div>
+      <div class="textWrapper">{$value + (unit ? unit : '')}</div>
     </div>
   {/if}
 </div>
