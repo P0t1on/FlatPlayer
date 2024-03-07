@@ -52,7 +52,7 @@
 
 <style lang="scss">
   div {
-    height: 100%;
+    min-height: 100%;
     background-color: #9c95dc;
 
     header {
