@@ -47,7 +47,7 @@ export type GithubRepoSearchResponse = {
   }[];
 };
 
-export type GithubRepoSearchResponseHeaderType = {
+export type GithubRepoSearchResponseHeader = {
   'cache-control': string;
   'content-type': string;
   'x-github-media-type': string;
@@ -66,7 +66,7 @@ export async function searchMap(
   page = 1,
   per_page = 30,
   ...topics: string[]
-): Promise<[GithubRepoSearchResponse, GithubRepoSearchResponseHeaderType]> {
+): Promise<[GithubRepoSearchResponse, GithubRepoSearchResponseHeader]> {
   const response = await fetch(
     `https://api.github.com/search/repositories?per_page=${per_page}&page=${page}&q=${(topics.push(
       ...baseTopic

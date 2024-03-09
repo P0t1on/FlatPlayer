@@ -2,18 +2,18 @@
   import {
     searchMap,
     type GithubRepoSearchResponse,
-    type GithubRepoSearchResponseHeaderType,
+    type GithubRepoSearchResponseHeader,
   } from '$lib/Curl';
   import { onMount } from 'svelte';
 
   let searchString = '';
   let searchProcess:
-    | Promise<[GithubRepoSearchResponse, GithubRepoSearchResponseHeaderType]>
+    | Promise<[GithubRepoSearchResponse, GithubRepoSearchResponseHeader]>
     | undefined;
 
   const searchTrigger = async () => {
     searchProcess = searchMap(searchString);
-    console.log(await searchProcess);
+    console.log((await searchProcess)[0]);
   };
 
   onMount(() => {
@@ -44,7 +44,7 @@
       on:click={searchTrigger}
       on:keydown
       role="button"
-      tabindex="0"
+      tabindex={0}
     >
       search
     </span>
@@ -52,17 +52,18 @@
   <div id="searchResult">
     {#if searchProcess !== undefined}
       {#await searchProcess}
-        loading
+        <progress>loading</progress>
       {:then result}
         {#each result[0].items as info}
           <div class="item">
             <span class="bolder">
-              &lt;<a target="_blank" href={info.owner.html_url}
+              [ <a target="_blank" href={info.owner.html_url}
                 >{info.owner.login}</a
               >
               -
-              <a target="_blank" href={info.html_url}>{info.name}</a>&gt;
-            </span>
+              <a target="_blank" href={info.html_url}>{info.name}</a> ]
+            </span> <br />
+            <span> test </span>
             <!-- {JSON.stringify(info)} -->
           </div>
         {/each}
@@ -134,14 +135,17 @@
       align-items: center;
 
       div.item {
-        outline-style: double;
+        border-style: dashed;
         background-color: gray;
         margin: 5px 0 5px 0;
-        width: 100%;
+        padding: 8px;
+        width: -webkit-fill-available;
+        width: -moz-fill-available;
+        width: fill-available;
         user-select: none;
 
         &:hover {
-          outline-style: auto;
+          border-style: solid;
         }
 
         a {

@@ -1,7 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import { Explorer, Hub, MyPage } from './documents';
+  import Explorer from './documents/Explorer.svelte';
+  import Hub from './documents/Hub.svelte';
+  import MyPage from './documents/MyPage.svelte';
+  import Setting from './documents/Setting.svelte';
   // import type { PageData } from "./$types";
 
   // export let data: PageData;
@@ -18,12 +21,22 @@
       component: Hub,
     },
     {
-      name: '내 정보',
+      name: '라이브러리',
       component: MyPage,
+    },
+    {
+      name: '설정',
+      component: Setting,
     },
   ];
 
   onMount(() => {
+    const req = indexedDB.open('user', 3);
+    req.onupgradeneeded = (e) => {
+      const db = req.result;
+
+      db.createObjectStore('base', { keyPath: '' });
+    };
     //open("./game", "_self")
   });
 </script>
@@ -37,8 +50,11 @@
         <li
           class={i == selectedMenu ? 'selected' : ''}
           on:click={() => (selectedMenu = i)}
-          on:keydown
+          on:keydown={(e) => {
+            if (e.key === 'Enter') selectedMenu = i;
+          }}
           role="menuitem"
+          tabindex={i == selectedMenu ? -1 : 0}
         >
           {name}
         </li>
