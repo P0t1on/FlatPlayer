@@ -1,10 +1,16 @@
+<script lang="ts" context="module">
+  const responseList = writable<GithubRepoSearchResponse | undefined>();
+</script>
+
 <script lang="ts">
+  import { goto } from '$app/navigation';
   import {
     searchMap,
     type GithubRepoSearchResponse,
     type GithubRepoSearchResponseHeader,
   } from '$lib/Curl';
   import { onMount } from 'svelte';
+  import { writable } from 'svelte/store';
 
   let searchString = '';
   let searchProcess:
@@ -13,7 +19,10 @@
 
   const searchTrigger = async () => {
     searchProcess = searchMap(searchString);
-    console.log((await searchProcess)[0]);
+    const data = (await searchProcess)[0];
+
+    console.log(data);
+    responseList.set(data);
   };
 
   onMount(() => {
@@ -56,11 +65,29 @@
               -
               <a target="_blank" href={info.html_url}>{info.name}</a> ]
             </span> <br />
-            <span> test </span>
+            <button on:click={() => goto('./game', { state: { val: 123 } })}
+              >test</button
+            >
             <!-- {JSON.stringify(info)} -->
           </div>
         {/each}
       {/await}
+    {:else if $responseList !== undefined}
+      {#each $responseList.items as info}
+        <div class="item">
+          <span class="bolder">
+            [ <a target="_blank" href={info.owner.html_url}
+              >{info.owner.login}</a
+            >
+            -
+            <a target="_blank" href={info.html_url}>{info.name}</a> ]
+          </span> <br />
+          <button on:click={() => goto('./game', { state: { val: 123 } })}
+            >test</button
+          >
+          <!-- {JSON.stringify(info)} -->
+        </div>
+      {/each}
     {/if}
   </div>
 </article>

@@ -1,3 +1,7 @@
+<script lang="ts" context="module">
+  let selectedMenu = writable(1);
+</script>
+
 <script lang="ts">
   import { onMount } from 'svelte';
 
@@ -5,12 +9,12 @@
   import Hub from './documents/Hub.svelte';
   import MyPage from './documents/MyPage.svelte';
   import Setting from './documents/Setting.svelte';
+  import { writable } from 'svelte/store';
   // import type { PageData } from "./$types";
 
   // export let data: PageData;
 
   // menu 구현
-  let selectedMenu = 1;
   const menuList = [
     {
       name: '맵 검색',
@@ -48,13 +52,13 @@
     <ul id="menu">
       {#each menuList as { name }, i}
         <li
-          class={i == selectedMenu ? 'selected' : ''}
-          on:click={() => (selectedMenu = i)}
+          class={i == $selectedMenu ? 'selected' : ''}
+          on:click={() => selectedMenu.set(i)}
           on:keydown={(e) => {
-            if (e.key === 'Enter') selectedMenu = i;
+            if (e.key === 'Enter') selectedMenu.set(i);
           }}
           role="menuitem"
-          tabindex={i == selectedMenu ? -1 : 0}
+          tabindex={i == $selectedMenu ? -1 : 0}
         >
           {name}
         </li>
@@ -62,7 +66,7 @@
     </ul>
   </header>
   <div id="document">
-    <svelte:component this={menuList[selectedMenu]?.component} />
+    <svelte:component this={menuList[$selectedMenu]?.component} />
   </div>
 </div>
 
