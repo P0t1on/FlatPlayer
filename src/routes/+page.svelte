@@ -35,13 +35,13 @@
   ];
 
   onMount(() => {
-    const req = indexedDB.open('user', 3);
-    req.onupgradeneeded = (e) => {
-      const db = req.result;
-
-      db.createObjectStore('base', { keyPath: '' });
-    };
-    //open("./game", "_self")
+    const selected = new Number(
+      sessionStorage.getItem('selectedMenu')
+    ) as number;
+    selectedMenu.update((v) => selected ?? v);
+    selectedMenu.subscribe((e) =>
+      sessionStorage.setItem('selectedMenu', new String(e) as string)
+    );
   });
 </script>
 
