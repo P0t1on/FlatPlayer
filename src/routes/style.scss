@@ -2,6 +2,11 @@
   cursor: pointer;
 }
 
+.nodrag {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
 .hide {
   display: none;
 }

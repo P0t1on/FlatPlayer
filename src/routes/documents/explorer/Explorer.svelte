@@ -4,6 +4,7 @@
 
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { icon } from '$lib/Assets';
   import {
     searchMap,
     type GithubRepoSearchResponse,
@@ -11,6 +12,7 @@
   } from '$lib/Curl';
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
+  import './Explorer.scss';
 
   let searchString = '';
   let searchProcess:
@@ -41,15 +43,9 @@
         if (e.key === 'Enter') searchTrigger();
       }}
     />
-    <span
-      class="material-symbols-outlined searchIcon"
-      on:click={searchTrigger}
-      on:keydown
-      role="button"
-      tabindex={0}
-    >
-      search
-    </span>
+    <button class="searchIcon clickable" on:click={searchTrigger} tabindex={0}>
+      <img class="nodrag" alt="search" src={icon('search')} />
+    </button>
   </div>
   <div id="searchResult">
     {#if searchProcess !== undefined}
@@ -59,15 +55,20 @@
         {#each result[0].items as info}
           <div class="item">
             <span class="bolder">
-              [ <a target="_blank" href={info.owner.html_url}
-                >{info.owner.login}</a
-              >
+              [ <a target="_blank" href={info.owner.html_url}>
+                {info.owner.login}
+              </a>
               -
               <a target="_blank" href={info.html_url}>{info.name}</a> ]
             </span> <br />
-            <button on:click={() => goto('./game', { state: { val: 123 } })}
-              >test</button
-            >
+            <div class="container">
+              <button
+                class="clickable play"
+                on:click={() => goto('./game', { state: { val: 123 } })}
+              >
+                <img class="nodrag" alt="play" src={icon('sports_esports')} />
+              </button>
+            </div>
             <!-- {JSON.stringify(info)} -->
           </div>
         {/each}
@@ -82,9 +83,14 @@
             -
             <a target="_blank" href={info.html_url}>{info.name}</a> ]
           </span> <br />
-          <button on:click={() => goto('./game', { state: { val: 123 } })}
-            >test</button
-          >
+          <div class="container">
+            <button
+              class="clickable play"
+              on:click={() => goto('./game', { state: { val: 123 } })}
+            >
+              <img class="nodrag" alt="play" src={icon('sports_esports')} />
+            </button>
+          </div>
           <!-- {JSON.stringify(info)} -->
         </div>
       {/each}
@@ -127,14 +133,16 @@
         }
       }
 
-      span.searchIcon {
+      button.searchIcon {
+        background-color: transparent;
         padding: 4px;
         border-radius: 8px;
-        user-select: none;
-        cursor: pointer;
 
-        &:hover {
-          box-shadow: inset 0 2px 16px black;
+        &:hover,
+        &:focus {
+          animation-name: playButtonHover;
+          animation-duration: 0.5s;
+          animation-fill-mode: forwards;
         }
 
         &:active {
@@ -159,9 +167,7 @@
         background-color: gray;
         margin: 5px 0 5px 0;
         padding: 8px;
-        width: -webkit-fill-available;
-        width: -moz-fill-available;
-        width: fill-available;
+        width: 90%;
         user-select: none;
 
         &:hover {
@@ -172,8 +178,27 @@
           color: black;
           text-decoration: none;
 
-          &:hover {
+          &:hover,
+          &:focus {
             color: white;
+          }
+        }
+
+        div.container {
+          display: flex;
+          justify-content: flex-end;
+
+          button.play {
+            background-color: transparent;
+            border: none;
+            border-radius: 5px;
+
+            &:hover,
+            &:focus {
+              animation-name: playButtonHover;
+              animation-duration: 0.5s;
+              animation-fill-mode: forwards;
+            }
           }
         }
       }

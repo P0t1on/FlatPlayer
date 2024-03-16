@@ -5,7 +5,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  import Explorer from './documents/Explorer.svelte';
+  import Explorer from './documents/explorer/Explorer.svelte';
   import Hub from './documents/Hub.svelte';
   import MyPage from './documents/MyPage.svelte';
   import Setting from './documents/Setting.svelte';
