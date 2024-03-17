@@ -1,50 +1,63 @@
+import type { MapFormat } from './types';
+
 export async function getJson<T>(url: string): Promise<T> {
   return JSON.parse(await (await fetch(url)).text());
+}
+
+export async function getFlatData(fullName: string, branch: string) {
+  const flatConfig = await getJson<MapFormat>(
+    `https://raw.githubusercontent.com/${fullName}/${branch}/flat.json`
+  );
+
+  return flatConfig;
 }
 
 export async function getSource<T = string>(url: string): Promise<T> {
   return (await (await fetch(url)).text()) as T;
 }
 
+export type GithubRepo = {
+  id: number;
+  node_id: string;
+  name: string;
+  full_name: string;
+  default_branch: string;
+  score: 1;
+  watchers: number;
+  private: boolean;
+  owner: {
+    login: string;
+    id: number;
+    node_id: string;
+    avatar_url: string;
+    gravatar_id: string;
+    url: string;
+    html_url: string;
+    followers_url: string;
+    following_url: string;
+    gists_url: string;
+    starred_url: string;
+    subscriptions_url: string;
+    organizations_url: string;
+    repos_url: string;
+    events_url: string;
+    received_events_url: string;
+    type: 'User';
+    site_admin: boolean;
+  };
+  html_url: string;
+  url: string;
+  description: string | null;
+  fork: boolean;
+  topics: string[];
+  stargazers_count: number;
+  stargazers_url: string;
+};
+
 export type GithubRepoSearchResponse = {
   total_count: number;
   imcomplete_results: boolean;
-  items: {
-    id: number;
-    node_id: string;
-    name: string;
-    full_name: string;
-    score: 1;
-    watchers: number;
-    private: boolean;
-    owner: {
-      login: string;
-      id: number;
-      node_id: string;
-      avatar_url: string;
-      gravatar_id: string;
-      url: string;
-      html_url: string;
-      followers_url: string;
-      following_url: string;
-      gists_url: string;
-      starred_url: string;
-      subscriptions_url: string;
-      organizations_url: string;
-      repos_url: string;
-      events_url: string;
-      received_events_url: string;
-      type: 'User';
-      site_admin: boolean;
-    };
-    html_url: string;
-    url: string;
-    description: string | null;
-    fork: boolean;
-    topics: string[];
-    stargazers_count: number;
-    stargazers_url: string;
-  }[];
+  items: GithubRepo[];
 };
 
 export type GithubRepoSearchResponseHeader = {

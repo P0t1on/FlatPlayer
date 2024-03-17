@@ -3,16 +3,21 @@
 </script>
 
 <script lang="ts">
-  import { goto } from '$app/navigation';
   import { icon } from '$lib/Assets';
   import {
     searchMap,
     type GithubRepoSearchResponse,
     type GithubRepoSearchResponseHeader,
+    type GithubRepo,
+    getFlatData,
   } from '$lib/Curl';
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
   import './Explorer.scss';
+  import type { MapFormat } from '$lib/types';
+
+  // ref
+  let gameInfoDialog: HTMLDialogElement;
 
   let searchString = '';
   let searchProcess:
@@ -21,14 +26,26 @@
 
   const searchTrigger = async () => {
     searchProcess = searchMap(searchString);
-    const data = (await searchProcess)[0];
+    const data = await searchProcess;
 
-    console.log(data);
-    responseList.set(data);
+    // @ts-ignore
+    console.log('남은 요청 횟수 : ' + data[1]['x-ratelimit-remaining']);
+    console.log(data[0]);
+
+    responseList.set(data[0]);
+
+    return await searchProcess;
   };
 
-  onMount(() => {
-    // searchTrigger();
+  let gameInfo: GithubRepo | undefined;
+  const openGameInfo = (info: GithubRepo) => () => {
+    gameInfo = info;
+    gameInfoDialog.showModal();
+  };
+
+  onMount(async () => {
+    const info = (await searchTrigger())[0];
+    openGameInfo(info.items[0] as GithubRepo)();
   });
 </script>
 
@@ -62,10 +79,7 @@
               <a target="_blank" href={info.html_url}>{info.name}</a> ]
             </span> <br />
             <div class="container">
-              <button
-                class="clickable play"
-                on:click={() => goto('./game', { state: { val: 123 } })}
-              >
+              <button class="clickable play" on:click={openGameInfo(info)}>
                 <img class="nodrag" alt="play" src={icon('sports_esports')} />
               </button>
             </div>
@@ -84,10 +98,7 @@
             <a target="_blank" href={info.html_url}>{info.name}</a> ]
           </span> <br />
           <div class="container">
-            <button
-              class="clickable play"
-              on:click={() => goto('./game', { state: { val: 123 } })}
-            >
+            <button class="clickable play" on:click={openGameInfo(info)}>
               <img class="nodrag" alt="play" src={icon('sports_esports')} />
             </button>
           </div>
@@ -96,6 +107,27 @@
       {/each}
     {/if}
   </div>
+  <dialog
+    id="gameInfo_container"
+    bind:this={gameInfoDialog}
+    on:click={(e) => {
+      if (e.target === gameInfoDialog) gameInfoDialog.close();
+    }}
+    role="presentation"
+  >
+    <div id="gameInfo">
+      {#if gameInfo !== undefined}
+        {#await getFlatData(gameInfo.full_name, gameInfo.default_branch)}
+          <progress>loading</progress> <br />
+          맵 데이터 불러오는 중...
+        {:then data}
+          <span class="name">{data.name}</span>
+        {/await}
+      {:else}
+        게임 데이터가 없습니다.
+      {/if}
+    </div>
+  </dialog>
 </article>
 
 <style module lang="scss">
@@ -138,14 +170,14 @@
         padding: 4px;
         border-radius: 8px;
 
-        &:hover,
-        &:focus {
+        &:hover {
           animation-name: playButtonHover;
           animation-duration: 0.5s;
           animation-fill-mode: forwards;
         }
 
         &:active {
+          animation-name: none;
           outline: 1px solid black;
           background-color: gray;
         }
@@ -178,8 +210,7 @@
           color: black;
           text-decoration: none;
 
-          &:hover,
-          &:focus {
+          &:hover {
             color: white;
           }
         }
@@ -193,14 +224,44 @@
             border: none;
             border-radius: 5px;
 
-            &:hover,
-            &:focus {
+            &:hover {
               animation-name: playButtonHover;
               animation-duration: 0.5s;
               animation-fill-mode: forwards;
             }
+
+            &:active {
+              animation-name: none;
+              background-color: rgb(58, 58, 58);
+            }
           }
         }
+      }
+    }
+
+    dialog#gameInfo_container {
+      width: 100%;
+      height: 100%;
+
+      &:not([open]) {
+        display: none;
+      }
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      background-color: rgba(0, 0, 0, 0.699);
+
+      div#gameInfo {
+        user-select: none;
+        background-color: gray;
+        width: 60%;
+        height: 60%;
+        padding: 8px;
+
+        border: 4px black;
+        border-style: ridge;
+        border-radius: 8px;
       }
     }
   }
