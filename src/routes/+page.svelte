@@ -6,6 +6,7 @@
   import { onMount } from 'svelte';
 
   import Explorer from './documents/explorer/Explorer.svelte';
+  import Server from './documents/server/Server.svelte';
   import Hub from './documents/Hub.svelte';
   import MyPage from './documents/MyPage.svelte';
   import Setting from './documents/Setting.svelte';
@@ -17,8 +18,12 @@
   // menu 구현
   const menuList = [
     {
-      name: '맵 검색',
+      name: '맵 스토어',
       component: Explorer,
+    },
+    {
+      name: '서버',
+      component: Server,
     },
     {
       name: '홈',
