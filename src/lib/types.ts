@@ -33,12 +33,12 @@ export type Entity = {
 
 type BuildShape = {
   rect: {
-    shape: "rect";
+    shape: 'rect';
     position: Vector3;
     size: Vector2;
   };
   line: {
-    shape: "line";
+    shape: 'line';
     layer: number;
     startPosition: Vector2;
     endPosition: Vector2;
@@ -49,13 +49,13 @@ type BuildShape = {
 
 type BuildMethod = {
   fill: {
-    method: "fill";
+    method: 'fill';
     entity: string;
   };
 };
 
-export type buildScriptType = BuildMethod["fill"] &
-  (BuildShape["line"] | BuildShape["rect"]);
+export type buildScriptType = BuildMethod['fill'] &
+  (BuildShape['line'] | BuildShape['rect']);
 
 export type StatusFormat = {
   displayName?: string;
@@ -68,17 +68,17 @@ export type StatusFormat = {
     deathOnZero?: boolean;
     visible?: boolean;
   };
-}
+};
 
 export const StatusOption = {
   NONE: 0b000,
   DEATHONZERO: 0b001,
   VISIBLE: 0b010,
-  BASIS: 0b100
+  BASIS: 0b100,
 } as const;
 
 export type MapFormat = {
-  version: "1.0"
+  version: '1.0';
   name: string;
   /* URL domain */ domain: string;
   layer: number;
@@ -101,6 +101,7 @@ export type MapFormat = {
   status: StatusFormat[];
   /* URL */ generator: string;
   /* URL */ playerSystem: string;
+  /* URL */ define: string;
   buildScripts: buildScriptType[];
   startPoint: Vector3;
 };
