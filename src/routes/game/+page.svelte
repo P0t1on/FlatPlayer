@@ -46,6 +46,7 @@
     }
     // test
     {
+      console.log(history.state);
     }
     // indexedDB
     {
