@@ -13,6 +13,7 @@
   } from '$lib/Curl';
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
+  import InfoView from './InfoView.svelte';
   import './Explorer.scss';
   import type { MapFormat } from '$lib/types';
 
@@ -38,14 +39,15 @@
   };
 
   let gameInfo: GithubRepo | undefined;
-  const openGameInfo = (info: GithubRepo) => () => {
+  const openGameInfo = (info: GithubRepo) => {
+    console.log(info);
     gameInfo = info;
     gameInfoDialog.showModal();
   };
 
   onMount(async () => {
     const info = (await searchTrigger())[0];
-    openGameInfo(info.items[0] as GithubRepo)();
+    openGameInfo(info.items[0] as GithubRepo);
   });
 </script>
 
@@ -70,40 +72,18 @@
         <progress>loading</progress>
       {:then result}
         {#each result[0].items as info}
-          <div class="item">
-            <span class="bolder">
-              [ <a target="_blank" href={info.owner.html_url}>
-                {info.owner.login}
-              </a>
-              -
-              <a target="_blank" href={info.html_url}>{info.name}</a> ]
-            </span> <br />
-            <div class="container">
-              <button class="clickable play" on:click={openGameInfo(info)}>
-                <img class="nodrag" alt="play" src={icon('sports_esports')} />
-              </button>
-            </div>
-            <!-- {JSON.stringify(info)} -->
-          </div>
+          <InfoView
+            bind:info
+            on:openGameInfo={({ detail }) => openGameInfo(detail)}
+          />
         {/each}
       {/await}
     {:else if $responseList !== undefined}
       {#each $responseList.items as info}
-        <div class="item">
-          <span class="bolder">
-            [ <a target="_blank" href={info.owner.html_url}
-              >{info.owner.login}</a
-            >
-            -
-            <a target="_blank" href={info.html_url}>{info.name}</a> ]
-          </span> <br />
-          <div class="container">
-            <button class="clickable play" on:click={openGameInfo(info)}>
-              <img class="nodrag" alt="play" src={icon('sports_esports')} />
-            </button>
-          </div>
-          <!-- {JSON.stringify(info)} -->
-        </div>
+        <InfoView
+          bind:info
+          on:openGameInfo={({ detail }) => openGameInfo(detail)}
+        />
       {/each}
     {/if}
   </div>
@@ -193,50 +173,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-
-      div.item {
-        border-style: dashed;
-        background-color: gray;
-        margin: 5px 0 5px 0;
-        padding: 8px;
-        width: 90%;
-        user-select: none;
-
-        &:hover {
-          border-style: solid;
-        }
-
-        a {
-          color: black;
-          text-decoration: none;
-
-          &:hover {
-            color: white;
-          }
-        }
-
-        div.container {
-          display: flex;
-          justify-content: flex-end;
-
-          button.play {
-            background-color: transparent;
-            border: none;
-            border-radius: 5px;
-
-            &:hover {
-              animation-name: playButtonHover;
-              animation-duration: 0.5s;
-              animation-fill-mode: forwards;
-            }
-
-            &:active {
-              animation-name: none;
-              background-color: rgb(58, 58, 58);
-            }
-          }
-        }
-      }
     }
 
     dialog#gameInfo_container {
