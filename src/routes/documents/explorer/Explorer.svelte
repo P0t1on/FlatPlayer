@@ -15,11 +15,12 @@
   import { writable } from 'svelte/store';
   import InfoView from './InfoView.svelte';
   import './Explorer.scss';
-  import type { MapFormat } from '$lib/types';
+  import { goto } from '$app/navigation';
 
   // ref
   let gameInfoDialog: HTMLDialogElement;
 
+  // 검색 구현
   let searchString = '';
   let searchProcess:
     | Promise<[GithubRepoSearchResponse, GithubRepoSearchResponseHeader]>
@@ -38,11 +39,17 @@
     return await searchProcess;
   };
 
+  // 게임 정보 창 구현
+
   let gameInfo: GithubRepo | undefined;
   const openGameInfo = (info: GithubRepo) => {
     console.log(info);
     gameInfo = info;
     gameInfoDialog.showModal();
+  };
+
+  const joinGame = () => {
+    goto('/game', { state: { info: gameInfo } });
   };
 
   onMount(async () => {
@@ -101,7 +108,28 @@
           <progress>loading</progress> <br />
           맵 데이터 불러오는 중...
         {:then data}
-          <span class="name">{data.name}</span>
+          <span class="name">{data.name}</span> <br />
+          <span>게임 버전: {data.version}</span>
+          <span>
+            제작자: <a
+              target="_blank"
+              href={gameInfo.owner.html_url}
+              title="제작자 페이지로 이동"
+            >
+              {gameInfo.owner.login}
+            </a>
+          </span>
+          <span>맵 크기: {data.width} x {data.height}</span> <br />
+          <span>
+            {gameInfo.description !== null
+              ? gameInfo.description
+              : '설명이 없습니다.'}
+          </span>
+          <div class="play">
+            <button on:click={joinGame}>
+              <img class="nodrag" alt="search" src={icon('play')} />
+            </button>
+          </div>
         {/await}
       {:else}
         게임 데이터가 없습니다.
@@ -114,6 +142,15 @@
   article#explorer {
     display: flex;
     flex-direction: column;
+
+    a {
+      color: black;
+      text-decoration: none;
+
+      &:hover {
+        color: white;
+      }
+    }
 
     div#search {
       position: relative;
@@ -195,9 +232,43 @@
         height: 60%;
         padding: 8px;
 
+        display: flex;
+        flex-direction: column;
+
         border: 4px black;
         border-style: ridge;
         border-radius: 8px;
+
+        span.name {
+          width: 100%;
+          text-align: center;
+          font-weight: bolder;
+          font-size: larger;
+        }
+
+        .play {
+          height: 100%;
+          display: flex;
+          justify-content: flex-end;
+          align-items: flex-end;
+
+          button {
+            background: none;
+            border: none;
+            cursor: pointer;
+
+            &:hover {
+              animation-name: playButtonHover;
+              animation-duration: 0.5s;
+              animation-fill-mode: forwards;
+            }
+
+            &:active {
+              animation-name: none;
+              background-color: rgb(70, 70, 70);
+            }
+          }
+        }
       }
     }
   }

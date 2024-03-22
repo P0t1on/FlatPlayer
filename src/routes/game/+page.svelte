@@ -4,7 +4,7 @@
 
   import Interaction from './components/Interaction.svelte';
 
-  import { getJson } from '$lib/Curl';
+  import { getFlatData, getJson, type GithubRepo } from '$lib/Curl';
   import { GameManager } from './system/Manager';
   import type { MapFormat } from '$lib/types';
 
@@ -31,11 +31,13 @@
   const { keydownHook, keyupHook } = game.getHooks();
 
   onMount(async () => {
+    console.clear();
     // 게임 데이터 초기화
     {
-      await game.loadWorld(
-        await getJson<MapFormat>(`${assets}/FlatWorld/flat.json`)
-      );
+      const info: GithubRepo = history.state['sveltekit:states'].info;
+      const flatData = await getFlatData(info.full_name, info.default_branch);
+
+      await game.loadWorld(flatData);
       if (canvas) canvas = canvas;
       if (game.player) {
         game.player.hooks.onMove.push((pos) => {
@@ -46,7 +48,6 @@
     }
     // test
     {
-      console.log(history.state);
     }
     // indexedDB
     {
