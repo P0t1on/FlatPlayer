@@ -9,11 +9,17 @@
 
 <div class="item">
   <span class="bolder">
-    [ <a target="_blank" href={info.owner.html_url}>
+    [ <a
+      target="_blank"
+      href={info.owner.html_url}
+      title="제작자 페이지로 이동"
+    >
       {info.owner.login}
     </a>
     -
-    <a target="_blank" href={info.html_url}>{info.name}</a> ]
+    <a target="_blank" href={info.html_url} title="맵 저장소로 이동"
+      >{info.name}</a
+    > ]
   </span> <br />
   <div class="container">
     <button
