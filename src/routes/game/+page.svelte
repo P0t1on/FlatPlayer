@@ -4,9 +4,8 @@
 
   import Interaction from './components/Interaction.svelte';
 
-  import { getFlatData, getJson, type GithubRepo } from '$lib/Curl';
+  import { getFlatData, type GithubRepo } from '$lib/Curl';
   import { GameManager } from './system/Manager';
-  import type { MapFormat } from '$lib/types';
 
   import './style.scss';
 
