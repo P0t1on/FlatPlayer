@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-  let selectedMenu = writable(1);
+  const selectedMenu = writable(4);
 </script>
 
 <script lang="ts">
@@ -57,7 +57,7 @@
     <ul id="menu">
       {#each menuList as { name }, i}
         <li
-          class={i == $selectedMenu ? 'selected' : ''}
+          class={i === $selectedMenu ? 'selected' : ''}
           on:click={() => selectedMenu.set(i)}
           on:keydown={(e) => {
             if (e.key === 'Enter') selectedMenu.set(i);
