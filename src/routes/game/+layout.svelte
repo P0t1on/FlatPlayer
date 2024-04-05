@@ -1,11 +1,8 @@
 <script lang="ts">
-  import './+style.scss';
-
-  let gameName = '';
 </script>
 
 <svelte:head>
-  <title>{gameName}</title>
+  <title>Flat survival</title>
 </svelte:head>
 
 <slot />
