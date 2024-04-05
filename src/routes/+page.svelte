@@ -9,7 +9,7 @@
   import Server from './documents/server/Server.svelte';
   import Hub from './documents/Hub.svelte';
   import MyPage from './documents/MyPage.svelte';
-  import Setting from './documents/Setting.svelte';
+  import Setting from './documents/setting/Setting.svelte';
   import { writable } from 'svelte/store';
   // import type { PageData } from "./$types";
 
