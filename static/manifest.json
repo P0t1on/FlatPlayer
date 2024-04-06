@@ -3,9 +3,9 @@
   "name": "FlatPlayer : Time to world creator!",
   "icons": [
     {
-      "src": "%sveltekit.assets%/favicon.png",
+      "src": "/favicon.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "128x128"
     }
   ],
   "background_color": "#9c95dc",
