@@ -1,0 +1,18 @@
+{
+  "short_name": "FlatPlayer",
+  "name": "FlatPlayer : Time to world creator!",
+  "icons": [
+    {
+      "src": "%sveltekit.assets%/favicon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "background_color": "#9c95dc",
+  "display": "standalone",
+  "scope": "/",
+  "shortcuts": [],
+  "theme_color": "#9c95dc",
+  "screenshots": [],
+  "description": "2차원 세계(Flat) 창작 인프라"
+}
