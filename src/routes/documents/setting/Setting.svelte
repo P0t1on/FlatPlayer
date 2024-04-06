@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ComponentType, SvelteComponent } from 'svelte';
-  import SimpleBool from './formats/simpleBool.svelte';
+  import SimpleBool from './formats/SimpleBool.svelte';
 
   const settings: {
     id: string;
