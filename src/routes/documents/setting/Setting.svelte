@@ -1,27 +1,68 @@
 <script lang="ts">
-  import type { ComponentType, SvelteComponent } from 'svelte';
+  import { onMount, type ComponentType, type SvelteComponent } from 'svelte';
   import SimpleBool from './formats/SimpleBool.svelte';
 
-  const settings: {
+  let settings: {
     id: string;
     title: string;
-    format: ComponentType<SvelteComponent<{ value?: any }>>;
+    description: string;
+    format: ComponentType<
+      SvelteComponent<
+        {
+          title: string;
+          description: string;
+          experimental: boolean;
+          value: any;
+        },
+        { change: CustomEvent<any> }
+      >
+    >;
     value: any;
+    experimental: boolean;
   }[] = [
     {
       id: 'enableMultiplayer',
       title: '멀티플레이어',
+      description: '이 설정으로 멀티플레이어 기능을 활성화할 수 있습니다.',
       format: SimpleBool,
       value: false,
+      experimental: true,
+    },
+    {
+      id: 'enableMultiplayer1',
+      title: '멀티플레이어',
+      description: '',
+      format: SimpleBool,
+      value: false,
+      experimental: false,
     },
   ];
+
+  const onValueChange = (id: string) => (e: CustomEvent<any>) => {
+    localStorage.setItem('config_' + id, e.detail);
+  };
+
+  onMount(() => {
+    for (const config of settings) {
+      const bVal = localStorage.getItem('config_' + config.id);
+
+      if (bVal !== null) {
+        config.value = bVal;
+      }
+    }
+    settings = settings;
+  });
 </script>
 
 <article id="setting">
   <ul class="settingList">
-    {#each settings as { format, value }, i (i)}
+    {#each settings as { id, format, ...args }, i (i)}
       <li>
-        <svelte:component this={format} bind:value />
+        <svelte:component
+          this={format}
+          {...args}
+          on:change={onValueChange(id)}
+        />
       </li>
     {/each}
   </ul>
