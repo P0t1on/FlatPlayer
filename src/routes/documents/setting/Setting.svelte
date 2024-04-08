@@ -73,7 +73,7 @@
 
 <article id="setting">
   <ul class="settingList">
-    {#each settings as { id, format, ...args }, i (i)}
+    {#each settings as { id, format, type, ...args }, i (i)}
       <li>
         <svelte:component
           this={format}
