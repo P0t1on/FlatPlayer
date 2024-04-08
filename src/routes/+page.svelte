@@ -4,26 +4,23 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { writable } from 'svelte/store';
 
+  import { getConfig } from '$lib/Util';
   import Explorer from './documents/explorer/Explorer.svelte';
   import Server from './documents/server/Server.svelte';
   import Hub from './documents/Hub.svelte';
   import MyPage from './documents/MyPage.svelte';
   import Setting from './documents/setting/Setting.svelte';
-  import { writable } from 'svelte/store';
   // import type { PageData } from "./$types";
 
   // export let data: PageData;
 
   // menu 구현
-  const menuList = [
+  let menuList = [
     {
       name: '맵 스토어',
       component: Explorer,
-    },
-    {
-      name: '서버',
-      component: Server,
     },
     {
       name: '홈',
@@ -40,6 +37,14 @@
   ];
 
   onMount(() => {
+    if (getConfig('enableMultiplayer', 'boolean', false)) {
+      menuList.splice(1, 0, {
+        name: '서버',
+        component: Server,
+      });
+      menuList = [...menuList];
+    }
+
     const selected = new Number(
       sessionStorage.getItem('selectedMenu')
     ) as number;
