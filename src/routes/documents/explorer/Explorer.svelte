@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-  import { icon } from '$lib/Assets';
+  import { icon } from '$lib/Util';
   import {
     searchMap,
     type GithubRepoSearchResponse,

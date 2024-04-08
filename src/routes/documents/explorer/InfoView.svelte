@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { icon } from '$lib/Assets';
+  import { icon } from '$lib/Util';
   import type { GithubRepo } from '$lib/Curl';
   import { createEventDispatcher } from 'svelte';
 
