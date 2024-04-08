@@ -103,7 +103,9 @@
 </script>
 
 <svelte:document on:keydown={keydownHook} on:keyup={keyupHook} />
-
+<svelte:head>
+  <title>Flat survival</title>
+</svelte:head>
 <section id="game">
   <button on:click={() => temp(10)}>+10</button>
   <button on:click={() => temp(-10)}>-10</button>
