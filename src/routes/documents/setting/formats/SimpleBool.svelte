@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { createEventDispatcher } from 'svelte';
 
   export let value: boolean,
     experimental: boolean,
@@ -18,7 +18,7 @@
   {/if} <br />
   <input
     type="checkbox"
-    on:change={(e) => dispatch('change', e.target.checked)}
+    on:change={(e) => dispatch('change', e.target?.checked)}
     checked={value}
   />
   <small>{description}</small>

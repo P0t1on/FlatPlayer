@@ -18,6 +18,7 @@
       >
     >;
     value: any;
+    type: 'string' | 'number' | 'boolean';
     experimental: boolean;
   }[] = [
     {
@@ -26,6 +27,7 @@
       description: '이 설정으로 멀티플레이어 기능을 활성화할 수 있습니다.',
       format: SimpleBool,
       value: false,
+      type: 'boolean',
       experimental: true,
     },
     {
@@ -34,6 +36,7 @@
       description: '',
       format: SimpleBool,
       value: false,
+      type: 'boolean',
       experimental: false,
     },
   ];
@@ -48,6 +51,20 @@
 
       if (bVal !== null) {
         config.value = bVal;
+        switch (config.type) {
+          case 'boolean': {
+            config.value = JSON.parse(bVal);
+            break;
+          }
+          case 'number': {
+            config.value = Number.parseFloat(bVal);
+            break;
+          }
+          case 'string': {
+            config.value = bVal;
+            break;
+          }
+        }
       }
     }
     settings = settings;
