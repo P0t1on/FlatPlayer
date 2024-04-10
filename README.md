@@ -4,5 +4,4 @@
 
 ## How to run Dev server
 
-1. git config --unset commit.gpgsign
-2. yarn vite --port=4000
+> yarn vite --port=4000
