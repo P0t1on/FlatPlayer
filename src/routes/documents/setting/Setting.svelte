@@ -41,11 +41,26 @@
     },
   ];
 
+  export let isChanged = false;
+  let changedConfig: { [key: string]: any } = {};
+
   const onValueChange = (id: string) => (e: CustomEvent<any>) => {
-    localStorage.setItem('config_' + id, e.detail);
+    changedConfig[id] = e.detail;
+    if (!isChanged) isChanged = true;
+  };
+
+  const applyConfig = () => {
+    for (const id in changedConfig) {
+      localStorage.setItem('config_' + id, changedConfig[id]);
+    }
+
+    isChanged = false;
+    location.reload();
   };
 
   onMount(() => {
+    changedConfig = {};
+
     for (const config of settings) {
       const bVal = localStorage.getItem('config_' + config.id);
 
@@ -71,7 +86,18 @@
   });
 </script>
 
+<svelte:window
+  on:beforeunload={(e) => {
+    if (isChanged) e.preventDefault();
+  }}
+/>
+
 <article id="setting">
+  {#if isChanged}
+    <button id="applySetting" on:click={applyConfig}>
+      변경된 설정 적용하기
+    </button>
+  {/if}
   <ul class="settingList">
     {#each settings as { id, format, type, ...args }, i (i)}
       <li>
@@ -94,6 +120,18 @@
       padding: 8px 8px 8px 12px;
       margin: 8px 0 8px 0;
       background-color: gray;
+
+      user-select: none;
     }
+  }
+
+  button#applySetting {
+    position: relative;
+    top: 16px;
+    left: 32px;
+    background-color: transparent;
+    border: none;
+
+    cursor: pointer;
   }
 </style>

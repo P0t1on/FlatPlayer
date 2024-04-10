@@ -36,6 +36,17 @@
     },
   ];
 
+  // setting comp
+  let isSettingChanged: boolean;
+  const changeMenu = (i: number) => {
+    if (isSettingChanged) {
+      if (!confirm('변경된 설정이 적용되지 않았습니다. 정말로 나가시겠습니까?'))
+        return;
+      else isSettingChanged = false;
+    }
+    selectedMenu.set(i);
+  };
+
   onMount(() => {
     if (getConfig('enableMultiplayer', 'boolean', false)) {
       menuList.splice(1, 0, {
@@ -63,9 +74,9 @@
       {#each menuList as { name }, i}
         <li
           class={i === $selectedMenu ? 'selected' : ''}
-          on:click={() => selectedMenu.set(i)}
+          on:click={() => changeMenu(i)}
           on:keydown={(e) => {
-            if (e.key === 'Enter') selectedMenu.set(i);
+            if (e.key === 'Enter') changeMenu(i);
           }}
           role="menuitem"
           tabindex={i == $selectedMenu ? -1 : 0}
@@ -76,7 +87,11 @@
     </ul>
   </header>
   <div id="document">
-    <svelte:component this={menuList[$selectedMenu]?.component} />
+    {#if menuList[$selectedMenu]?.component === Setting}
+      <Setting bind:isChanged={isSettingChanged} />
+    {:else}
+      <svelte:component this={menuList[$selectedMenu]?.component} />
+    {/if}
   </div>
 </div>
 
