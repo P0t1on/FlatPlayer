@@ -14,25 +14,27 @@
   let actions: {
     id: string;
     name: string;
-    cooltime: number | false;
     method: () => void;
-    currentCooltime: Writable<number>;
     paused: boolean;
+    cooltime:
+      | false
+      | {
+          max: number;
+          current: Writable<number>;
+        };
   }[] = [
     {
       id: 'test1',
       name: '테스트1',
-      cooltime: 50,
+      cooltime: { max: 800, current: writable(0) },
       method: () => {},
-      currentCooltime: writable(0),
       paused: false,
     },
     {
       id: 'test2',
       name: '테스트2',
-      cooltime: 30,
+      cooltime: { max: 800, current: writable(0) },
       method: () => {},
-      currentCooltime: writable(0),
       paused: false,
     },
   ];
@@ -41,11 +43,11 @@
 
   onMount(() => {
     timeUpdater = setInterval(() => {
-      for (const { paused, cooltime, currentCooltime } of actions) {
+      for (const { paused, cooltime } of actions) {
         if (!paused && cooltime !== false)
-          currentCooltime.update((v) => (v < cooltime ? v + 1 : v));
+          cooltime.current.update((v) => (v < cooltime.max ? v + 1 : v));
       }
-    }, 100);
+    }, 10);
   });
 
   onDestroy(() => {
