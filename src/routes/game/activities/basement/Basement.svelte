@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte';
   import ActionSlot from './ActionSlot.svelte';
-  import './style.scss';
   import { writable, type Writable } from 'svelte/store';
+  import './style.scss';
 
   let items: {
     [key: string]: {
@@ -33,7 +33,7 @@
     {
       id: 'test2',
       name: '테스트2',
-      cooltime: { max: 800, current: writable(0) },
+      cooltime: { max: 400, current: writable(0) },
       method: () => {},
       paused: false,
     },
