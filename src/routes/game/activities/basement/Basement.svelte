@@ -2,7 +2,6 @@
   import { onDestroy, onMount } from 'svelte';
   import ActionSlot from './ActionSlot.svelte';
   import { writable, type Writable } from 'svelte/store';
-  import './style.scss';
 
   let items: {
     [key: string]: {

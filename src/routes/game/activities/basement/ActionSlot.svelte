@@ -12,8 +12,7 @@
     method: () => void;
   let main: HTMLLIElement;
   // classList
-  let actionSlot = true,
-    ready = false;
+  let ready = false;
 
   const onClick = () => {
     if (cooltime !== false) {
@@ -76,6 +75,15 @@
 {/if}
 
 <style lang="scss" module>
+  @keyframes -global-ActionSlot_hoverAnim {
+    0% {
+      box-shadow: inset 0 0 0 0 white;
+    }
+
+    100% {
+      box-shadow: inset 0 0 10px 5px gray;
+    }
+  }
   li.actionSlot {
     &.s1 {
       background: linear-gradient(
@@ -85,7 +93,7 @@
       );
 
       &.ready:hover {
-        animation-name: actionAnim;
+        animation-name: ActionSlot_hoverAnim;
         animation-duration: 0.5s;
         animation-fill-mode: forwards;
         border: solid 2px gray;
@@ -101,10 +109,6 @@
         animation-fill-mode: forwards;
         border: solid 2px gray;
       }
-    }
-
-    :global(&.ready:hover) {
-      border: solid 2px gray;
     }
 
     margin: 12px;
