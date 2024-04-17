@@ -1,16 +1,22 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte';
-  import ActionSlot from './ActionSlot.svelte';
   import { writable, type Writable } from 'svelte/store';
+  import ActionSlot from './ActionSlot.svelte';
+  import ItemSlot from './ItemSlot.svelte';
 
-  let items: {
+  type ItemType = {
+    name: string;
+    description: string;
+    max: number | false;
+  };
+
+  const items: {
     [key: string]: {
       value: number;
-      max: number | false;
-    };
+    } & ItemType;
   } = {};
 
-  let actions: {
+  const actions: {
     id: string;
     name: string;
     method: () => void;
@@ -39,6 +45,52 @@
   ];
 
   let timeUpdater: NodeJS.Timeout;
+  const itemManager = {
+    set: (
+      id: string,
+      value: number,
+      type?: {
+        name?: string;
+        description?: string;
+        max?: number | false;
+      }
+    ) => {
+      let item = items[id];
+
+      if (item) {
+        item.value = value;
+      } else {
+        items[id] = item = {
+          name: id,
+          description: 'no description',
+          max: false,
+          value,
+        };
+      }
+
+      if (type) {
+        const { name, description, max } = type;
+
+        if (name !== undefined) item.name = name;
+        if (description !== undefined) item.description = description;
+        if (max !== undefined) item.max = max;
+      }
+
+      return item;
+    },
+    change: (id: string, setter: (prevVal: number) => number) => {
+      const item = items[id];
+
+      if (item) {
+        const val = setter(item.value);
+
+        item.value =
+          item.max !== false ? (val > item.max ? item.max : val) : val;
+      }
+
+      return item;
+    },
+  };
 
   onMount(() => {
     timeUpdater = setInterval(() => {
@@ -56,8 +108,13 @@
 
 <section id="basement">
   <ul id="actionList">
-    {#each actions as { id, ...args }, i (i)}
+    {#each actions as { id, ...args }}
       <ActionSlot {...args} />
+    {/each}
+  </ul>
+  <ul id="itemList">
+    {#each Object.entries(items) as [id, data]}
+      <ItemSlot itemData={data} />
     {/each}
   </ul>
 </section>

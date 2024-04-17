@@ -9,7 +9,8 @@
           max: number;
           current: Writable<number>;
         },
-    method: () => void;
+    method: () => void,
+    paused: boolean;
   let main: HTMLLIElement;
   // classList
   let ready = false;
