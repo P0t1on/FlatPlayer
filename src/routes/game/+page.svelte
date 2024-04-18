@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { onMount, type ComponentType } from 'svelte';
+  import { onMount } from 'svelte';
   import Adventure from './activities/adventure/Adventure.svelte';
   import Basement from './activities/basement/Basement.svelte';
+  import Logger from './Logger.svelte';
 
   import './style.scss';
 
@@ -19,7 +20,13 @@
   <title>{gameName} - {component}</title>
 </svelte:head>
 
-<svelte:component this={comps[component]} />
+<section>
+  <svelte:component this={comps[component]} />
+  <Logger />
+</section>
 
 <style lang="scss">
+  :global(body) {
+    overflow-y: hidden;
+  }
 </style>

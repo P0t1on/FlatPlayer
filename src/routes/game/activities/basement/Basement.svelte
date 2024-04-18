@@ -15,12 +15,12 @@
       value: Writable<number>;
     } & ItemType;
   } = {
-    rog:{
-      name: "Rog item",
-      description: "test desc",
+    rog: {
+      name: 'Rog item',
+      description: 'test desc',
       max: false,
-      value: writable(3)
-    }
+      value: writable(3),
+    },
   };
 
   const actions: {
@@ -47,7 +47,7 @@
       name: '테스트2',
       cooltime: { max: 400, current: writable(0) },
       method: () => {
-        itemManager.change('rog', v => v+1)
+        itemManager.change('rog', (v) => v + 1);
       },
       paused: false,
     },
@@ -87,10 +87,7 @@
 
       return item;
     },
-    change: (
-      id: string,
-      setter: (prevVal: number) => number,
-    ) => {
+    change: (id: string, setter: (prevVal: number) => number) => {
       const item = items[id];
 
       if (item) {
@@ -118,7 +115,7 @@
   });
 </script>
 
-<section id="basement">
+<article id="basement">
   <ul id="actionList">
     {#each actions as { id, ...args }}
       <ActionSlot {...args} />
@@ -129,10 +126,10 @@
       <ItemSlot {...data} />
     {/each}
   </ul>
-</section>
+</article>
 
 <style lang="scss">
-  section#basement {
+  article#basement {
     height: 100%;
     display: flex;
 
