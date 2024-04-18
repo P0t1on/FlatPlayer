@@ -12,9 +12,16 @@
 
   const items: {
     [key: string]: {
-      value: number;
+      value: Writable<number>;
     } & ItemType;
-  } = {};
+  } = {
+    rog:{
+      name: "Rog item",
+      description: "test desc",
+      max: false,
+      value: writable(3)
+    }
+  };
 
   const actions: {
     id: string;
@@ -39,7 +46,9 @@
       id: 'test2',
       name: '테스트2',
       cooltime: { max: 400, current: writable(0) },
-      method: () => {},
+      method: () => {
+        itemManager.change('rog', v => v+1)
+      },
       paused: false,
     },
   ];
@@ -58,13 +67,13 @@
       let item = items[id];
 
       if (item) {
-        item.value = value;
+        item.value.set(value);
       } else {
         items[id] = item = {
           name: id,
           description: 'no description',
           max: false,
-          value,
+          value: writable(value),
         };
       }
 
@@ -78,14 +87,17 @@
 
       return item;
     },
-    change: (id: string, setter: (prevVal: number) => number) => {
+    change: (
+      id: string,
+      setter: (prevVal: number) => number,
+    ) => {
       const item = items[id];
 
       if (item) {
-        const val = setter(item.value);
-
-        item.value =
-          item.max !== false ? (val > item.max ? item.max : val) : val;
+        item.value.update((v) => {
+          const val = setter(v);
+          return item.max !== false ? (val > item.max ? item.max : val) : val;
+        });
       }
 
       return item;
@@ -113,8 +125,8 @@
     {/each}
   </ul>
   <ul id="itemList">
-    {#each Object.entries(items) as [id, data]}
-      <ItemSlot itemData={data} />
+    {#each Object.entries(items) as [_, data]}
+      <ItemSlot {...data} />
     {/each}
   </ul>
 </section>
