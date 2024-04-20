@@ -35,7 +35,7 @@
     transition: all ease 0.5s;
 
     position: absolute;
-    top: 95vh;
+    bottom: 4px;
     width: 100%;
 
     display: flex;
@@ -73,8 +73,6 @@
     }
 
     &:hover {
-      top: 71vh;
-
       span.handle {
         transform: rotate(180deg);
       }
