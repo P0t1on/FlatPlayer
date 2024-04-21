@@ -27,7 +27,7 @@
   };
 
   //
-  let fill: string, slot1Style: string;
+  let fill: string;
 
   onMount(() => {
     if (cooltime !== false) {
@@ -52,9 +52,8 @@
 {#if cooltime !== false}
   <li
     class:ready
-    class:clickable={ready}
     class="actionSlot s1"
-    style={slot1Style}
+    style="transition: all ease 0.5s;"
     on:click={onClick}
     on:keydown
     role="presentation"
@@ -94,6 +93,7 @@
       );
 
       &.ready:hover {
+        cursor: pointer;
         animation-name: ActionSlot_hoverAnim;
         animation-duration: 0.5s;
         animation-fill-mode: forwards;

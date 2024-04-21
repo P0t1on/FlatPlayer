@@ -16,10 +16,16 @@
     } & ItemType;
   } = {
     rog: {
-      name: 'Rog item',
-      description: 'test desc',
+      name: 'Rog',
+      description: 'rog item desc',
       max: false,
       value: writable(3),
+    },
+    stone: {
+      name: 'Stone',
+      description: 'stone item desc',
+      max: 3,
+      value: writable(2),
     },
   };
 
@@ -130,6 +136,7 @@
 
 <style lang="scss">
   article#basement {
+    padding: 8px;
     height: 100%;
     display: flex;
 
@@ -149,6 +156,15 @@
       &::-webkit-scrollbar-thumb {
         background-color: white;
       }
+    }
+
+    ul#itemList {
+      list-style: none;
+
+      margin-left: 8px;
+      padding: 0;
+
+      border: 2px solid white;
     }
   }
 </style>
