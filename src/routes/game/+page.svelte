@@ -4,8 +4,6 @@
   import Basement from './activities/basement/Basement.svelte';
   import Logger from './Logger.svelte';
 
-  import './style.scss';
-
   const comps = {
     basement: Basement,
     adventure: Adventure,
