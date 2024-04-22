@@ -1,9 +1,0 @@
-[
-  {
-    "method": "fill",
-    "shape": "rect",
-    "entity": "wall",
-    "position": { "x": 6, "y": 6, "z": 0 },
-    "size": { "x": 2, "y": 4 }
-  }
-]

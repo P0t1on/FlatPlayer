@@ -1,8 +1,0 @@
-{
-  "entity": "entities.json",
-  "skill": "skills.json",
-  "sprite": "sprites.json",
-  "status": "status.json",
-  "item": "items.json",
-  "player": "player.json"
-}
