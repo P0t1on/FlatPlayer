@@ -3,15 +3,22 @@
   import Adventure from './activities/adventure/Adventure.svelte';
   import Basement from './activities/basement/Basement.svelte';
   import Logger from './Logger.svelte';
+  import type { LoggerType } from '$lib/game/basement';
 
   const comps = {
     basement: Basement,
     adventure: Adventure,
   };
   let gameName = '';
-  let component: keyof typeof comps = 'basement';
+  let component: keyof typeof comps = 'basement',
+    logger: LoggerType;
 
-  onMount(() => {});
+  onMount(() => {
+    console.log(logger);
+    logger.log('tester', 'hello, world!');
+    logger.log('tester', 'hello, world!');
+    logger.log('tester', 'hello, world!');
+  });
 </script>
 
 <svelte:head>
@@ -20,7 +27,7 @@
 
 <section>
   <svelte:component this={comps[component]} />
-  <Logger />
+  <Logger bind:logger />
 </section>
 
 <style lang="scss">

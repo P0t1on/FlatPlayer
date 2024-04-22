@@ -1,15 +1,35 @@
 <script lang="ts">
-  let loggerOpen = true;
+  import { onMount } from 'svelte';
 
-  export const maxMsgLength = 100;
+  import type { LoggerType } from '$lib/game/basement';
 
-  const msgList: {
+  let loggerOpen = false,
+    update = false;
+
+  export let maximum: number = 100;
+  export const logger: LoggerType = {
+    log(sender, msg) {
+      if (msgList.length < maximum) {
+        msgList.push({ sender, msg });
+        update = !update;
+      }
+    },
+    clear() {
+      msgList = [];
+    },
+    delete(index) {
+      msgList.splice(index, 1);
+      update = !update;
+    },
+  };
+
+  let msgList: {
     sender: string;
     msg: string;
   }[] = [
     {
       sender: 'System',
-      msg: 'padding\n 속성은 한 개, 두\n 개, 세 개,\n 혹은 네 개의\n 값으로 지정할 수\n 있습니다.\n 각 값은\n <length>, <percentage> 중 하나로, 음수 값은 유효하지 \n않습니다.',
+      msg: 'padding\n 속성은 한 개, 두 개, 세 개,\n 혹은 네 개의 값으로 지정할 수 있습니다.\n 각 값은\n <length>, <percentage> 중 하나로, 음수 값은 유효하지 \n않습니다.',
     },
     {
       sender: 'System',
@@ -20,6 +40,8 @@
       msg: 'test3',
     },
   ];
+
+  onMount(() => {});
 </script>
 
 <div class:open={loggerOpen} id="logger">
@@ -34,12 +56,21 @@
     ▲
   </span>
   <ul class="logList">
-    {#each msgList as { sender, msg }}
-      <li>
-        <div class="sender">{sender}</div>
-        <div class="msg">{msg}</div>
-      </li>
-    {/each}
+    {#key update}
+      {#each msgList as { sender, msg }, i}
+        <li>
+          <div class="sender">
+            {sender}
+            <br />
+            <span
+              style="font-size:smaller; font-weight:lighter;"
+              >{i}</span
+            >
+          </div>
+          <div class="msg">{msg}</div>
+        </li>
+      {/each}
+    {/key}
   </ul>
 </div>
 
@@ -88,9 +119,10 @@
         flex-direction: row;
 
         div.sender {
-          padding: 4px 10px 4px 6px;
+          padding: 4px 14px 4px 6px;
           font-weight: bolder;
           border-right: 2px solid white;
+          width: 50px;
         }
 
         div.msg {
