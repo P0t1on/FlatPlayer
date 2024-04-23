@@ -14,7 +14,6 @@
     logger: LoggerType;
 
   onMount(() => {
-    console.log(logger);
     logger.log('tester', 'hello, world!');
     logger.log('tester', 'hello, world!');
     logger.log('tester', 'hello, world!');

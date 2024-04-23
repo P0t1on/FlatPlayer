@@ -41,7 +41,15 @@
     },
   ];
 
-  onMount(() => {});
+  onMount(() => {
+    const array = new Uint32Array(10);
+    self.crypto.getRandomValues(array);
+
+    console.log('오늘자 행운의 수:');
+    for (const num of array) {
+      console.log(num);
+    }
+  });
 </script>
 
 <div class:open={loggerOpen} id="logger">
@@ -62,10 +70,7 @@
           <div class="sender">
             {sender}
             <br />
-            <span
-              style="font-size:smaller; font-weight:lighter;"
-              >{i}</span
-            >
+            <span style="font-size:smaller; font-weight:lighter;">{i}</span>
           </div>
           <div class="msg">{msg}</div>
         </li>

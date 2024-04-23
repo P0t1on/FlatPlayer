@@ -45,16 +45,14 @@
       id: 'test1',
       name: '테스트1',
       cooltime: { max: 800, current: writable(0) },
-      method: () => {},
+      method: () => itemManager.change('stone', (v) => v + 1),
       paused: false,
     },
     {
       id: 'test2',
       name: '테스트2',
       cooltime: { max: 400, current: writable(0) },
-      method: () => {
-        itemManager.change('rog', (v) => v + 1);
-      },
+      method: () => itemManager.change('rog', (v) => v + 1),
       paused: false,
     },
   ];
