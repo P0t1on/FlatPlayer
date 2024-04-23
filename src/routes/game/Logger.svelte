@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-
   import type { LoggerType } from '$lib/game/basement';
 
   let loggerOpen = false,
@@ -40,16 +38,6 @@
       msg: 'test3',
     },
   ];
-
-  onMount(() => {
-    const array = new Uint32Array(10);
-    self.crypto.getRandomValues(array);
-
-    console.log('오늘자 행운의 수:');
-    for (const num of array) {
-      console.log(num);
-    }
-  });
 </script>
 
 <div class:open={loggerOpen} id="logger">

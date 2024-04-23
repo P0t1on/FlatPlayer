@@ -31,3 +31,15 @@ export function getConfig<T = any>(
 
   return defaultValue ?? undefined;
 }
+
+let uids: number[];
+
+export function getUid() {
+  if (uids.length < 1) {
+    const data = new Uint32Array(100);
+    crypto.getRandomValues(data);
+    new Array(...data);
+  }
+
+  return uids.shift() as number;
+}
