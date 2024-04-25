@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { LoggerType } from '$lib/game/basement';
 
-  let loggerOpen = false,
+  let loggerOpen = true,
     update = false;
 
   export let maximum: number = 100;
@@ -104,6 +104,7 @@
       list-style: none;
 
       overflow-y: scroll;
+      scrollbar-color: white transparent;
 
       li {
         border-bottom: 1px solid white;
