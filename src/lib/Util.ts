@@ -1,6 +1,6 @@
 import { assets } from '$app/paths';
 
-type IconNames = 'close' | 'play' | 'search' | 'sports_esports';
+type IconNames = 'close' | 'play' | 'search' | 'sports_esports' | 'done';
 
 export function icon(name: IconNames, type: 'svg' | 'webp' = 'svg') {
   return `${assets}/icons/${type}/${name}.${type}`;
