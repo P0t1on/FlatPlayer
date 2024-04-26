@@ -8,7 +8,6 @@
 
   export let title: string,
     description: string,
-    canIgnore: boolean,
     zIndex: number,
     menu: string[],
     onSubmit: (selected: number) => void;

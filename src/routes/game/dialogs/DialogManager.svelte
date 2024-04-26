@@ -16,13 +16,13 @@
     }
   >;
 
-  let managerDiv: HTMLDivElement,
+  let managerDiv: HTMLSpanElement,
     activeDialogs: DialogType[] = [];
 
   export const manager = {
     show(context: DialogContext) {
       const { title, description, canIgnore } = context,
-        zIndex = activeDialogs.length;
+        zIndex = activeDialogs.length + 1;
       let element: DialogType;
 
       switch (context.type) {
@@ -34,7 +34,6 @@
               zIndex,
               title,
               description,
-              canIgnore,
               onSubmit,
             },
           });
@@ -50,7 +49,6 @@
               zIndex,
               title,
               description,
-              canIgnore,
               onSubmit,
               menu,
             },
@@ -81,6 +79,10 @@
         this.sort();
       });
 
+      if (!canIgnore) {
+        dispatch('pause', true);
+      }
+
       activeDialogs.push(element);
     },
     sort() {
@@ -95,8 +97,8 @@
   onMount(() => {
     manager.show({
       type: 'message',
-      title: '',
-      description: '',
+      title: 'test',
+      description: '설명',
       canIgnore: true,
       onSubmit() {
         console.log('YEE');
@@ -105,12 +107,7 @@
   });
 </script>
 
-<div id="manager" bind:this={managerDiv}></div>
+<span id="dialogManager" bind:this={managerDiv}></span>
 
 <style lang="scss" module>
-  div#manager {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
 </style>
