@@ -105,7 +105,6 @@
 
       overflow-y: scroll;
       scrollbar-color: white transparent;
-
       li {
         border-bottom: 1px solid white;
 
