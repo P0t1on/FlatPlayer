@@ -4,13 +4,10 @@
   const dispatch = createEventDispatcher<{
     focus: void;
     destroy: void;
+    submit: [() => void, number];
   }>();
 
-  export let title: string,
-    description: string,
-    zIndex: number,
-    menu: string[],
-    onSubmit: (selected: number) => void;
+  export let title: string, description: string, zIndex: number, menu: string[];
 </script>
 
 <article id="selection"></article>

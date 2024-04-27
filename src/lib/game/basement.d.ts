@@ -11,11 +11,11 @@ export type DialogContext = {
 } & (
   | {
       type: 'message';
-      onSubmit(): void;
+      onSubmit(preventDefault: () => void): void;
     }
   | {
       type: 'selection';
       menu: string[];
-      onSubmit(selected: number): void;
+      onSubmit(preventDefault: () => void, selected: number): void;
     }
 );

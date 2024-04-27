@@ -5,12 +5,10 @@
   const dispatch = createEventDispatcher<{
     focus: void;
     destroy: void;
+    submit: [() => void];
   }>();
 
-  export let title: string,
-    description: string,
-    zIndex: number,
-    onSubmit: () => void;
+  export let title: string, description: string, zIndex: number;
 
   let main: HTMLElement,
     closer: HTMLImageElement,
@@ -57,8 +55,20 @@
       role="presentation"
     />
   </div>
-  <div>{description}</div>
-  <div class="submit"></div>
+  <div class="desc">{description}</div>
+  <div class="submit">
+    <img
+      class="nodrag"
+      alt="submit"
+      src={icon('done')}
+      on:click={() => {
+        let submitDelete = true;
+        dispatch('submit', [() => (submitDelete = false)]);
+        if (submitDelete) dispatch('destroy');
+      }}
+      role="presentation"
+    />
+  </div>
 </article>
 
 <style lang="scss" module>
@@ -66,20 +76,48 @@
     position: absolute;
     background-color: white;
 
-    top: 50%;
-    left: 50%;
+    top: 30%;
+    left: 40%;
     min-width: 100px;
     z-index: bind(zIndex);
 
-    padding: 8px;
     border-radius: 8px;
+    outline: 4px double gray;
 
     user-select: none;
 
     div.tab {
+      border-radius: 8px 8px 0 0;
+      padding: 8px;
+      min-width: 12vw;
+      background-color: white;
       display: flex;
       justify-content: space-between;
+      outline: 4px double black;
 
+      img {
+        cursor: pointer;
+        transition: all ease 0.5s;
+
+        &:hover {
+          box-shadow: 0 0 3px 3px gray;
+        }
+
+        &:active {
+          box-shadow: none;
+          background-color: gray;
+        }
+      }
+    }
+
+    div.desc {
+      padding: 6px;
+    }
+
+    div.submit {
+      display: flex;
+      justify-content: flex-end;
+      padding: 6px;
       img {
         cursor: pointer;
         transition: all ease 0.5s;

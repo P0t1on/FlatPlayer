@@ -13,6 +13,7 @@
     {
       focus: CustomEvent<void>;
       destroy: CustomEvent<void>;
+      submit: CustomEvent<[() => void, ...any[]]>;
     }
   >;
 
@@ -28,31 +29,38 @@
       switch (context.type) {
         case 'message': {
           const { onSubmit } = context;
-          element = new MsgDialog({
+          let e = new MsgDialog({
             target: managerDiv,
             props: {
               zIndex,
               title,
               description,
-              onSubmit,
             },
           });
+
+          e.$on('submit', (e) => onSubmit(...e.detail));
+
+          element = e;
 
           break;
         }
 
         case 'selection': {
           const { onSubmit, menu } = context;
-          element = new SelectionDialog({
+          const e = new SelectionDialog({
             target: managerDiv,
             props: {
               zIndex,
               title,
               description,
-              onSubmit,
               menu,
             },
           });
+
+          e.$on('submit', (e) => onSubmit(...e.detail));
+
+          element = e;
+
           break;
         }
       }
@@ -84,6 +92,8 @@
       }
 
       activeDialogs.push(element);
+
+      return element;
     },
     sort() {
       for (let i = 0; i < activeDialogs.length; i++) {
