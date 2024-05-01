@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { icon } from '$lib/Util';
+  import { icon, SvgIcon } from '$lib/Util';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher<{
@@ -50,11 +50,12 @@
 <article id="msg" bind:this={main}>
   <div class="tab" on:mousedown={down} role="presentation">
     <span>{title}</span>
+    <SvgIcon type="done" color="white" />
     <img
       class="nodrag"
       bind:this={closer}
       alt="close"
-      src={icon('close')}
+      src={icon('close', 'svg')}
       on:click={() => dispatch('destroy')}
       role="presentation"
     />
@@ -64,7 +65,7 @@
     <img
       class="nodrag"
       alt="submit"
-      src={icon('done')}
+      src={icon('done', 'svg')}
       on:click={() => {
         let submitDelete = true;
         dispatch('submit', [() => (submitDelete = false)]);
@@ -78,7 +79,8 @@
 <style lang="scss" module>
   article#msg {
     position: absolute;
-    background-color: white;
+    background-color: black;
+    color: white;
 
     top: 30%;
     left: 40%;
@@ -86,28 +88,32 @@
     z-index: bind(zIndex);
 
     border-radius: 8px;
-    outline: 4px double gray;
+    outline: 4px double white;
 
     user-select: none;
 
     div.tab {
       border-radius: 8px 8px 0 0;
-      padding: 8px;
+      padding: 4px 8px 4px 8px;
       min-width: 12vw;
-      background-color: white;
+      background-color: black;
       display: flex;
       justify-content: space-between;
-      outline: 4px double black;
+      outline: 4px double white;
 
       img {
         cursor: pointer;
         transition: all ease 0.5s;
+        filter: invert(100%);
+        border-radius: 4px;
 
         &:hover {
-          box-shadow: 0 0 3px 3px gray;
+          box-shadow: 0 0 1px 1px gray;
+          color: white;
         }
 
         &:active {
+          filter: invert(0%);
           box-shadow: none;
           background-color: gray;
         }
@@ -122,15 +128,20 @@
       display: flex;
       justify-content: flex-end;
       padding: 6px;
+
       img {
+        border-radius: 4px;
         cursor: pointer;
         transition: all ease 0.5s;
+        filter: invert(100%);
 
         &:hover {
           box-shadow: 0 0 3px 3px gray;
+          color: white;
         }
 
         &:active {
+          filter: invert(0%);
           box-shadow: none;
           background-color: gray;
         }
