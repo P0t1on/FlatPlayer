@@ -1,10 +1,13 @@
 import { assets } from '$app/paths';
+import SvgIcon from './SVGIcon.svelte';
 
-type IconNames = 'close' | 'play' | 'search' | 'sports_esports' | 'done';
+export type IconNames = 'close' | 'play' | 'search' | 'sports_esports' | 'done';
 
-export function icon(name: IconNames, type: 'svg' | 'webp' = 'svg') {
+export function icon(name: IconNames, type: 'svg' | 'webp' = 'webp') {
   return `${assets}/icons/${type}/${name}.${type}`;
 }
+
+export { SvgIcon };
 
 const get = (id: string) => localStorage.getItem('config_' + id);
 
