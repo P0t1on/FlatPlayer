@@ -36,6 +36,7 @@
 
 <style lang="scss">
   :global(body) {
+    overflow-x: hidden;
     overflow-y: hidden;
   }
 </style>

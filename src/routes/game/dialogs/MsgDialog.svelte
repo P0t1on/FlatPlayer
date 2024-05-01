@@ -41,7 +41,11 @@
     };
 </script>
 
-<svelte:document on:mousemove={move} on:mouseup={up} />
+<svelte:document
+  on:mousemove={move}
+  on:mouseup={up}
+  on:dragstart={() => (isDrag = false)}
+/>
 
 <article id="msg" bind:this={main}>
   <div class="tab" on:mousedown={down} role="presentation">
