@@ -9,3 +9,4 @@ memo.md
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+.vscode/settings.json
