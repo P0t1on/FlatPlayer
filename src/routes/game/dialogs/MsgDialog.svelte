@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { icon, SvgIcon } from '$lib/Util';
+  import { SvgIcon } from '$lib/Util';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher<{
@@ -11,13 +11,13 @@
   export let title: string, description: string, zIndex: number;
 
   let main: HTMLElement,
-    closer: HTMLImageElement,
+    closer: HTMLSpanElement,
     isDrag = false,
     x = 0,
     y = 0;
 
   const down = (e: MouseEvent) => {
-      if (e.target !== closer) {
+      if (e.target !== closer && !closer.contains(e.target as HTMLElement)) {
         dispatch('focus');
         isDrag = true;
         x = e.clientX;
@@ -41,38 +41,33 @@
     };
 </script>
 
-<svelte:document
-  on:mousemove={move}
-  on:mouseup={up}
-  on:dragstart={() => (isDrag = false)}
-/>
+<svelte:document on:mousemove={move} on:mouseup={up} />
 
 <article id="msg" bind:this={main}>
   <div class="tab" on:mousedown={down} role="presentation">
     <span>{title}</span>
-    <SvgIcon type="done" color="white" />
-    <img
-      class="nodrag"
+    <span
+      class="nodrag button"
       bind:this={closer}
-      alt="close"
-      src={icon('close', 'svg')}
       on:click={() => dispatch('destroy')}
       role="presentation"
-    />
+    >
+      <SvgIcon type="close" color="white" />
+    </span>
   </div>
   <div class="desc">{description}</div>
   <div class="submit">
-    <img
+    <span
       class="nodrag"
-      alt="submit"
-      src={icon('done', 'svg')}
       on:click={() => {
         let submitDelete = true;
         dispatch('submit', [() => (submitDelete = false)]);
         if (submitDelete) dispatch('destroy');
       }}
       role="presentation"
-    />
+    >
+      <SvgIcon type="done" color="white" />
+    </span>
   </div>
 </article>
 
@@ -101,10 +96,10 @@
       justify-content: space-between;
       outline: 4px double white;
 
-      img {
+      span.button {
+        height: 24px;
         cursor: pointer;
         transition: all ease 0.5s;
-        filter: invert(100%);
         border-radius: 4px;
 
         &:hover {
@@ -113,7 +108,7 @@
         }
 
         &:active {
-          filter: invert(0%);
+          filter: invert(100%);
           box-shadow: none;
           background-color: gray;
         }
@@ -129,11 +124,11 @@
       justify-content: flex-end;
       padding: 6px;
 
-      img {
+      span {
+        height: 24px;
         border-radius: 4px;
         cursor: pointer;
         transition: all ease 0.5s;
-        filter: invert(100%);
 
         &:hover {
           box-shadow: 0 0 3px 3px gray;
@@ -141,7 +136,7 @@
         }
 
         &:active {
-          filter: invert(0%);
+          filter: invert(100%);
           box-shadow: none;
           background-color: gray;
         }
