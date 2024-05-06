@@ -4,7 +4,7 @@
   import Basement from './activities/basement/Basement.svelte';
   import Logger from './Logger.svelte';
   import DialogManager from './dialogs/DialogManager.svelte';
-  import type { LoggerType } from '$lib/game/basement';
+  import type { DialogManagerType, LoggerType } from '$lib/game/basement';
 
   const comps = {
     basement: Basement,
@@ -15,12 +15,25 @@
 
   let gameName = '';
   let component: keyof typeof comps = 'basement',
-    logger: LoggerType;
+    logger: LoggerType,
+    dialogManager: DialogManagerType;
 
   onMount(() => {
     logger.log('tester', 'hello, world!');
     logger.log('tester', 'hello, world!');
     logger.log('tester', 'hello, world!');
+
+    const menu = ['test1', 'a', 'b', 'c', '321'];
+    dialogManager.show({
+      type: 'selection',
+      title: 'test',
+      description: '설명',
+      canIgnore: true,
+      menu,
+      onSubmit(_, i) {
+        console.log(menu[i]);
+      },
+    });
   });
 </script>
 
@@ -31,7 +44,7 @@
 <section>
   <svelte:component this={comps[component]} />
   <Logger bind:logger />
-  <DialogManager on:pause={onPause} />
+  <DialogManager bind:manager={dialogManager} on:pause={onPause} />
 </section>
 
 <style lang="scss">

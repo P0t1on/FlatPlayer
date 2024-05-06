@@ -1,26 +1,21 @@
 <script lang="ts">
-  import type { DialogContext } from '$lib/game/basement';
-  import { createEventDispatcher, onMount, SvelteComponent } from 'svelte';
-  import MsgDialog from './MsgDialog.svelte';
+  import type {
+    DialogContext,
+    DialogManagerType,
+    DialogType,
+  } from '$lib/game/basement';
+  import { createEventDispatcher } from 'svelte';
+  import MessageDialog from './MessageDialog.svelte';
   import SelectionDialog from './SelectionDialog.svelte';
 
   const dispatch = createEventDispatcher<{
     pause: boolean;
   }>();
 
-  type DialogType = SvelteComponent<
-    { zIndex: number },
-    {
-      focus: CustomEvent<void>;
-      destroy: CustomEvent<void>;
-      submit: CustomEvent<[() => void, ...any[]]>;
-    }
-  >;
-
   let managerDiv: HTMLSpanElement,
     activeDialogs: DialogType[] = [];
 
-  export const manager = {
+  export const manager: DialogManagerType = {
     show(context: DialogContext) {
       const { title, description, canIgnore } = context,
         zIndex = activeDialogs.length + 1;
@@ -29,7 +24,7 @@
       switch (context.type) {
         case 'message': {
           const { onSubmit } = context;
-          let e = new MsgDialog({
+          let e = new MessageDialog({
             target: managerDiv,
             props: {
               zIndex,
@@ -103,18 +98,6 @@
       }
     },
   };
-
-  onMount(() => {
-    manager.show({
-      type: 'message',
-      title: 'test',
-      description: '설명',
-      canIgnore: true,
-      onSubmit() {
-        console.log('YEE');
-      },
-    });
-  });
 </script>
 
 <span id="dialogManager" bind:this={managerDiv}></span>
