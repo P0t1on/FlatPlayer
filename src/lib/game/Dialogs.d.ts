@@ -1,5 +1,4 @@
 import type { SvelteComponent } from 'svelte';
-import type DialogBase from '../../routes/game/dialogs/DialogBase.svelte';
 
 export type LoggerType = {
   log(sender: string, msg: string): void;

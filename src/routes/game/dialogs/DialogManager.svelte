@@ -3,7 +3,7 @@
     DialogContext,
     DialogManagerType,
     DialogType,
-  } from '$lib/game/basement';
+  } from '$lib/game/Dialogs';
   import { createEventDispatcher } from 'svelte';
   import MessageDialog from './MessageDialog.svelte';
   import SelectionDialog from './SelectionDialog.svelte';

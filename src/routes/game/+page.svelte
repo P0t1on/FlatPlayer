@@ -4,7 +4,7 @@
   import Basement from './activities/basement/Basement.svelte';
   import Logger from './Logger.svelte';
   import DialogManager from './dialogs/DialogManager.svelte';
-  import type { DialogManagerType, LoggerType } from '$lib/game/basement';
+  import type { DialogManagerType, LoggerType } from '$lib/game/Dialogs';
 
   const comps = {
     basement: Basement,
