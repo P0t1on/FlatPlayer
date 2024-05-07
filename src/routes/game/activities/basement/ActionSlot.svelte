@@ -10,20 +10,22 @@
           current: Writable<number>;
         },
     method: () => void,
-    paused: boolean;
+    paused: Writable<boolean>;
   let main: HTMLLIElement;
   // classList
   let ready = false;
 
   const onClick = () => {
-    if (cooltime !== false) {
-      const { current, max } = cooltime;
+    if (!get(paused)) {
+      if (cooltime !== false) {
+        const { current, max } = cooltime;
 
-      if (get(current) >= max) {
-        current.set(0);
-        method();
-      }
-    } else method();
+        if (get(current) >= max) {
+          current.set(0);
+          method();
+        }
+      } else method();
+    }
   };
 
   //

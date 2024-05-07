@@ -25,7 +25,7 @@
     <div class="value">{$value}</div>
   </li>
 {:else}
-  <li id="itemSlot">
+  <li id="itemSlot" title={description}>
     <div class="name">{name}</div>
     <div class="value max"><span>{$value} / {max}</span></div>
   </li>

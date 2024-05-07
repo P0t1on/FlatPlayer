@@ -1,14 +1,13 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte';
-  import { writable, type Writable } from 'svelte/store';
+  import { get, writable, type Writable } from 'svelte/store';
   import ActionSlot from './ActionSlot.svelte';
   import ItemSlot from './ItemSlot.svelte';
-
-  type ItemType = {
-    name: string;
-    description: string;
-    max: number | false;
-  };
+  import type {
+    ActionType,
+    ItemManagerType,
+    ItemType,
+  } from '$lib/game/Basement';
 
   const items: {
     [key: string]: {
@@ -29,45 +28,33 @@
     },
   };
 
-  const actions: {
-    id: string;
-    name: string;
-    method: () => void;
-    paused: boolean;
-    cooltime:
-      | false
-      | {
-          max: number;
-          current: Writable<number>;
-        };
-  }[] = [
+  const actions: ActionType[] = [
     {
       id: 'test1',
       name: '테스트1',
       cooltime: { max: 800, current: writable(0) },
       method: () => itemManager.change('stone', (v) => v + 1),
-      paused: false,
+      paused: writable(false),
     },
     {
       id: 'test2',
       name: '테스트2',
       cooltime: { max: 400, current: writable(0) },
       method: () => itemManager.change('rog', (v) => v + 1),
-      paused: false,
+      paused: writable(false),
+    },
+    {
+      id: 'seek',
+      name: '주위를 탐색한다.',
+      cooltime: false,
+      method: () => itemManager.change('rog', (v) => v + 1),
+      paused: writable(true),
     },
   ];
 
   let timeUpdater: NodeJS.Timeout;
-  const itemManager = {
-    set: (
-      id: string,
-      value: number,
-      type?: {
-        name?: string;
-        description?: string;
-        max?: number | false;
-      }
-    ) => {
+  const itemManager: ItemManagerType = {
+    set(id, value, type) {
       let item = items[id];
 
       if (item) {
@@ -91,7 +78,7 @@
 
       return item;
     },
-    change: (id: string, setter: (prevVal: number) => number) => {
+    change(id, setter) {
       const item = items[id];
 
       if (item) {
@@ -108,7 +95,7 @@
   onMount(() => {
     timeUpdater = setInterval(() => {
       for (const { paused, cooltime } of actions) {
-        if (!paused && cooltime !== false)
+        if (!get(paused) && cooltime !== false)
           cooltime.current.update((v) => (v < cooltime.max ? v + 1 : v));
       }
     }, 10);
