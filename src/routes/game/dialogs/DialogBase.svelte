@@ -20,7 +20,10 @@
     y = 0;
 
   function down(e: MouseEvent) {
-    if (e.target !== closer && !closer.contains(e.target as HTMLElement)) {
+    if (
+      !closer ||
+      (e.target !== closer && !closer.contains(e.target as HTMLElement))
+    ) {
       isDrag = true;
       x = e.clientX;
       y = e.clientY;
@@ -56,7 +59,7 @@
   <slot name="tab">
     <div class="tab" on:mousedown={down} role="presentation">
       <span>{title}</span>
-      {#if !canIgnore}
+      {#if canIgnore}
         <span
           class="nodrag button"
           bind:this={closer}
