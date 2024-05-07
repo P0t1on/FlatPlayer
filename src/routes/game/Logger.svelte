@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { LoggerType } from '$lib/game/basement';
+  import type { LoggerType } from '$lib/game/Dialogs';
 
   let loggerOpen = true,
     update = false;
