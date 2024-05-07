@@ -28,12 +28,13 @@
             target: managerDiv,
             props: {
               zIndex,
-              title,
-              description,
+              title: title ?? '',
+              description: description ?? '',
+              canIgnore: canIgnore ?? true,
             },
           });
 
-          e.$on('submit', (e) => onSubmit(...e.detail));
+          e.$on('submit', (e) => onSubmit?.(...e.detail));
 
           element = e;
 
@@ -46,13 +47,14 @@
             target: managerDiv,
             props: {
               zIndex,
-              title,
-              description,
+              title: title ?? '',
+              description: description ?? '',
               menu,
+              canIgnore: canIgnore ?? true,
             },
           });
 
-          e.$on('submit', (e) => onSubmit(...e.detail));
+          e.$on('submit', (e) => onSubmit?.(...e.detail));
 
           element = e;
 

@@ -8,18 +8,18 @@ export type LoggerType = {
 };
 
 export type DialogContext = {
-  title: string;
-  description: string;
-  canIgnore: boolean;
+  title?: string;
+  description?: string;
+  canIgnore?: boolean;
 } & (
   | {
       type: 'message';
-      onSubmit(preventDefault: () => void): void;
+      onSubmit?(preventDefault: () => void): void;
     }
   | {
       type: 'selection';
       menu: string[];
-      onSubmit(preventDefault: () => void, selected: number): void;
+      onSubmit?(preventDefault: () => void, selected: number): void;
     }
 );
 

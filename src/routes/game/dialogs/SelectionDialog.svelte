@@ -3,7 +3,11 @@
 
   import DialogBase from './DialogBase.svelte';
 
-  export let title: string, description: string, zIndex: number, menu: string[];
+  export let title: string,
+    description: string,
+    zIndex: number,
+    menu: string[],
+    canIgnore: boolean;
 
   let renderMenus: [string, string | undefined][];
   $: {
@@ -31,7 +35,7 @@
 </script>
 
 <DialogBase
-  {...{ title, description: '', zIndex }}
+  {...{ title, zIndex, canIgnore }}
   on:focus={() => dispatch('focus')}
   on:destroy={() => dispatch('destroy')}
 >

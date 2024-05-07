@@ -8,7 +8,10 @@
     submit: [() => void];
   }>();
 
-  export let title: string, description: string, zIndex: number;
+  export let title = '',
+    description = '',
+    zIndex: number,
+    canIgnore = true;
 
   let main: HTMLElement,
     closer: HTMLSpanElement,
@@ -18,7 +21,6 @@
 
   function down(e: MouseEvent) {
     if (e.target !== closer && !closer.contains(e.target as HTMLElement)) {
-      dispatch('focus');
       isDrag = true;
       x = e.clientX;
       y = e.clientY;
@@ -45,18 +47,25 @@
 
 <svelte:document on:mousemove={move} on:mouseup={up} />
 
-<article id="dialog" bind:this={main}>
+<article
+  id="dialog"
+  bind:this={main}
+  on:mousedown={() => dispatch('focus')}
+  role="presentation"
+>
   <slot name="tab">
     <div class="tab" on:mousedown={down} role="presentation">
       <span>{title}</span>
-      <span
-        class="nodrag button"
-        bind:this={closer}
-        on:click={() => dispatch('destroy')}
-        role="presentation"
-      >
-        <SvgIcon type="close" color="white" />
-      </span>
+      {#if !canIgnore}
+        <span
+          class="nodrag button"
+          bind:this={closer}
+          on:click={() => dispatch('destroy')}
+          role="presentation"
+        >
+          <SvgIcon type="close" color="white" />
+        </span>
+      {/if}
     </div>
   </slot>
   <slot name="content">

@@ -8,16 +8,18 @@
     submit: [() => void];
   }>();
 
-  export let title: string, description: string, zIndex: number;
+  export let title: string,
+    description: string,
+    zIndex: number,
+    canIgnore: boolean;
 </script>
 
 <DialogBase
-  {...{ title, description, zIndex }}
+  {...{ title, description, zIndex, canIgnore }}
   on:destroy={() => dispatch('destroy')}
   on:focus={() => dispatch('focus')}
   on:submit={(e) => dispatch('submit', e.detail)}
->
-</DialogBase>
+></DialogBase>
 
 <style lang="scss" module>
 </style>

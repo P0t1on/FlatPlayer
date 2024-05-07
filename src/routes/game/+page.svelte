@@ -30,8 +30,18 @@
       description: '설명',
       canIgnore: true,
       menu,
-      onSubmit(_, i) {
+      onSubmit(preventDefault, i) {
+        preventDefault();
         console.log(menu[i]);
+      },
+    });
+
+    dialogManager.show({
+      type: 'message',
+      title: 'te',
+      description: 'yeeeeeee',
+      onSubmit() {
+        console.log('yee');
       },
     });
   });
