@@ -9,14 +9,15 @@ export type ItemType = {
 export type ActionType = {
   id: string;
   name: string;
-  method: () => void;
-  paused: Writable<boolean>;
-  cooltime:
-    | false
-    | {
-        max: number;
-        current: Writable<number>;
-      };
+  method: (e: CustomEvent<number>) => void;
+  cooltime: {
+    max: number;
+    current: Writable<number>;
+  };
+  worker: {
+    max?: Writable<number>;
+    current: Writable<number>;
+  };
 };
 
 export type ItemManagerType = {

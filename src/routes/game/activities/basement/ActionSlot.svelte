@@ -1,126 +1,65 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { get, type Writable } from 'svelte/store';
 
   export let name: string,
-    cooltime:
-      | false
-      | {
-          max: number;
-          current: Writable<number>;
-        },
-    method: () => void,
-    paused: Writable<boolean>;
+    cooltime: {
+      max: number;
+      current: Writable<number>;
+    },
+    worker: {
+      max?: Writable<number>;
+      current: Writable<number>;
+    };
+  const dispatch = createEventDispatcher<{
+    execute: number;
+    reqChangeWorker: number;
+  }>();
+
   let main: HTMLLIElement;
-  // classList
-  let ready = false;
-
-  const onClick = () => {
-    if (!get(paused)) {
-      if (cooltime !== false) {
-        const { current, max } = cooltime;
-
-        if (get(current) >= max) {
-          current.set(0);
-          method();
-        }
-      } else method();
-    }
-  };
-
-  //
   let fill: string;
 
-  onMount(() => {
-    if (cooltime !== false) {
-      const max = cooltime.max;
+  function onWheel(e: WheelEvent) {
+    console.log(e.deltaY);
+  }
 
-      cooltime.current.subscribe((v) => {
-        fill = `${(100 * v) / max}%`;
-        if (main) {
-          if (v >= max) {
-            ready = true;
-          } else {
-            ready = false;
-          }
-        }
-      });
-    } else if (main) {
-      ready = true;
-    }
+  onMount(() => {
+    let executable = get(worker.current) > 0;
+    const cMax = cooltime.max;
+
+    cooltime.current.subscribe((v) => {
+      fill = `${(100 * v) / cMax}%`;
+      if (main && executable && v >= cMax) {
+        cooltime.current.set(0);
+        dispatch('execute', get(worker.current));
+      }
+    });
+
+    worker.current.subscribe((v) => (executable = v > 0));
   });
 </script>
 
-{#if cooltime !== false}
-  <li
-    class:ready
-    class="actionSlot s1"
-    style="transition: all ease 0.5s;"
-    on:click={onClick}
-    on:keydown
-    role="presentation"
-    bind:this={main}
-  >
-    <span>{name}</span>
-  </li>
-{:else}
-  <li
-    class:clickable={ready}
-    class="actionSlot s2"
-    on:click={onClick}
-    on:keydown
-    role="presentation"
-    bind:this={main}
-  >
-    <span>{name}</span>
-  </li>
-{/if}
+<li class="actionSlot" bind:this={main}>
+  <span>{name}</span>
+  <div on:mousewheel={onWheel}>h</div>
+</li>
 
 <style lang="scss" module>
-  @keyframes -global-ActionSlot_hoverAnim {
-    0% {
-      box-shadow: inset 0 0 0 0 white;
-    }
-
-    100% {
-      box-shadow: inset 0 0 10px 5px gray;
-    }
-  }
   li.actionSlot {
-    &.s1 {
-      background: linear-gradient(
-        to right,
-        white 0 bind(fill),
-        black bind(fill) 100%
-      );
-
-      &.ready:hover {
-        cursor: pointer;
-        animation-name: ActionSlot_hoverAnim;
-        animation-duration: 0.5s;
-        animation-fill-mode: forwards;
-        border: solid 2px gray;
-      }
-    }
-
-    &.s2 {
-      background-color: white;
-      cursor: pointer;
-      &.ready:hover {
-        animation-name: actionAnim;
-        animation-duration: 0.5s;
-        animation-fill-mode: forwards;
-        border: solid 2px gray;
-      }
-    }
-
+    background: linear-gradient(
+      to right,
+      white 0 bind(fill),
+      black bind(fill) 100%
+    );
     margin: 12px;
     padding: 8px;
     mix-blend-mode: difference;
     font-weight: bold;
-    font-size: larger;
+    font-size: large;
     user-select: none;
     border: solid 2px white;
+
+    display: flex;
 
     span {
       mix-blend-mode: difference;

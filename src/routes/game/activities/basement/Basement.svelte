@@ -28,27 +28,30 @@
     },
   };
 
+  const seekCooltime = writable(0);
+
   const actions: ActionType[] = [
     {
       id: 'test1',
       name: '테스트1',
       cooltime: { max: 800, current: writable(0) },
-      method: () => itemManager.change('stone', (v) => v + 1),
-      paused: writable(false),
-    },
-    {
-      id: 'test2',
-      name: '테스트2',
-      cooltime: { max: 400, current: writable(0) },
-      method: () => itemManager.change('rog', (v) => v + 1),
-      paused: writable(false),
+      method: ({ detail: worker }) =>
+        itemManager.change('stone', (v) => v + worker),
+      worker: {
+        max: writable(5),
+        current: writable(0),
+      },
     },
     {
       id: 'seek',
       name: '주위를 탐색한다.',
-      cooltime: false,
-      method: () => itemManager.change('rog', (v) => v + 1),
-      paused: writable(true),
+      method: ({ detail: worker }) =>
+        itemManager.change('rog', (v) => v + worker),
+      cooltime: { max: 400, current: seekCooltime },
+      worker: {
+        max: writable(5),
+        current: writable(1),
+      },
     },
   ];
 
@@ -94,9 +97,8 @@
 
   onMount(() => {
     timeUpdater = setInterval(() => {
-      for (const { paused, cooltime } of actions) {
-        if (!get(paused) && cooltime !== false)
-          cooltime.current.update((v) => (v < cooltime.max ? v + 1 : v));
+      for (const { cooltime } of actions) {
+        cooltime.current.update((v) => (v < cooltime.max ? v + 1 : v));
       }
     }, 10);
   });
@@ -108,8 +110,8 @@
 
 <article id="basement">
   <ul id="actionList">
-    {#each actions as { id, ...args }}
-      <ActionSlot {...args} />
+    {#each actions as { id, method, ...args }}
+      <ActionSlot {...args} on:execute={method} />
     {/each}
   </ul>
   <ul id="itemList">
