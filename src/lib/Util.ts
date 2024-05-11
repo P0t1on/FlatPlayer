@@ -1,5 +1,4 @@
 import { assets } from '$app/paths';
-import SvgIcon from './SVGIcon.svelte';
 
 export type IconNames =
   | 'close'
@@ -16,8 +15,6 @@ export type IconNames =
 export function icon(name: IconNames, type: 'svg' | 'webp' = 'webp') {
   return `${assets}/icons/${type}/${name}.${type}`;
 }
-
-export { SvgIcon };
 
 const get = (id: string) => localStorage.getItem('config_' + id);
 

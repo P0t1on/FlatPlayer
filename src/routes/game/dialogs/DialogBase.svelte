@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SvgIcon } from '$lib/Util';
+  import SvgIcon from '$lib/SVGIcon.svelte';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher<{
