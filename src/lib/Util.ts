@@ -1,7 +1,17 @@
 import { assets } from '$app/paths';
 import SvgIcon from './SVGIcon.svelte';
 
-export type IconNames = 'close' | 'play' | 'search' | 'sports_esports' | 'done';
+export type IconNames =
+  | 'close'
+  | 'delete'
+  | 'done'
+  | 'keyboard_arrow_down'
+  | 'keyboard_arrow_left'
+  | 'keyboard_arrow_right'
+  | 'keyboard_arrow_up'
+  | 'play'
+  | 'search'
+  | 'sports_esports';
 
 export function icon(name: IconNames, type: 'svg' | 'webp' = 'webp') {
   return `${assets}/icons/${type}/${name}.${type}`;
