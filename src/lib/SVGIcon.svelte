@@ -1,8 +1,14 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte';
   import type { IconNames } from './Util';
+
+  const dispatch = createEventDispatcher<{
+    click: number;
+  }>();
 
   export let type: IconNames,
     color: string = 'white',
+    size = 24,
     outline: string | undefined = undefined,
     outlineWidth: string | undefined = undefined;
 
@@ -29,9 +35,11 @@
 
 <svg
   xmlns="http://www.w3.org/2000/svg"
-  height="24"
+  height={size}
   viewBox="0 -960 960 960"
-  width="24"
+  width={size}
+  on:click={(e) => dispatch('click', e.detail)}
+  role="presentation"
 >
   <path
     fill={color}
