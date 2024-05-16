@@ -13,6 +13,10 @@
     outlineWidth: string | undefined = undefined;
 
   const pattern: { [key in IconNames]: string } = {
+    arrow_drop_down: 'M480-360 280-560h400L480-360Z',
+    arrow_drop_up: 'm280-400 200-200 200 200H280Z',
+    arrow_left: 'M560-280 360-480l200-200v400Z',
+    arrow_right: 'M400-280v-400l200 200-200 200Z',
     close:
       'm256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z',
     delete:

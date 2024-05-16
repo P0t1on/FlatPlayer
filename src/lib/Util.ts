@@ -1,6 +1,10 @@
 import { assets } from '$app/paths';
 
 export type IconNames =
+  | 'arrow_drop_down'
+  | 'arrow_drop_up'
+  | 'arrow_left'
+  | 'arrow_right'
   | 'close'
   | 'delete'
   | 'done'
