@@ -9,6 +9,9 @@
     ItemType,
   } from '$lib/game/Basement';
 
+  const totalWorkers = writable(10),
+    allocWorkers = writable(0);
+
   const items: {
     [key: string]: {
       value: Writable<number>;
@@ -38,7 +41,7 @@
       method: ({ detail: worker }) =>
         itemManager.change('stone', (v) => v + worker),
       worker: {
-        max: writable(5),
+        require: writable(2),
         current: writable(0),
       },
     },
@@ -49,7 +52,7 @@
         itemManager.change('rog', (v) => v + worker),
       cooltime: { max: 400, current: seekCooltime },
       worker: {
-        max: writable(5),
+        require: writable(1),
         current: writable(1),
       },
     },
@@ -97,10 +100,18 @@
 
   onMount(() => {
     timeUpdater = setInterval(() => {
-      for (const { cooltime } of actions) {
-        cooltime.current.update((v) => (v < cooltime.max ? v + 1 : v));
+      for (const {
+        cooltime,
+        worker: { current },
+      } of actions) {
+        if (get(current) > 0)
+          cooltime.current.update((v) => (v < cooltime.max ? v + 1 : v));
       }
     }, 10);
+
+    actions.forEach(({ worker: { require, current } }) => {
+      allocWorkers.update((v) => v + get(require) * get(current));
+    });
   });
 
   onDestroy(() => {
@@ -110,8 +121,17 @@
 
 <article id="basement">
   <ul id="actionList">
-    {#each actions as { id, method, ...args }}
-      <ActionSlot {...args} on:execute={method} />
+    {#each actions as { id, method, worker: { current: workerCurrent, require: requireWorkers }, ...args }}
+      <ActionSlot
+        {...{
+          ...args,
+          totalWorkers,
+          allocWorkers,
+          workerCurrent,
+          requireWorkers,
+        }}
+        on:execute={method}
+      />
     {/each}
   </ul>
   <ul id="itemList">

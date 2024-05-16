@@ -15,7 +15,7 @@ export type ActionType = {
     current: Writable<number>;
   };
   worker: {
-    max?: Writable<number>;
+    require: Writable<number>;
     current: Writable<number>;
   };
 };
