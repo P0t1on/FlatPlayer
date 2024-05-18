@@ -1,5 +1,7 @@
 <script lang="ts">
+  import SvgIcon from '$lib/SVGIcon.svelte';
   import type { LoggerType } from '$lib/game/Dialogs';
+  import { onMount } from 'svelte';
 
   let loggerOpen = true,
     update = false;
@@ -14,6 +16,7 @@
     },
     clear() {
       msgList = [];
+      update = !update;
     },
     delete(index) {
       msgList.splice(index, 1);
@@ -38,29 +41,69 @@
       msg: 'test3',
     },
   ];
+
+  let contextOpen = false,
+    contextDialog: HTMLDialogElement;
+
+  function openContext(
+    e: MouseEvent & {
+      currentTarget: EventTarget & HTMLUListElement;
+    }
+  ) {
+    e.preventDefault();
+    contextDialog.style.top = e.y + 'px';
+    contextDialog.style.left = e.x + 'px';
+    contextOpen = true;
+  }
+
+  let temp: Element[];
+
+  onMount(() => {
+    temp = [contextDialog, ...contextDialog.children];
+  });
 </script>
 
+<svelte:window
+  on:mousedown={(e) => {
+    if (contextOpen && !temp.includes(e.target)) {
+      contextOpen = false;
+    }
+  }}
+/>
+
 <div class:open={loggerOpen} id="logger">
-  <span
-    class="handle"
-    role="button"
-    tabindex={0}
-    on:keydown={(e) =>
-      (loggerOpen = e.code === 'Enter' ? !loggerOpen : loggerOpen)}
-    on:click={() => (loggerOpen = !loggerOpen)}
-  >
-    ▲
-  </span>
-  <ul class="logList">
+  <dialog id="context" bind:this={contextDialog} open={contextOpen}>
+    <button
+      on:click={() => {
+        logger.clear();
+        contextOpen = false;
+      }}
+    >
+      로그 모두 지우기
+    </button>
+  </dialog>
+
+  <button class="handle" on:click={() => (loggerOpen = !loggerOpen)}>
+    <SvgIcon type="arrow_drop_up" size={36} />
+  </button>
+
+  <ul class="logList" on:contextmenu={openContext} role="presentation">
     {#key update}
       {#each msgList as { sender, msg }, i}
         <li>
           <div class="sender">
             {sender}
             <br />
-            <span style="font-size:smaller; font-weight:lighter;">{i}</span>
+            <span>{i}</span>
           </div>
-          <div class="msg">{msg}</div>
+          <div class="msg">
+            <span class="msg">{msg}</span>
+            <div class="delete">
+              <button on:click={() => logger.delete(i)}>
+                <SvgIcon type="delete" />
+              </button>
+            </div>
+          </div>
         </li>
       {/each}
     {/key}
@@ -79,14 +122,50 @@
     flex-direction: column;
     align-items: center;
 
-    span.handle {
+    dialog#context {
+      position: fixed;
+      z-index: 100;
+      user-select: none;
+      padding: 4px 0 4px 0;
+      margin: 0;
+
+      background-color: rgb(55, 55, 55);
+      border: 0 solid transparent;
+      border-radius: 4px;
+
+      button {
+        font-family: Noto Sans KR;
+        font-size: smaller;
+        color: white;
+        padding: 2px 16px 2px 16px;
+        background-color: transparent;
+        border: none;
+
+        &:hover {
+          background-color: rgb(125, 125, 125);
+        }
+      }
+    }
+
+    button.handle {
       transition: all ease 0.5s;
 
       user-select: none;
       cursor: pointer;
 
+      height: 44px;
+      width: 44px;
+      margin: 4px;
+      padding: 0;
+      border-radius: 16px;
+      border: 1px solid transparent;
+      background-color: transparent;
       color: white;
       font-size: xx-large;
+
+      &:hover {
+        border: 1px solid gray;
+      }
     }
 
     ul.logList {
@@ -109,6 +188,7 @@
         border-bottom: 1px solid white;
 
         display: flex;
+        justify-content: space-between;
         flex-direction: row;
 
         div.sender {
@@ -116,11 +196,51 @@
           font-weight: bolder;
           border-right: 2px solid white;
           width: 50px;
+
+          span {
+            font-size: smaller;
+            font-weight: lighter;
+          }
         }
 
         div.msg {
+          width: 100%;
           padding: 2px;
           white-space: pre;
+          display: flex;
+          justify-content: space-between;
+
+          div.delete {
+            display: flex;
+            align-items: flex-end;
+
+            button {
+              transition: all ease 0.4s;
+              cursor: pointer;
+              padding: 2px;
+              margin: 0 8px 8px 0;
+              background-color: transparent;
+              border: 1px solid transparent;
+              border-radius: 4px;
+
+              &:hover {
+                border: 1px solid gray;
+
+                svg path {
+                  transition: all ease 0.4s;
+                  fill: white;
+                }
+
+                &:active {
+                  background-color: gray;
+
+                  svg path {
+                    fill: black;
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -128,7 +248,7 @@
     &.open {
       bottom: 1rem;
 
-      span.handle {
+      button.handle {
         transform: rotate(180deg);
       }
 
