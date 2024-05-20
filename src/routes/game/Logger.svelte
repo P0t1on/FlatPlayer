@@ -3,7 +3,7 @@
   import type { LoggerType } from '$lib/game/Dialogs';
   import { onMount } from 'svelte';
 
-  let loggerOpen = true,
+  let loggerOpen = false,
     update = false;
 
   export let maximum: number = 100;

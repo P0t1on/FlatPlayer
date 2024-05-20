@@ -52,7 +52,7 @@
 </svelte:head>
 
 <section>
-  <svelte:component this={comps[component]} />
+  <svelte:component this={comps[component]} {dialogManager} {logger} />
   <Logger bind:logger />
   <DialogManager bind:manager={dialogManager} on:pause={onPause} />
 </section>
