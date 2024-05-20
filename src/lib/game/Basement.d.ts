@@ -3,7 +3,7 @@ import type { Writable } from 'svelte/store';
 export type ItemType = {
   name: string;
   description: string;
-  max: number | false;
+  max: Writable<number> | false;
 };
 
 export type ActionType = {

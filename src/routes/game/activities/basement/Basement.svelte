@@ -17,6 +17,12 @@
       value: Writable<number>;
     } & ItemType;
   } = {
+    workers: {
+      name: 'Worker',
+      description: 'PEOPLE',
+      max: totalWorkers,
+      value: allocWorkers,
+    },
     rog: {
       name: 'Rog',
       description: 'rog item desc',
@@ -26,7 +32,7 @@
     stone: {
       name: 'Stone',
       description: 'stone item desc',
-      max: 3,
+      max: writable(3),
       value: writable(2),
     },
   };
@@ -79,7 +85,7 @@
 
         if (name !== undefined) item.name = name;
         if (description !== undefined) item.description = description;
-        if (max !== undefined) item.max = max;
+        if (max !== undefined && max !== false) item.max;
       }
 
       return item;
@@ -89,8 +95,9 @@
 
       if (item) {
         item.value.update((v) => {
-          const val = setter(v);
-          return item.max !== false ? (val > item.max ? item.max : val) : val;
+          const val = setter(v),
+            max = item.max;
+          return max !== false ? (val > get(max) ? get(max) : val) : val;
         });
       }
 

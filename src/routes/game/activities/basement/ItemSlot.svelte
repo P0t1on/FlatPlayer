@@ -1,20 +1,22 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Writable } from 'svelte/store';
+  import { get, type Writable } from 'svelte/store';
 
   export let value: Writable<number>,
     name: string,
     description: string,
-    max: number | false;
+    max: Writable<number> | false;
 
-  let fill = '0%';
+  let fill = '0%',
+    m = 0;
 
   onMount(() => {
     if (max !== false) {
-      const m = max;
       value.subscribe((v) => {
-        fill = `${(v * 100) / m}%`;
+        fill = `${(v * 100) / get(max)}%`;
       });
+
+      max.subscribe((v) => (m = v));
     }
   });
 </script>
@@ -27,7 +29,7 @@
 {:else}
   <li id="itemSlot" title={description}>
     <div class="name">{name}</div>
-    <div class="value max"><span>{$value} / {max}</span></div>
+    <div class="value max"><span>{$value} / {m}</span></div>
   </li>
 {/if}
 
