@@ -16,7 +16,7 @@
   const totalWorkers = writable(10),
     availableWorker = writable(10);
 
-  const items: {
+  let items: {
     [key: string]: {
       value: Writable<number>;
     } & ItemType;
@@ -43,7 +43,7 @@
 
   const seekCooltime = writable(0);
 
-  const actions: { [key: string]: ActionType } = {
+  let actions: { [key: string]: ActionType } = {
     test1: {
       name: '테스트1',
       cooltime: { max: writable(800), current: writable(0) },
@@ -105,6 +105,12 @@
 
       return item;
     },
+    update(id) {
+      if (id !== undefined) {
+        items[id] = items[id] as { value: Writable<number> } & ItemType;
+        return;
+      } else return (items = items);
+    },
     release(id) {
       if (id !== 'workers') {
         delete items[id];
@@ -113,7 +119,31 @@
   };
 
   const actionManager: ActionManagerType = {
-    set() {},
+    register(
+      id,
+      { name, cooltime: { max, startCooltime }, requiredWorker, method }
+    ) {
+      const action: ActionType = {
+        name: name ?? id,
+        method: ({ detail }) => method(detail),
+        cooltime: {
+          max: writable(max),
+          current: writable(startCooltime),
+        },
+        worker: {
+          require: writable(requiredWorker ?? 1),
+          current: writable(0),
+        },
+      };
+
+      actions[id] = action;
+
+      return action;
+    },
+
+    release(id) {
+      delete actions[id];
+    },
   };
 
   onMount(() => {
@@ -154,7 +184,14 @@
       );
     });
 
-    initOrientation(items, actions, itemManager, dialogManager, logger);
+    initOrientation(
+      items,
+      actions,
+      itemManager,
+      actionManager,
+      dialogManager,
+      logger
+    );
   });
 
   onDestroy(() => {
@@ -164,17 +201,19 @@
 
 <article id="basement">
   <ul id="actionList">
-    {#each Object.entries(actions) as [_, { method, worker: { current: workerCurrent, require: requireWorkers }, ...args }]}
-      <ActionSlot
-        {...{
-          ...args,
-          availableWorker,
-          workerCurrent,
-          requireWorkers,
-        }}
-        on:execute={method}
-      />
-    {/each}
+    {#key actions}
+      {#each Object.entries(actions) as [_, { method, worker: { current: workerCurrent, require: requireWorkers }, ...args }]}
+        <ActionSlot
+          {...{
+            ...args,
+            availableWorker,
+            workerCurrent,
+            requireWorkers,
+          }}
+          on:execute={method}
+        />
+      {/each}
+    {/key}
   </ul>
   <ul id="itemList">
     {#each Object.entries(items) as [_, data]}

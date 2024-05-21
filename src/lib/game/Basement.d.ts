@@ -41,15 +41,26 @@ export type ItemManagerType = {
       } & ItemType)
     | undefined;
 
+  update:
+    | ((id: string) => void)
+    | (() => { value: Writable<number> } & ItemType);
+
   release(id: string): void;
 };
 
 export type ActionManagerType = {
-  set(
+  register(
     id: string,
     actionData: {
       name?: string;
-      cooltime: {};
+      cooltime: {
+        max: number;
+        startCooltime?: number;
+      };
+      requiredWorker?: number;
+      method: (worker: number) => void;
     }
-  ): void;
+  ): ActionType;
+
+  release(id: string): void;
 };
