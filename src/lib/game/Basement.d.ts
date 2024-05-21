@@ -7,11 +7,10 @@ export type ItemType = {
 };
 
 export type ActionType = {
-  id: string;
   name: string;
   method: (e: CustomEvent<number>) => void;
   cooltime: {
-    max: number;
+    max: Writable<number>;
     current: Writable<number>;
   };
   worker: {
@@ -41,4 +40,16 @@ export type ItemManagerType = {
         value: Writable<number>;
       } & ItemType)
     | undefined;
+
+  release(id: string): void;
+};
+
+export type ActionManagerType = {
+  set(
+    id: string,
+    actionData: {
+      name?: string;
+      cooltime: {};
+    }
+  ): void;
 };

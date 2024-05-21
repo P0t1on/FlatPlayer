@@ -5,6 +5,7 @@
   import ActionSlot from './ActionSlot.svelte';
   import ItemSlot from './ItemSlot.svelte';
   import type {
+    ActionManagerType,
     ActionType,
     ItemManagerType,
     ItemType,
@@ -13,7 +14,7 @@
 
   export let dialogManager: DialogManagerType, logger: LoggerType;
   const totalWorkers = writable(10),
-    allocWorkers = writable(0);
+    availableWorker = writable(10);
 
   const items: {
     [key: string]: {
@@ -24,7 +25,7 @@
       name: 'Worker',
       description: 'PEOPLE',
       max: totalWorkers,
-      value: allocWorkers,
+      value: availableWorker,
     },
     rog: {
       name: 'Rog',
@@ -42,11 +43,10 @@
 
   const seekCooltime = writable(0);
 
-  const actions: ActionType[] = [
-    {
-      id: 'test1',
+  const actions: { [key: string]: ActionType } = {
+    test1: {
       name: '테스트1',
-      cooltime: { max: 800, current: writable(0) },
+      cooltime: { max: writable(800), current: writable(0) },
       method: ({ detail: worker }) =>
         itemManager.change('stone', (v) => v + worker),
       worker: {
@@ -54,18 +54,17 @@
         current: writable(0),
       },
     },
-    {
-      id: 'seek',
+    seek: {
       name: '주위를 탐색한다.',
       method: ({ detail: worker }) =>
         itemManager.change('rog', (v) => v + worker),
-      cooltime: { max: 400, current: seekCooltime },
+      cooltime: { max: writable(400), current: seekCooltime },
       worker: {
         require: writable(1),
         current: writable(1),
       },
     },
-  ];
+  };
 
   let timeUpdater: NodeJS.Timeout;
   const itemManager: ItemManagerType = {
@@ -106,21 +105,53 @@
 
       return item;
     },
+    release(id) {
+      if (id !== 'workers') {
+        delete items[id];
+      }
+    },
+  };
+
+  const actionManager: ActionManagerType = {
+    set() {},
   };
 
   onMount(() => {
     timeUpdater = setInterval(() => {
-      for (const {
-        cooltime,
-        worker: { current },
-      } of actions) {
+      for (const id in actions) {
+        const {
+          cooltime,
+          worker: { current },
+        } = actions[id] as ActionType;
+
         if (get(current) > 0)
-          cooltime.current.update((v) => (v < cooltime.max ? v + 1 : v));
+          cooltime.current.update((v) => (v < get(cooltime.max) ? v + 1 : v));
       }
     }, 10);
 
-    actions.forEach(({ worker: { require, current } }) => {
-      allocWorkers.update((v) => v + get(require) * get(current));
+    Object.entries(actions).forEach(
+      ([
+        _,
+        {
+          worker: { require, current },
+        },
+      ]) => {
+        availableWorker.update((v) => v - get(require) * get(current));
+      }
+    );
+
+    totalWorkers.subscribe((v) => {
+      availableWorker.set(v);
+      Object.entries(actions).forEach(
+        ([
+          _,
+          {
+            worker: { require, current },
+          },
+        ]) => {
+          availableWorker.update((v) => v - get(require) * get(current));
+        }
+      );
     });
 
     initOrientation(items, actions, itemManager, dialogManager, logger);
@@ -133,12 +164,11 @@
 
 <article id="basement">
   <ul id="actionList">
-    {#each actions as { id, method, worker: { current: workerCurrent, require: requireWorkers }, ...args }}
+    {#each Object.entries(actions) as [_, { method, worker: { current: workerCurrent, require: requireWorkers }, ...args }]}
       <ActionSlot
         {...{
           ...args,
-          totalWorkers,
-          allocWorkers,
+          availableWorker,
           workerCurrent,
           requireWorkers,
         }}
@@ -161,6 +191,7 @@
 
     ul#actionList {
       list-style: none;
+      height: max-content;
       padding: 0;
       border: 2px solid white;
 

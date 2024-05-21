@@ -5,11 +5,10 @@
 
   export let name: string,
     cooltime: {
-      max: number;
+      max: Writable<number>;
       current: Writable<number>;
     },
-    totalWorkers: Writable<number>,
-    allocWorkers: Writable<number>,
+    availableWorker: Writable<number>,
     requireWorkers: Writable<number>,
     workerCurrent: Writable<number>;
 
@@ -23,33 +22,33 @@
 
   function changeWorker(val: number) {
     if (val > 0) {
-      const extra = get(totalWorkers) - get(allocWorkers),
+      const extra = get(availableWorker),
         req = get(requireWorkers);
       if (extra >= req * val) {
-        allocWorkers.update((v) => v + req * val);
+        availableWorker.update((v) => v - req * val);
         workerCurrent.update((v) => v + val);
       } else {
-        allocWorkers.update((v) => v + req * Math.floor(extra / req));
+        availableWorker.update((v) => v - req * Math.floor(extra / req));
         workerCurrent.update((v) => v + Math.floor(extra / req));
       }
     } else if (val < 0) {
       const wc = get(workerCurrent);
 
       if (wc >= -val) {
-        allocWorkers.update((v) => v + get(requireWorkers) * val);
+        availableWorker.update((v) => v - get(requireWorkers) * val);
         workerCurrent.update((v) => v + val);
       } else if (wc > 0) {
         console.log(wc);
-        allocWorkers.update((v) => v + get(requireWorkers) * (val + wc));
+        availableWorker.update((v) => v - get(requireWorkers) * (val + wc));
         workerCurrent.set(0);
       }
     }
   }
 
   onMount(() => {
-    const cMax = cooltime.max;
-
     cooltime.current.subscribe((v) => {
+      const cMax = get(cooltime.max);
+
       fill = `${(100 * v) / cMax}%`;
       const wc = get(workerCurrent);
 
@@ -87,7 +86,7 @@
     </span>
   </div>
   <div class="detail" bind:this={detailDiv}>
-    Max Worker : {Math.floor(($totalWorkers - $allocWorkers) / $requireWorkers)}
+    Available Worker : {Math.floor($availableWorker / $requireWorkers)}
   </div>
 </li>
 
