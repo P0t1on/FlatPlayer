@@ -46,6 +46,12 @@ export type ItemManagerType = {
     | (() => { value: Writable<number> } & ItemType);
 
   release(id: string): void;
+
+  data: {
+    [key: string]: {
+      value: Writable<number>;
+    } & ItemType;
+  };
 };
 
 export type ActionManagerType = {
@@ -63,4 +69,6 @@ export type ActionManagerType = {
   ): ActionType;
 
   release(id: string): void;
+
+  data: { [key: string]: ActionType };
 };

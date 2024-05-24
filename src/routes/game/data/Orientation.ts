@@ -1,22 +1,14 @@
-import type {
-  ActionManagerType,
-  ActionType,
-  ItemManagerType,
-  ItemType,
-} from '$lib/game/Basement';
+import type { ActionManagerType, ItemManagerType } from '$lib/game/Basement';
 import type { DialogManagerType, LoggerType } from '$lib/game/Dialogs';
-import { writable, type Writable } from 'svelte/store';
 
 export function initOrientation(
-  items: {
-    [key: string]: { value: Writable<number> } & ItemType;
-  },
-  actions: { [key: string]: ActionType },
   itemManager: ItemManagerType,
   actionManager: ActionManagerType,
   dialogger: DialogManagerType,
   logger: LoggerType
 ) {
+  const actions = actionManager.data;
+
   itemManager.set('test', 0, {
     name: '테스트자원',
     description: '테스트',
@@ -29,8 +21,4 @@ export function initOrientation(
     },
     method: (w) => itemManager.change('test', (v) => v + w),
   });
-
-  console.log(actions);
-
-  actionManager.release('test1');
 }

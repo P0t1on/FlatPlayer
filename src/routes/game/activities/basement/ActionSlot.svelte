@@ -9,16 +9,19 @@
       current: Writable<number>;
     },
     availableWorker: Writable<number>,
-    requireWorkers: Writable<number>,
-    workerCurrent: Writable<number>;
+    worker: {
+      require: Writable<number>;
+      current: Writable<number>;
+    };
 
   const dispatch = createEventDispatcher<{
     execute: number;
-    reqChangeWorker: number;
   }>();
 
   let fill: string, detailHeight: string;
   let detailDiv: HTMLDivElement;
+  let workerCurrent = worker.current,
+    requireWorkers = worker.require;
 
   function changeWorker(val: number) {
     if (val > 0) {
@@ -38,7 +41,6 @@
         availableWorker.update((v) => v - get(requireWorkers) * val);
         workerCurrent.update((v) => v + val);
       } else if (wc > 0) {
-        console.log(wc);
         availableWorker.update((v) => v - get(requireWorkers) * (val + wc));
         workerCurrent.set(0);
       }
@@ -48,13 +50,9 @@
   onMount(() => {
     cooltime.current.subscribe((v) => {
       const cMax = get(cooltime.max);
-
       fill = `${(100 * v) / cMax}%`;
-      const wc = get(workerCurrent);
 
-      if (wc === 0) {
-        cooltime.current.set(0);
-      } else if (v >= cMax) {
+      if (v >= cMax) {
         cooltime.current.set(0);
         dispatch('execute', get(workerCurrent));
       }

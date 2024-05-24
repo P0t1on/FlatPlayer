@@ -56,8 +56,9 @@
     },
     seek: {
       name: '주위를 탐색한다.',
-      method: ({ detail: worker }) =>
-        itemManager.change('rog', (v) => v + worker),
+      method: ({ detail: worker }) => {
+        itemManager.change('rog', (v) => v + worker);
+      },
       cooltime: { max: writable(400), current: seekCooltime },
       worker: {
         require: writable(1),
@@ -67,7 +68,7 @@
   };
 
   let timeUpdater: NodeJS.Timeout;
-  const itemManager: ItemManagerType = {
+  export const itemManager: ItemManagerType = {
     set(id, value, type) {
       let item = items[id];
 
@@ -116,9 +117,10 @@
         delete items[id];
       }
     },
+    data: items,
   };
 
-  const actionManager: ActionManagerType = {
+  export const actionManager: ActionManagerType = {
     register(
       id,
       { name, cooltime: { max, startCooltime }, requiredWorker, method }
@@ -128,14 +130,13 @@
         method: ({ detail }) => method(detail),
         cooltime: {
           max: writable(max),
-          current: writable(startCooltime),
+          current: writable(startCooltime ?? 0),
         },
         worker: {
           require: writable(requiredWorker ?? 1),
           current: writable(0),
         },
       };
-
       actions[id] = action;
 
       return action;
@@ -144,18 +145,21 @@
     release(id) {
       delete actions[id];
     },
+
+    data: actions,
   };
 
   onMount(() => {
     timeUpdater = setInterval(() => {
       for (const id in actions) {
         const {
-          cooltime,
-          worker: { current },
+          cooltime: { current: cCool },
+          worker: { current: worker },
         } = actions[id] as ActionType;
 
-        if (get(current) > 0)
-          cooltime.current.update((v) => (v < get(cooltime.max) ? v + 1 : v));
+        if (get(worker) > 0) {
+          cCool.update((v) => v + 1);
+        }
       }
     }, 10);
 
@@ -184,14 +188,7 @@
       );
     });
 
-    initOrientation(
-      items,
-      actions,
-      itemManager,
-      actionManager,
-      dialogManager,
-      logger
-    );
+    initOrientation(itemManager, actionManager, dialogManager, logger);
   });
 
   onDestroy(() => {
@@ -201,19 +198,16 @@
 
 <article id="basement">
   <ul id="actionList">
-    {#key actions}
-      {#each Object.entries(actions) as [_, { method, worker: { current: workerCurrent, require: requireWorkers }, ...args }]}
-        <ActionSlot
-          {...{
-            ...args,
-            availableWorker,
-            workerCurrent,
-            requireWorkers,
-          }}
-          on:execute={method}
-        />
-      {/each}
-    {/key}
+    {#each Object.entries(actions) as [_, { method, worker, ...args }]}
+      <ActionSlot
+        {...{
+          ...args,
+          availableWorker,
+          worker,
+        }}
+        on:execute={method}
+      />
+    {/each}
   </ul>
   <ul id="itemList">
     {#each Object.entries(items) as [_, data]}
