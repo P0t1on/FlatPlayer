@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte';
   import { get, writable, type Writable } from 'svelte/store';
-  import { initOrientation } from '../../data/Orientation';
   import ActionSlot from './ActionSlot.svelte';
   import ItemSlot from './ItemSlot.svelte';
   import type {
@@ -10,9 +9,7 @@
     ItemManagerType,
     ItemType,
   } from '$lib/game/Basement';
-  import type { DialogManagerType, LoggerType } from '$lib/game/Dialogs';
 
-  export let dialogManager: DialogManagerType, logger: LoggerType;
   const totalWorkers = writable(10),
     availableWorker = writable(10);
 
@@ -151,8 +148,6 @@
         }
       );
     });
-
-    initOrientation(itemManager, actionManager, dialogManager, logger);
   });
 
   onDestroy(() => {
