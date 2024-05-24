@@ -18,33 +18,7 @@
     logger: LoggerType,
     dialogManager: DialogManagerType;
 
-  onMount(() => {
-    logger.log('tester', 'hello, world!');
-    logger.log('tester', 'hello, world!');
-    logger.log('tester', 'hello, world!');
-
-    const menu = ['test1', 'a', 'b', 'c', '321'];
-    dialogManager.show({
-      type: 'selection',
-      title: 'test',
-      description: '설명',
-      canIgnore: true,
-      menu,
-      onSubmit(preventDefault, i) {
-        preventDefault();
-        console.log(menu[i]);
-      },
-    });
-
-    dialogManager.show({
-      type: 'message',
-      title: 'te',
-      description: 'yeeeeeee',
-      onSubmit() {
-        console.log('yee');
-      },
-    });
-  });
+  onMount(() => {});
 </script>
 
 <svelte:head>

@@ -27,45 +27,9 @@
       max: totalWorkers,
       value: availableWorker,
     },
-    rog: {
-      name: 'Rog',
-      description: 'rog item desc',
-      max: false,
-      value: writable(3),
-    },
-    stone: {
-      name: 'Stone',
-      description: 'stone item desc',
-      max: writable(3),
-      value: writable(2),
-    },
   };
 
-  const seekCooltime = writable(0);
-
-  let actions: { [key: string]: ActionType } = {
-    test1: {
-      name: '테스트1',
-      cooltime: { max: writable(800), current: writable(0) },
-      method: ({ detail: worker }) =>
-        itemManager.change('stone', (v) => v + worker),
-      worker: {
-        require: writable(2),
-        current: writable(0),
-      },
-    },
-    seek: {
-      name: '주위를 탐색한다.',
-      method: ({ detail: worker }) => {
-        itemManager.change('rog', (v) => v + worker);
-      },
-      cooltime: { max: writable(400), current: seekCooltime },
-      worker: {
-        require: writable(1),
-        current: writable(1),
-      },
-    },
-  };
+  let actions: { [key: string]: ActionType } = {};
 
   let timeUpdater: NodeJS.Timeout;
   export const itemManager: ItemManagerType = {
@@ -225,6 +189,8 @@
     ul#actionList {
       list-style: none;
       height: max-content;
+      min-height: 20px;
+      min-width: 150px;
       padding: 0;
       border: 2px solid white;
 
@@ -244,6 +210,7 @@
     ul#itemList {
       list-style: none;
 
+      height: max-content;
       margin-left: 8px;
       padding: 0;
 

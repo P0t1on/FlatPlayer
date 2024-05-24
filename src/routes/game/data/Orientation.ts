@@ -8,17 +8,4 @@ export function initOrientation(
   logger: LoggerType
 ) {
   const actions = actionManager.data;
-
-  itemManager.set('test', 0, {
-    name: '테스트자원',
-    description: '테스트',
-  });
-
-  actionManager.register('test', {
-    name: '테스트 액션',
-    cooltime: {
-      max: 200,
-    },
-    method: (w) => itemManager.change('test', (v) => v + w),
-  });
 }

@@ -27,20 +27,7 @@
   let msgList: {
     sender: string;
     msg: string;
-  }[] = [
-    {
-      sender: 'System',
-      msg: 'padding\n 속성은 한 개, 두 개, 세 개,\n 혹은 네 개의 값으로 지정할 수 있습니다.\n 각 값은\n <length>, <percentage> 중 하나로, 음수 값은 유효하지 \n않습니다.',
-    },
-    {
-      sender: 'System',
-      msg: 'test2',
-    },
-    {
-      sender: 'System',
-      msg: 'test3',
-    },
-  ];
+  }[] = [];
 
   let contextOpen = false,
     contextDialog: HTMLDialogElement;
