@@ -71,6 +71,7 @@
       return item;
     },
 
+    // TODO 이거 ts-ignore 없이도 타입 문제없이 구현할 방법 찾아야됨
     // @ts-ignore
     update(id) {
       if (id !== undefined) {
@@ -118,6 +119,7 @@
       return action;
     },
 
+    // TODO 이거 ts-ignore 없이도 타입 문제없이 구현할 방법 찾아야됨
     // @ts-ignore
     update(id) {
       if (id !== undefined) {
