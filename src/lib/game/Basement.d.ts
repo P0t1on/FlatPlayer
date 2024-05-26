@@ -42,8 +42,12 @@ export type ItemManagerType = {
     | undefined;
 
   update:
-    | ((id: string) => void)
-    | (() => { value: Writable<number> } & ItemType);
+    | ((id: string) =>
+        | ({
+            value: Writable<number>;
+          } & ItemType)
+        | undefined)
+    | (() => { [key: string]: { value: Writable<number> } & ItemType });
 
   release(id: string): void;
 
@@ -66,9 +70,11 @@ export type ActionManagerType = {
       requiredWorker?: number;
       method: (worker: number) => void;
     }
-  ): ActionType;
+  ): ActionType | undefined;
 
   release(id: string): void;
+
+  update: (id: string) => ActionType | undefined;
 
   data: { [key: string]: ActionType };
 };

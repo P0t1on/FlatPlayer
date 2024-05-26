@@ -70,12 +70,19 @@
 
       return item;
     },
+
+    // @ts-ignore
     update(id) {
       if (id !== undefined) {
-        items[id] = items[id] as { value: Writable<number> } & ItemType;
-        return;
+        const before = items[id];
+        if (before !== undefined) {
+          return (items[id] = before);
+        } else {
+          return;
+        }
       } else return (items = items);
     },
+
     release(id) {
       if (id !== 'workers') {
         delete items[id];
@@ -89,6 +96,11 @@
       id,
       { name, cooltime: { max, startCooltime }, requiredWorker, method }
     ) {
+      if (actions[id] !== undefined) {
+        console.debug(`${id}는 이미 존재하는 액션입니다.`);
+        return;
+      }
+
       const action: ActionType = {
         name: name ?? id,
         method: ({ detail }) => method(detail),
@@ -104,6 +116,18 @@
       actions[id] = action;
 
       return action;
+    },
+
+    // @ts-ignore
+    update(id) {
+      if (id !== undefined) {
+        const before = actions[id];
+        if (before !== undefined) {
+          return (actions[id] = before);
+        } else {
+          return;
+        }
+      } else return (actions = actions);
     },
 
     release(id) {
