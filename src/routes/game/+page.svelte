@@ -7,42 +7,58 @@
   import DialogManager from './dialogs/DialogManager.svelte';
   import type { DialogManagerType, LoggerType } from '$lib/game/Dialogs';
   import type { ActionManagerType, ItemManagerType } from '$lib/game/Basement';
-  import type { ActivityNames } from '$lib/game';
+  import type {
+    ActivityChangerMethodType,
+    ActivityChangerType,
+    ActivityNames,
+  } from '$lib/game';
 
   let gameName = '';
-  let component: ActivityNames,
+  let activity: ActivityNames,
     logger: LoggerType,
     dialogManager: DialogManagerType;
-  component = 'basement';
+
+  const loaders = {
+      basement: (managers: [ItemManagerType, ActionManagerType]) => {},
+      adventure: (value: number) => {},
+    },
+    activityChangerMethod: ActivityChangerMethodType = {
+      adventure: new Promise<number>((res, rej) => {}),
+      basement: new Promise<[ItemManagerType, ActionManagerType]>(
+        (res, rej) => {}
+      ),
+    },
+    activityChanger: ActivityChangerType = (name) => {
+      console.debug(`loading Activity : ${name}`);
+      activity = name;
+
+      // @ts-ignore
+      activityChangerMethod[name] = new Promise((res) => {
+        loaders[name] = res;
+      });
+
+      return activityChangerMethod[name];
+    };
 
   function onPause(e: CustomEvent<boolean>) {}
 
-  function activityChanger(comp: ActivityNames) {
-    component = comp;
-  }
-
-  // Basement variables
-  let itemManager: ItemManagerType, actionManager: ActionManagerType;
-
   onMount(() => {
-    initOrientation(
-      activityChanger,
-      itemManager,
-      actionManager,
-      dialogManager,
-      logger
-    );
+    initOrientation(activityChanger, dialogManager, logger);
   });
 </script>
 
 <svelte:head>
-  <title>{gameName} - {component}</title>
+  <title>{gameName} - {activity}</title>
 </svelte:head>
 
 <section>
-  {#if component === 'basement'}
-    <Basement bind:itemManager bind:actionManager />
-  {:else if component === 'adventure'}
+  {#if activity === 'basement'}
+    <Basement
+      on:load={({ detail }) => {
+        loaders.basement(detail);
+      }}
+    />
+  {:else if activity === 'adventure'}
     <Adventure />
   {/if}
   <Logger bind:logger />

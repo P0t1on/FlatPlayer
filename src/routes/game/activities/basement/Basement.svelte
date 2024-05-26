@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { get, writable, type Writable } from 'svelte/store';
   import ActionSlot from './ActionSlot.svelte';
   import ItemSlot from './ItemSlot.svelte';
@@ -11,7 +11,10 @@
   } from '$lib/game/Basement';
 
   const totalWorkers = writable(10),
-    availableWorker = writable(10);
+    availableWorker = writable(10),
+    dispatch = createEventDispatcher<{
+      load: [ItemManagerType, ActionManagerType];
+    }>();
 
   let items: {
     [key: string]: {
@@ -29,7 +32,7 @@
   let actions: { [key: string]: ActionType } = {};
 
   let timeUpdater: NodeJS.Timeout;
-  export const itemManager: ItemManagerType = {
+  const itemManager: ItemManagerType = {
     set(id, value, type) {
       let item = items[id];
 
@@ -81,7 +84,7 @@
     data: items,
   };
 
-  export const actionManager: ActionManagerType = {
+  const actionManager: ActionManagerType = {
     register(
       id,
       { name, cooltime: { max, startCooltime }, requiredWorker, method }
@@ -148,6 +151,8 @@
         }
       );
     });
+
+    dispatch('load', [itemManager, actionManager]);
   });
 
   onDestroy(() => {
