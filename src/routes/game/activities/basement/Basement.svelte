@@ -1,13 +1,14 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-  import { get, writable, type Writable } from 'svelte/store';
+  import { get, writable } from 'svelte/store';
   import ActionSlot from './ActionSlot.svelte';
   import ItemSlot from './ItemSlot.svelte';
   import type {
+    ActionCollectionType,
     ActionManagerType,
     ActionType,
+    ItemCollectionType,
     ItemManagerType,
-    ItemType,
   } from '$lib/game/Basement';
 
   export let paused: boolean;
@@ -18,11 +19,7 @@
       load: [ItemManagerType, ActionManagerType];
     }>();
 
-  let items: {
-    [key: string]: {
-      value: Writable<number>;
-    } & ItemType;
-  } = {
+  let items: ItemCollectionType = {
     workers: {
       name: writable('Worker'),
       description: writable('PEOPLE'),
@@ -31,7 +28,7 @@
     },
   };
 
-  let actions: { [key: string]: ActionType } = {};
+  let actions: ActionCollectionType = {};
 
   let timeUpdater: NodeJS.Timeout;
   const itemManager: ItemManagerType = {
@@ -67,20 +64,6 @@
       return item;
     },
 
-    change(id, setter) {
-      const item = items[id];
-
-      if (item) {
-        item.value.update((v) => {
-          const val = setter(v),
-            max = item.max;
-          return max !== false ? (val > get(max) ? get(max) : val) : val;
-        });
-      }
-
-      return item;
-    },
-
     update(id) {
       const before = items[id];
       return before !== undefined ? (items[id] = before) : undefined;
@@ -92,8 +75,11 @@
 
     release(id) {
       if (id !== 'workers') {
+        const result = items[id];
         delete items[id];
-      }
+
+        return result;
+      } else return;
     },
 
     getData() {
@@ -138,7 +124,9 @@
     },
 
     release(id) {
+      const result = actions[id];
       delete actions[id];
+      return result;
     },
 
     getData() {

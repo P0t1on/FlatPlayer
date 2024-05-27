@@ -4,6 +4,31 @@ export type ItemType = {
   name: Writable<string>;
   description: Writable<string>;
   max: Writable<number> | false;
+  value: Writable<number>;
+};
+
+export type ItemCollectionType = {
+  [key: string]: ItemType;
+};
+
+export type ItemManagerType = {
+  set(
+    id: string,
+    value: number,
+    type?: {
+      name?: string;
+      description?: string;
+      max?: number | false;
+    }
+  ): ItemType;
+
+  update(id: string): ItemType | undefined;
+
+  updateAll(): ItemCollectionType;
+
+  release(id: string): ItemType | undefined;
+
+  getData(): ItemCollectionType;
 };
 
 export type ActionType = {
@@ -19,40 +44,7 @@ export type ActionType = {
   };
 };
 
-export type ItemManagerType = {
-  set(
-    id: string,
-    value: number,
-    type?: {
-      name?: string;
-      description?: string;
-      max?: number | false;
-    }
-  ): {
-    value: Writable<number>;
-  } & ItemType;
-
-  change(
-    id: string,
-    setter: (prevVal: number) => number
-  ):
-    | ({
-        value: Writable<number>;
-      } & ItemType)
-    | undefined;
-
-  update(id: string): ({ value: Writable<number> } & ItemType) | undefined;
-
-  updateAll(): { [key: string]: { value: Writable<number> } & ItemType };
-
-  release(id: string): void;
-
-  getData(): {
-    [key: string]: {
-      value: Writable<number>;
-    } & ItemType;
-  };
-};
+export type ActionCollectionType = { [key: string]: ActionType };
 
 export type ActionManagerType = {
   register(
@@ -68,10 +60,11 @@ export type ActionManagerType = {
     }
   ): ActionType | undefined;
 
-  release(id: string): void;
+  release(id: string): ActionType | undefined;
 
   update(id: string): ActionType | undefined;
-  updateAll(): { [key: string]: ActionType };
 
-  getData(): { [key: string]: ActionType };
+  updateAll(): ActionCollectionType;
+
+  getData(): ActionCollectionType;
 };
