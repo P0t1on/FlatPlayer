@@ -43,6 +43,16 @@
     contextOpen = true;
   }
 
+  function onMouseDown(
+    e: MouseEvent & {
+      currentTarget: EventTarget & Window;
+    }
+  ) {
+    if (contextOpen && !temp.includes(e.target as Element)) {
+      contextOpen = false;
+    }
+  }
+
   let temp: Element[];
 
   onMount(() => {
@@ -50,13 +60,7 @@
   });
 </script>
 
-<svelte:window
-  on:mousedown={(e) => {
-    if (contextOpen && !temp.includes(e.target)) {
-      contextOpen = false;
-    }
-  }}
-/>
+<svelte:window on:mousedown={onMouseDown} />
 
 <div class:open={loggerOpen} id="logger">
   <dialog id="context" bind:this={contextDialog} open={contextOpen}>
