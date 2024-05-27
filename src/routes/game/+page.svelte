@@ -18,10 +18,10 @@
     logger: LoggerType,
     dialogManager: DialogManagerType;
 
-  const loaders = {
-      basement: (managers: [ItemManagerType, ActionManagerType]) => {},
-      adventure: (value: number) => {},
-    },
+  const loaders: {
+      basement?: (managers: [ItemManagerType, ActionManagerType]) => void;
+      adventure?: (value: number) => void;
+    } = {},
     activityChangerMethod: ActivityChangerMethodType = {
       adventure: new Promise<number>((res, rej) => {}),
       basement: new Promise<[ItemManagerType, ActionManagerType]>(
@@ -56,7 +56,7 @@
   {#if activity === 'basement'}
     <Basement
       on:load={({ detail }) => {
-        loaders.basement(detail);
+        loaders.basement?.(detail);
       }}
     />
   {:else if activity === 'adventure'}
