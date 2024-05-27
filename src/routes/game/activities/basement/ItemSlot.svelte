@@ -3,8 +3,8 @@
   import { get, type Writable } from 'svelte/store';
 
   export let value: Writable<number>,
-    name: string,
-    description: string,
+    name: Writable<string>,
+    description: Writable<string>,
     max: Writable<number> | false;
 
   let fill = '0%',
@@ -22,13 +22,13 @@
 </script>
 
 {#if max === false}
-  <li id="itemSlot" title={description}>
-    <div class="name">{name}</div>
+  <li id="itemSlot" title={$description}>
+    <div class="name">{$name}</div>
     <div class="value">{$value}</div>
   </li>
 {:else}
-  <li id="itemSlot" title={description}>
-    <div class="name">{name}</div>
+  <li id="itemSlot" title={$description}>
+    <div class="name">{$name}</div>
     <div class="value max"><span>{$value} / {m}</span></div>
   </li>
 {/if}

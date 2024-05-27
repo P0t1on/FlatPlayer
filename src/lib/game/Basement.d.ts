@@ -1,8 +1,8 @@
 import type { Writable } from 'svelte/store';
 
 export type ItemType = {
-  name: string;
-  description: string;
+  name: Writable<string>;
+  description: Writable<string>;
   max: Writable<number> | false;
 };
 
@@ -41,17 +41,13 @@ export type ItemManagerType = {
       } & ItemType)
     | undefined;
 
-  update:
-    | ((id: string) =>
-        | ({
-            value: Writable<number>;
-          } & ItemType)
-        | undefined)
-    | (() => { [key: string]: { value: Writable<number> } & ItemType });
+  update(id: string): ({ value: Writable<number> } & ItemType) | undefined;
+
+  updateAll(): { [key: string]: { value: Writable<number> } & ItemType };
 
   release(id: string): void;
 
-  data: {
+  getData(): {
     [key: string]: {
       value: Writable<number>;
     } & ItemType;
@@ -74,7 +70,8 @@ export type ActionManagerType = {
 
   release(id: string): void;
 
-  update: (id: string) => ActionType | undefined;
+  update(id: string): ActionType | undefined;
+  updateAll(): { [key: string]: ActionType };
 
-  data: { [key: string]: ActionType };
+  getData(): { [key: string]: ActionType };
 };

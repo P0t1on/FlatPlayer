@@ -41,7 +41,12 @@
       return activityChangerMethod[name];
     };
 
-  function onPause(e: CustomEvent<boolean>) {}
+  // Game Logic
+  let paused = true;
+
+  function onPause(e: CustomEvent<boolean>) {
+    paused = e.detail;
+  }
 
   onMount(() => {
     initOrientation(activityChanger, dialogManager, logger);
@@ -58,6 +63,7 @@
       on:load={({ detail }) => {
         loaders.basement?.(detail);
       }}
+      {paused}
     />
   {:else if activity === 'adventure'}
     <Adventure />

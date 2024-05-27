@@ -10,6 +10,8 @@
     ItemType,
   } from '$lib/game/Basement';
 
+  export let paused: boolean;
+
   const totalWorkers = writable(10),
     availableWorker = writable(10),
     dispatch = createEventDispatcher<{
@@ -22,8 +24,8 @@
     } & ItemType;
   } = {
     workers: {
-      name: 'Worker',
-      description: 'PEOPLE',
+      name: writable('Worker'),
+      description: writable('PEOPLE'),
       max: totalWorkers,
       value: availableWorker,
     },
@@ -36,12 +38,12 @@
     set(id, value, type) {
       let item = items[id];
 
-      if (item) {
+      if (item !== undefined) {
         item.value.set(value);
       } else {
         items[id] = item = {
-          name: id,
-          description: 'no description',
+          name: writable(id),
+          description: writable('no description'),
           max: false,
           value: writable(value),
         };
@@ -50,13 +52,21 @@
       if (type) {
         const { name, description, max } = type;
 
-        if (name !== undefined) item.name = name;
-        if (description !== undefined) item.description = description;
-        if (max !== undefined && max !== false) item.max;
+        if (name !== undefined) item.name.set(name);
+        if (description !== undefined) item.description.set(description);
+        if (max !== undefined && max !== false) {
+          const itemMax = item.max;
+          if (itemMax !== false) itemMax.set(max);
+          else {
+            item.max = writable(max);
+            itemManager.update(id);
+          }
+        }
       }
 
       return item;
     },
+
     change(id, setter) {
       const item = items[id];
 
@@ -71,17 +81,13 @@
       return item;
     },
 
-    // TODO 이거 ts-ignore 없이도 타입 문제없이 구현할 방법 찾아야됨
-    // @ts-ignore
     update(id) {
-      if (id !== undefined) {
-        const before = items[id];
-        if (before !== undefined) {
-          return (items[id] = before);
-        } else {
-          return;
-        }
-      } else return (items = items);
+      const before = items[id];
+      return before !== undefined ? (items[id] = before) : undefined;
+    },
+
+    updateAll() {
+      return (items = items);
     },
 
     release(id) {
@@ -89,7 +95,10 @@
         delete items[id];
       }
     },
-    data: items,
+
+    getData() {
+      return items;
+    },
   };
 
   const actionManager: ActionManagerType = {
@@ -119,28 +128,28 @@
       return action;
     },
 
-    // TODO 이거 ts-ignore 없이도 타입 문제없이 구현할 방법 찾아야됨
-    // @ts-ignore
     update(id) {
-      if (id !== undefined) {
-        const before = actions[id];
-        if (before !== undefined) {
-          return (actions[id] = before);
-        } else {
-          return;
-        }
-      } else return (actions = actions);
+      const before = actions[id];
+      return before !== undefined ? (actions[id] = before) : undefined;
+    },
+
+    updateAll() {
+      return (actions = actions);
     },
 
     release(id) {
       delete actions[id];
     },
 
-    data: actions,
+    getData() {
+      return actions;
+    },
   };
 
   onMount(() => {
     timeUpdater = setInterval(() => {
+      if (paused) return;
+
       for (const id in actions) {
         const {
           cooltime: { current: cCool },
