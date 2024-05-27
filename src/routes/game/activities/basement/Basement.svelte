@@ -12,8 +12,8 @@
 
   export let paused: boolean;
 
-  const totalWorkers = writable(10),
-    availableWorker = writable(10),
+  const totalWorkers = writable(1),
+    availableWorker = writable(get(totalWorkers)),
     dispatch = createEventDispatcher<{
       load: [ItemManagerType, ActionManagerType];
     }>();
