@@ -4,22 +4,25 @@
     DialogManagerType,
     DialogType,
   } from '$lib/game/Dialogs';
-  import { createEventDispatcher } from 'svelte';
+  import type { Writable } from 'svelte/store';
   import MessageDialog from './MessageDialog.svelte';
   import SelectionDialog from './SelectionDialog.svelte';
 
-  const dispatch = createEventDispatcher<{
-    pause: boolean;
-  }>();
+  export let pauseLevel: Writable<number>;
 
   let managerDiv: HTMLSpanElement,
     activeDialogs: DialogType[] = [];
 
   export const manager: DialogManagerType = {
     show(context: DialogContext) {
-      const { title, description, canIgnore } = context,
-        zIndex = activeDialogs.length + 1;
+      const { title, description, canIgnore, pauseGame } = context,
+        zIndex = activeDialogs.length + 500,
+        pause = pauseGame !== undefined ? pauseGame : false;
       let element: DialogType;
+
+      if (pause) {
+        pauseLevel.update((v) => v + 1);
+      }
 
       switch (context.type) {
         case 'message': {
@@ -80,13 +83,10 @@
           }
         });
 
+        pauseLevel.update((v) => (v > 0 ? v - 1 : v));
         element.$destroy();
         this.sort();
       });
-
-      if (!canIgnore) {
-        dispatch('pause', true);
-      }
 
       activeDialogs.push(element);
 
@@ -96,7 +96,7 @@
       for (let i = 0; i < activeDialogs.length; i++) {
         const dialog = activeDialogs[i] as DialogType;
 
-        dialog.$set({ zIndex: i });
+        dialog.$set({ zIndex: 500 + i });
       }
     },
   };

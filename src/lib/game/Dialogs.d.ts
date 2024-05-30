@@ -10,6 +10,7 @@ export type DialogContext = {
   title?: string;
   description?: string;
   canIgnore?: boolean;
+  pauseGame?: boolean;
 } & (
   | {
       type: 'message';

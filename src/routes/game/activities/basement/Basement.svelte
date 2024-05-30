@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-  import { get, writable } from 'svelte/store';
+  import { get, writable, type Writable } from 'svelte/store';
   import ActionSlot from './ActionSlot.svelte';
   import ItemSlot from './ItemSlot.svelte';
   import type {
@@ -11,13 +11,15 @@
     ItemManagerType,
   } from '$lib/game/Basement';
 
-  export let paused: boolean;
+  export let pauseLevel: Writable<number>;
 
   const totalWorkers = writable(1),
     availableWorker = writable(get(totalWorkers)),
     dispatch = createEventDispatcher<{
       load: [ItemManagerType, ActionManagerType];
     }>();
+
+  let cover: HTMLDivElement;
 
   let items: ItemCollectionType = {
     workers: {
@@ -135,8 +137,17 @@
   };
 
   onMount(() => {
+    if (cover) {
+      cover.style.display = get(pauseLevel) > 0 ? 'block' : 'none';
+    }
+    pauseLevel.subscribe(
+      (v) => (cover.style.display = v > 0 ? 'block' : 'none')
+    );
+
     timeUpdater = setInterval(() => {
-      if (paused) return;
+      if (get(pauseLevel) > 0) {
+        return;
+      }
 
       for (const id in actions) {
         const {
@@ -184,6 +195,7 @@
 </script>
 
 <article id="basement">
+  <div id="cover" bind:this={cover} />
   <ul id="actionList">
     {#each Object.entries(actions) as [_, { method, worker, ...args }]}
       <ActionSlot
@@ -208,6 +220,19 @@
     padding: 8px;
     height: 100%;
     display: flex;
+
+    div#cover {
+      position: absolute;
+      z-index: 500;
+      left: 0;
+      top: 0;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: gray;
+      opacity: 50%;
+    }
 
     ul#actionList {
       list-style: none;

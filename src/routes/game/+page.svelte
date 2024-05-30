@@ -12,6 +12,7 @@
     ActivityChangerType,
     ActivityNames,
   } from '$lib/game';
+  import { writable } from 'svelte/store';
 
   let gameName = '';
   let activity: ActivityNames,
@@ -42,11 +43,7 @@
     };
 
   // Game Logic
-  let paused = true;
-
-  function onPause(e: CustomEvent<boolean>) {
-    paused = e.detail;
-  }
+  let pauseLevel = writable(0);
 
   onMount(() => {
     initOrientation(activityChanger, dialogManager, logger);
@@ -63,13 +60,13 @@
       on:load={({ detail }) => {
         loaders.basement?.(detail);
       }}
-      {paused}
+      {pauseLevel}
     />
   {:else if activity === 'adventure'}
     <Adventure />
   {/if}
   <Logger bind:logger />
-  <DialogManager bind:manager={dialogManager} on:pause={onPause} />
+  <DialogManager bind:manager={dialogManager} {pauseLevel} />
 </section>
 
 <style lang="scss">

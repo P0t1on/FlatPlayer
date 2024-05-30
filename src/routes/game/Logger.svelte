@@ -106,6 +106,7 @@
     transition: all ease 0.5s;
 
     position: absolute;
+    z-index: 501;
     bottom: 0;
     width: 100%;
 
@@ -168,6 +169,7 @@
       margin: 0;
       height: 0;
       width: 90%;
+      background-color: black;
       color: white;
       border: 0px solid white;
       opacity: 0;
