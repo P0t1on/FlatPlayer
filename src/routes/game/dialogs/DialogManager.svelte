@@ -7,6 +7,7 @@
   import type { Writable } from 'svelte/store';
   import MessageDialog from './MessageDialog.svelte';
   import SelectionDialog from './SelectionDialog.svelte';
+  import MessagePageDialog from './MessagePageDialog.svelte';
 
   export let pauseLevel: Writable<number>;
 
@@ -15,7 +16,7 @@
 
   export const manager: DialogManagerType = {
     show(context: DialogContext) {
-      const { title, description, canIgnore, pauseGame } = context,
+      const { title, canIgnore, pauseGame } = context,
         zIndex = activeDialogs.length + 500,
         pause = pauseGame !== undefined ? pauseGame : false;
       let element: DialogType;
@@ -26,18 +27,18 @@
 
       switch (context.type) {
         case 'message': {
-          const { onSubmit } = context;
+          const { onSubmit, description } = context;
           let e = new MessageDialog({
             target: managerDiv,
             props: {
               zIndex,
-              title: title ?? false,
+              title: title ?? '',
               description: description ?? '',
               canIgnore: canIgnore ?? true,
             },
           });
 
-          e.$on('submit', (e) => onSubmit?.(...e.detail));
+          e.$on('submit', ({ detail }) => onSubmit?.(...detail));
 
           element = e;
 
@@ -45,7 +46,7 @@
         }
 
         case 'selection': {
-          const { onSubmit, menu } = context;
+          const { onSubmit, description, menu } = context;
           const e = new SelectionDialog({
             target: managerDiv,
             props: {
@@ -57,11 +58,29 @@
             },
           });
 
-          e.$on('submit', (e) => onSubmit?.(...e.detail));
+          e.$on('submit', ({ detail }) => onSubmit?.(...detail));
 
           element = e;
 
           break;
+        }
+
+        case 'messagePage': {
+          const { onSubmit, onPageChange, description } = context;
+
+          const e = new MessagePageDialog({
+            target: managerDiv,
+            props: {
+              zIndex,
+              title: title ?? '',
+              description,
+              canIgnore: canIgnore ?? true,
+            },
+          });
+
+          e.$on('submit', ({ detail }) => onSubmit?.(...detail));
+          e.$on('pageChange', ({ detail }) => onPageChange?.(detail));
+          element = e;
         }
       }
 

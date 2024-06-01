@@ -8,7 +8,7 @@
     submit: [() => void];
   }>();
 
-  export let title: string | false = '',
+  export let title: string = '',
     description = '',
     zIndex: number,
     canIgnore = true;
@@ -60,7 +60,7 @@
     isDrag = false;
   }
 
-  onMount(async () => {
+  onMount(() => {
     {
       desc.innerText = description;
       desc.style.width = desc.offsetWidth + 'px';
@@ -96,21 +96,19 @@
   role="presentation"
 >
   <slot name="tab">
-    {#if !canIgnore && title !== false}
-      <div class="tab" on:mousedown={tabMouseDown} role="presentation">
-        <span>{title}</span>
-        {#if canIgnore}
-          <span
-            class="nodrag button"
-            bind:this={closer}
-            on:click={() => dispatch('destroy')}
-            role="presentation"
-          >
-            <SvgIcon type="close" color="white" />
-          </span>
-        {/if}
-      </div>
-    {/if}
+    <div class="tab" on:mousedown={tabMouseDown} role="presentation">
+      <span>{title}&nbsp;</span>
+      {#if canIgnore}
+        <span
+          class="nodrag button"
+          bind:this={closer}
+          on:click={() => dispatch('destroy')}
+          role="presentation"
+        >
+          <SvgIcon type="close" color="white" />
+        </span>
+      {/if}
+    </div>
   </slot>
   <slot name="content">
     <div
@@ -119,7 +117,6 @@
       on:click={skipDescAnim}
       role="presentation"
     />
-
     <div
       class="submit"
       style={isDescAnimPlaying ? 'cursor: pointer;' : 'cursor: auto;'}

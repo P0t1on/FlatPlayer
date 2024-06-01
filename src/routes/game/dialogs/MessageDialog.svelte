@@ -8,7 +8,7 @@
     submit: [() => void];
   }>();
 
-  export let title: string | false,
+  export let title: string,
     description: string,
     zIndex: number,
     canIgnore: boolean;

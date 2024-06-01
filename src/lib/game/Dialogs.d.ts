@@ -8,16 +8,23 @@ export type LoggerType = {
 
 export type DialogContext = {
   title?: string;
-  description?: string;
   canIgnore?: boolean;
   pauseGame?: boolean;
 } & (
   | {
       type: 'message';
+      description?: string;
+      onSubmit?(preventDefault: () => void): void;
+    }
+  | {
+      type: 'messagePage';
+      description: string[];
+      onPageChange?(index: number): void;
       onSubmit?(preventDefault: () => void): void;
     }
   | {
       type: 'selection';
+      description?: string;
       menu: string[];
       onSubmit?(preventDefault: () => void, selected: number): void;
     }

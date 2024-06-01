@@ -3,7 +3,7 @@
 
   import DialogBase from './DialogBase.svelte';
 
-  export let title: string,
+  export let title: string | false,
     description: string,
     zIndex: number,
     menu: string[],
