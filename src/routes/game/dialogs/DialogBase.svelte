@@ -8,7 +8,7 @@
     submit: [() => void];
   }>();
 
-  export let title = '',
+  export let title: string | false = '',
     description = '',
     zIndex: number,
     canIgnore = true;
@@ -96,19 +96,21 @@
   role="presentation"
 >
   <slot name="tab">
-    <div class="tab" on:mousedown={tabMouseDown} role="presentation">
-      <span>{title}</span>
-      {#if canIgnore}
-        <span
-          class="nodrag button"
-          bind:this={closer}
-          on:click={() => dispatch('destroy')}
-          role="presentation"
-        >
-          <SvgIcon type="close" color="white" />
-        </span>
-      {/if}
-    </div>
+    {#if !canIgnore && title !== false}
+      <div class="tab" on:mousedown={tabMouseDown} role="presentation">
+        <span>{title}</span>
+        {#if canIgnore}
+          <span
+            class="nodrag button"
+            bind:this={closer}
+            on:click={() => dispatch('destroy')}
+            role="presentation"
+          >
+            <SvgIcon type="close" color="white" />
+          </span>
+        {/if}
+      </div>
+    {/if}
   </slot>
   <slot name="content">
     <div

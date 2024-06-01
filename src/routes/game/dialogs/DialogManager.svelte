@@ -31,7 +31,7 @@
             target: managerDiv,
             props: {
               zIndex,
-              title: title ?? '',
+              title: title ?? false,
               description: description ?? '',
               canIgnore: canIgnore ?? true,
             },
