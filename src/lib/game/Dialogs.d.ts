@@ -18,7 +18,7 @@ export type DialogContext = {
     }
   | {
       type: 'messagePage';
-      description: string[];
+      descriptions: string[];
       onPageChange?(index: number): void;
       onSubmit?(preventDefault: () => void): void;
     }

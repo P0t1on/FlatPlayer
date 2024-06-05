@@ -19,6 +19,8 @@
     logger: LoggerType,
     dialogManager: DialogManagerType;
 
+  let root: HTMLElement;
+
   const loaders: {
       basement?: (managers: [ItemManagerType, ActionManagerType]) => void;
       adventure?: (value: number) => void;
@@ -54,7 +56,7 @@
   <title>{gameName} - {activity}</title>
 </svelte:head>
 
-<section>
+<section bind:this={root}>
   {#if activity === 'basement'}
     <Basement
       on:load={({ detail }) => {
@@ -66,12 +68,20 @@
     <Adventure />
   {/if}
   <Logger bind:logger />
-  <DialogManager bind:manager={dialogManager} {pauseLevel} />
+  <DialogManager managerDiv={root} bind:manager={dialogManager} {pauseLevel} />
 </section>
 
 <style lang="scss">
   :global(body) {
     overflow-x: hidden;
     overflow-y: hidden;
+  }
+
+  section {
+    display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
   }
 </style>

@@ -25,7 +25,22 @@ export async function initOrientation(
   });
 
   dialogManager.show({
-    type: 'message',
+    type: 'messagePage',
+    descriptions: [
+      '애니메이션을 제어하는 방법을 알아야 합니다애니메이션을 제어하는 방법을 알아야 합니다애니메이션을 제어하는 방법을 알아야 합니다애니메이션을 제어하는 방법을 알아야 합니다',
+      'test',
+      'test123',
+    ],
     pauseGame: true,
+    canIgnore: false,
+  });
+
+  dialogManager.show({
+    type: 'selection',
+    menu: ['test', '123'],
+    onSubmit: (preventDefault, selected) => {
+      preventDefault();
+      console.log(selected);
+    },
   });
 }

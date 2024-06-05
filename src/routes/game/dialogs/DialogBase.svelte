@@ -11,9 +11,10 @@
   export let title: string = '',
     description = '',
     zIndex: number,
-    canIgnore = true;
+    canIgnore = true,
+    overrideContent = false;
 
-  let main: HTMLElement,
+  let main: HTMLDialogElement,
     closer: HTMLSpanElement,
     desc: HTMLDivElement,
     isDescAnimPlaying = true,
@@ -23,6 +24,7 @@
     y = 0;
 
   function skipDescAnim() {
+    if (overrideContent) return;
     isDescAnimPlaying = false;
     if (descAnim) clearInterval(descAnim);
     desc.innerText = description;
@@ -60,24 +62,32 @@
     isDrag = false;
   }
 
-  onMount(() => {
-    {
-      desc.innerText = description;
-      desc.style.width = desc.offsetWidth + 'px';
-      desc.style.height = desc.offsetHeight + 'px';
-      desc.innerText = '';
-    }
+  export function submit() {
+    let submitDelete = true;
+    dispatch('submit', [() => (submitDelete = false)]);
+    if (submitDelete) dispatch('destroy');
+  }
 
-    let i = 0,
-      m = description.length;
-    descAnim = setInterval(() => {
-      desc.innerText += description[i];
-      i++;
-      if (i >= m) {
-        isDescAnimPlaying = false;
-        clearInterval(descAnim);
+  onMount(() => {
+    if (!overrideContent) {
+      {
+        desc.innerText = description;
+        desc.style.width = desc.offsetWidth + 'px';
+        desc.style.height = desc.offsetHeight + 'px';
+        desc.innerText = '';
       }
-    }, 50);
+
+      let i = 0,
+        m = description.length;
+      descAnim = setInterval(() => {
+        desc.innerText += description[i];
+        i++;
+        if (i >= m) {
+          isDescAnimPlaying = false;
+          clearInterval(descAnim);
+        }
+      }, 50);
+    }
   });
 </script>
 
@@ -89,11 +99,11 @@
   }}
 />
 
-<article
-  id="dialog"
+<dialog
   bind:this={main}
   on:mousedown={() => dispatch('focus')}
   role="presentation"
+  open
 >
   <slot name="tab">
     <div class="tab" on:mousedown={tabMouseDown} role="presentation">
@@ -118,27 +128,20 @@
       role="presentation"
     />
     <div
-      class="submit"
+      class="interactions"
       style={isDescAnimPlaying ? 'cursor: pointer;' : 'cursor: auto;'}
       on:click={skipDescAnim}
       role="presentation"
     >
-      <button
-        class="nodrag"
-        on:click={() => {
-          let submitDelete = true;
-          dispatch('submit', [() => (submitDelete = false)]);
-          if (submitDelete) dispatch('destroy');
-        }}
-      >
+      <button class="nodrag" on:click={submit}>
         <SvgIcon type="done" color="white" />
       </button>
     </div>
   </slot>
-</article>
+</dialog>
 
 <style lang="scss" module>
-  article#dialog {
+  dialog {
     position: absolute;
     background-color: black;
     color: white;
@@ -148,8 +151,11 @@
     min-width: 100px;
     z-index: bind(zIndex);
 
+    padding: 0;
+    margin: 0;
     border-radius: 8px;
     outline: 4px double white;
+    border: none;
 
     user-select: none;
 
@@ -190,7 +196,7 @@
       overflow-y: auto;
     }
 
-    div.submit {
+    div.interactions {
       display: flex;
       justify-content: flex-end;
       padding: 6px;
@@ -200,10 +206,11 @@
         width: 32px;
         border-radius: 4px;
         cursor: pointer;
-        transition: all ease 0.5s;
         background-color: transparent;
         border: none;
         padding: 4px;
+
+        transition: all ease 0.5s;
 
         &:hover {
           box-shadow: 0 0 3px 3px gray;

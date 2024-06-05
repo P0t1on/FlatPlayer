@@ -1,23 +1,15 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
 
   import DialogBase from './DialogBase.svelte';
 
-  export let title: string | false,
+  export let title: string,
     description: string,
     zIndex: number,
     menu: string[],
     canIgnore: boolean;
 
   let renderMenus: [string, string | undefined][];
-  $: {
-    const even = menu.length % 2 === 0,
-      length = Math.ceil(menu.length / 2);
-    renderMenus = Array.from({ length }, (_, i) => [
-      menu[i * 2],
-      i !== length - 1 && !even ? menu[i * 2 + 1] : undefined,
-    ]) as [string, string | undefined][];
-  }
 
   const dispatch = createEventDispatcher<{
     focus: void;
@@ -25,37 +17,52 @@
     submit: [() => void, number];
   }>();
 
-  const submit = (index: number) =>
-    function () {
+  function submit(index: number) {
+    return function () {
       let preventDefault = false;
       dispatch('submit', [() => (preventDefault = true), index]);
 
       if (!preventDefault) dispatch('destroy');
     };
+  }
+
+  onMount(() => {
+    const even = menu.length % 2 === 0,
+      length = Math.ceil(menu.length / 2);
+    renderMenus = Array.from({ length }, (_, i) => {
+      console.log(i);
+      return [
+        menu[i * 2],
+        i !== length - 1 || even ? menu[i * 2 + 1] : undefined,
+      ];
+    }) as [string, string | undefined][];
+  });
 </script>
 
 <DialogBase
-  {...{ title, zIndex, canIgnore }}
+  {...{ title, zIndex, canIgnore, overrideContent: true }}
   on:focus={() => dispatch('focus')}
   on:destroy={() => dispatch('destroy')}
 >
-  <svelte:fragment slot="content">
+  <div slot="content">
     <div class="desc">{description}</div>
-    <div class="selection">
-      <div>
-        {#each renderMenus as [a], i}
-          <button on:click={submit(i * 2)}>{a}</button>
-        {/each}
+    {#if renderMenus !== undefined}
+      <div class="selection">
+        <div>
+          {#each renderMenus as [a], i}
+            <button on:click={submit(i * 2)}>{a}</button>
+          {/each}
+        </div>
+        <div>
+          {#each renderMenus as [_, b], i}
+            {#if b !== undefined}
+              <button on:click={submit(i * 2 + 1)}>{b}</button>
+            {/if}
+          {/each}
+        </div>
       </div>
-      <div>
-        {#each renderMenus as [_, b], i}
-          {#if b !== undefined}
-            <button on:click={submit(i * 2 + 1)}>{b}</button>
-          {/if}
-        {/each}
-      </div>
-    </div>
-  </svelte:fragment>
+    {/if}
+  </div>
 </DialogBase>
 
 <style lang="scss" module>

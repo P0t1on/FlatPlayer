@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
   import DialogBase from './DialogBase.svelte';
+  import SvgIcon from '$lib/SVGIcon.svelte';
 
   const dispatch = createEventDispatcher<{
     focus: void;
@@ -10,72 +11,163 @@
   }>();
 
   export let title: string,
-    description: string[],
+    descriptions: string[],
     zIndex: number,
     canIgnore: boolean;
 
-  let pageIndex = 0,
-    descAnim: NodeJS.Timeout,
-    isDescAnimPlaying = true;
+  let description = '',
+    pageIndex = 0,
+    isDescAnimPlaying = true,
+    canPrev = false,
+    canNext = false,
+    readyDone = false;
+  let anim_i = 0,
+    anim_m = 0;
+
   // bindings
-  let desc: HTMLDivElement;
+  let descDiv: HTMLDivElement, interactionsDiv: HTMLDivElement;
+  let submit: () => void;
 
   function skipDescAnim() {
     isDescAnimPlaying = false;
-    if (descAnim) clearInterval(descAnim);
-    desc.innerText = description[pageIndex] as string;
+    descDiv.innerText = descriptions[pageIndex] as string;
+    readyDone = pageIndex === descriptions.length - 1;
+    canPrev = pageIndex > 0;
+    canNext = pageIndex < descriptions.length - 1;
+
+    anim_i = 0;
   }
 
   function changePage(index: number) {
-    pageIndex = index;
+    if (
+      descDiv !== undefined &&
+      pageIndex !== index &&
+      index > -1 &&
+      index < descriptions.length
+    ) {
+      pageIndex = index;
+      description = descriptions[index] as string;
+      anim_m = description.length;
+      descDiv.innerHTML = '';
+      isDescAnimPlaying = true;
+
+      canPrev = canNext = readyDone = false;
+    }
+  }
+
+  function onKeyDown(
+    e: KeyboardEvent & {
+      currentTarget: EventTarget & Document;
+    }
+  ) {
+    if (e.keyCode === 32) {
+      if (isDescAnimPlaying) skipDescAnim();
+      else changePage(pageIndex + 1);
+    }
+  }
+
+  $: {
+    if (descDiv !== undefined)
+      descDiv.style.cursor = isDescAnimPlaying ? 'pointer' : 'auto';
   }
 
   onMount(() => {
+    description = descriptions[pageIndex] as string;
+
     {
       let w = 0,
         h = 0;
-      for (const text of description) {
-        desc.innerText = text;
-        w = Math.max(w, desc.offsetWidth);
-        h = Math.max(h, desc.offsetHeight);
+      for (const text of descriptions) {
+        descDiv.innerText = text;
+        w = Math.max(w, descDiv.offsetWidth);
+        h = Math.max(h, descDiv.offsetHeight);
       }
 
-      desc.style.width = w + 'px';
-      desc.style.height = h + 'px';
-      desc.innerText = '';
+      descDiv.style.width = w + 'px';
+      descDiv.style.height = h + 'px';
+      descDiv.innerText = '';
     }
 
-    let i = 0,
-      m = description.length;
-    descAnim = setInterval(() => {
-      desc.innerText += description[i];
-      i++;
-      if (i >= m) {
-        isDescAnimPlaying = false;
-        clearInterval(descAnim);
+    anim_i = 0;
+    anim_m = description.length;
+    setInterval(() => {
+      if (!isDescAnimPlaying) return;
+      descDiv.innerText += description[anim_i];
+      anim_i++;
+      if (anim_i >= anim_m) {
+        anim_i = 0;
+        skipDescAnim();
       }
     }, 50);
   });
 </script>
 
-<svelte:document
-  on:keydown={(e) => {
-    if (e.keyCode === 32) skipDescAnim();
-  }}
-/>
+<svelte:document on:keydown={onKeyDown} />
 
 <DialogBase
-  {...{ title, zIndex, canIgnore }}
+  {...{ title, zIndex, canIgnore, overrideContent: true }}
+  bind:submit
   on:destroy={() => dispatch('destroy')}
   on:focus={() => dispatch('focus')}
+  on:submit={({ detail }) => dispatch('submit', detail)}
 >
   <div slot="content">
     <div
       class="desc"
-      bind:this={desc}
+      bind:this={descDiv}
       on:click={skipDescAnim}
       role="presentation"
     />
+
+    <div
+      class="interactions"
+      style={isDescAnimPlaying ? 'cursor: pointer;' : 'cursor: auto;'}
+      on:click={(e) => {
+        if (e.target === interactionsDiv) skipDescAnim();
+      }}
+      bind:this={interactionsDiv}
+      role="presentation"
+    >
+      <button
+        class:ready={canPrev}
+        style={isDescAnimPlaying || canPrev
+          ? 'cursor: pointer;'
+          : 'cursor: auto;'}
+        tabindex="-1"
+        on:click={() => {
+          if (canPrev) changePage(pageIndex - 1);
+          else skipDescAnim();
+        }}
+        on:keydown={(e) => e.preventDefault()}
+      >
+        <SvgIcon type="keyboard_arrow_left" />
+      </button>
+      <button
+        class:ready={canNext}
+        style={isDescAnimPlaying || canNext
+          ? 'cursor: pointer;'
+          : 'cursor: auto;'}
+        tabindex="-1"
+        on:click={() => {
+          if (canNext) changePage(pageIndex + 1);
+          else skipDescAnim();
+        }}
+        on:keydown={(e) => e.preventDefault()}
+      >
+        <SvgIcon type="keyboard_arrow_right" />
+      </button>
+      <button
+        class:ready={readyDone}
+        style={isDescAnimPlaying || readyDone
+          ? 'cursor: pointer;'
+          : 'cursor: auto;'}
+        tabindex="-1"
+        on:keydown={(e) => e.preventDefault()}
+        on:click={submit}
+      >
+        <SvgIcon type="done" />
+      </button>
+    </div>
   </div>
 </DialogBase>
 
@@ -87,5 +179,43 @@
     max-width: 50vw;
     max-height: 40vw;
     overflow-y: auto;
+  }
+
+  div.interactions {
+    display: flex;
+    justify-content: flex-end;
+
+    padding: 0 4px 4px 0;
+
+    button {
+      transition: all ease 0.5s;
+
+      opacity: 30%;
+      background-color: transparent;
+
+      margin: 4px;
+      padding: 4px;
+      width: 32px;
+      height: 32px;
+      border: none;
+
+      &:focus-visible {
+        outline: none;
+      }
+
+      &.ready {
+        opacity: 100%;
+
+        &:hover {
+          box-shadow: 0 0 3px 3px gray;
+
+          &:active {
+            filter: invert(100%);
+            box-shadow: none;
+            background-color: gray;
+          }
+        }
+      }
+    }
   }
 </style>

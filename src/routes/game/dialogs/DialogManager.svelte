@@ -9,10 +9,9 @@
   import SelectionDialog from './SelectionDialog.svelte';
   import MessagePageDialog from './MessagePageDialog.svelte';
 
-  export let pauseLevel: Writable<number>;
+  export let pauseLevel: Writable<number>, managerDiv: HTMLElement;
 
-  let managerDiv: HTMLSpanElement,
-    activeDialogs: DialogType[] = [];
+  let activeDialogs: DialogType[] = [];
 
   export const manager: DialogManagerType = {
     show(context: DialogContext) {
@@ -66,14 +65,14 @@
         }
 
         case 'messagePage': {
-          const { onSubmit, onPageChange, description } = context;
+          const { onSubmit, onPageChange, descriptions } = context;
 
           const e = new MessagePageDialog({
             target: managerDiv,
             props: {
               zIndex,
               title: title ?? '',
-              description,
+              descriptions,
               canIgnore: canIgnore ?? true,
             },
           });
@@ -102,7 +101,7 @@
           }
         });
 
-        pauseLevel.update((v) => (v > 0 ? v - 1 : v));
+        if (pause) pauseLevel.update((v) => (v > 0 ? v - 1 : v));
         element.$destroy();
         this.sort();
       });
@@ -121,7 +120,7 @@
   };
 </script>
 
-<span id="dialogManager" bind:this={managerDiv}></span>
+<slot id="dialogManager"></slot>
 
 <style lang="scss" module>
 </style>
