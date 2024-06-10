@@ -12,7 +12,8 @@
     description = '',
     zIndex: number,
     canIgnore = true,
-    overrideContent = false;
+    overrideContent = false,
+    textSpeed = 25;
 
   let main: HTMLDialogElement,
     closer: HTMLSpanElement,
@@ -86,7 +87,7 @@
           isDescAnimPlaying = false;
           clearInterval(descAnim);
         }
-      }, 50);
+      }, textSpeed);
     }
   });
 </script>

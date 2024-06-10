@@ -13,7 +13,8 @@
   export let title: string,
     descriptions: string[],
     zIndex: number,
-    canIgnore: boolean;
+    canIgnore: boolean,
+    textSpeed = 25;
 
   let description = '',
     pageIndex = 0,
@@ -98,7 +99,7 @@
         anim_i = 0;
         skipDescAnim();
       }
-    }, 50);
+    }, textSpeed);
   });
 </script>
 
