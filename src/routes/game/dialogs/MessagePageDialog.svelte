@@ -10,8 +10,7 @@
     submit: [() => void];
   }>();
 
-  export let title: string,
-    descriptions: string[],
+  export let messageList: [string, string][],
     zIndex: number,
     canIgnore: boolean,
     textSpeed = 25;
@@ -31,10 +30,10 @@
 
   function skipDescAnim() {
     isDescAnimPlaying = false;
-    descDiv.innerText = descriptions[pageIndex] as string;
-    readyDone = pageIndex === descriptions.length - 1;
+    descDiv.innerText = (messageList[pageIndex] as [string, string])[1];
+    readyDone = pageIndex === messageList.length - 1;
     canPrev = pageIndex > 0;
-    canNext = pageIndex < descriptions.length - 1;
+    canNext = pageIndex < messageList.length - 1;
 
     anim_i = 0;
   }
@@ -44,10 +43,10 @@
       descDiv !== undefined &&
       pageIndex !== index &&
       index > -1 &&
-      index < descriptions.length
+      index < messageList.length
     ) {
       pageIndex = index;
-      description = descriptions[index] as string;
+      description = (messageList[index] as [string, string])[1];
       anim_m = description.length;
       descDiv.innerHTML = '';
       isDescAnimPlaying = true;
@@ -73,12 +72,12 @@
   }
 
   onMount(() => {
-    description = descriptions[pageIndex] as string;
+    description = (messageList[pageIndex] as [string, string])[1];
 
     {
       let w = 0,
         h = 0;
-      for (const text of descriptions) {
+      for (const [_, text] of messageList) {
         descDiv.innerText = text;
         w = Math.max(w, descDiv.offsetWidth);
         h = Math.max(h, descDiv.offsetHeight);
@@ -106,7 +105,8 @@
 <svelte:document on:keydown={onKeyDown} />
 
 <DialogBase
-  {...{ title, zIndex, canIgnore, overrideContent: true }}
+  {...{ zIndex, canIgnore, overrideContent: true }}
+  title={messageList[pageIndex]?.[0] ?? ''}
   bind:submit
   on:destroy={() => dispatch('destroy')}
   on:focus={() => dispatch('focus')}

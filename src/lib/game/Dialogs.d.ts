@@ -7,23 +7,24 @@ export type LoggerType = {
 };
 
 export type DialogContext = {
-  title?: string;
   canIgnore?: boolean;
   pauseGame?: boolean;
 } & (
   | {
       type: 'message';
+      title?: string;
       description?: string;
       onSubmit?(preventDefault: () => void): void;
     }
   | {
       type: 'messagePage';
-      descriptions: string[];
+      messageList: [string, string][];
       onPageChange?(index: number): void;
       onSubmit?(preventDefault: () => void): void;
     }
   | {
       type: 'selection';
+      title?: string;
       description?: string;
       menu: string[];
       onSubmit?(preventDefault: () => void, selected: number): void;
@@ -40,6 +41,6 @@ export type DialogType = SvelteComponent<
 >;
 
 export type DialogManagerType = {
-  show(context: DialogContext): DialogType;
+  show(context: DialogContext): DialogType & Promise<[() => void, ...any[]]>;
   sort(): void;
 };

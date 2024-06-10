@@ -15,7 +15,7 @@
 
   export const manager: DialogManagerType = {
     show(context: DialogContext) {
-      const { title, canIgnore, pauseGame } = context,
+      const { canIgnore, pauseGame } = context,
         zIndex = activeDialogs.length + 500,
         pause = pauseGame !== undefined ? pauseGame : false;
       let element: DialogType;
@@ -26,7 +26,7 @@
 
       switch (context.type) {
         case 'message': {
-          const { onSubmit, description } = context;
+          const { title, onSubmit, description } = context;
           let e = new MessageDialog({
             target: managerDiv,
             props: {
@@ -45,7 +45,7 @@
         }
 
         case 'selection': {
-          const { onSubmit, description, menu } = context;
+          const { title, onSubmit, description, menu } = context;
           const e = new SelectionDialog({
             target: managerDiv,
             props: {
@@ -65,14 +65,13 @@
         }
 
         case 'messagePage': {
-          const { onSubmit, onPageChange, descriptions } = context;
+          const { onSubmit, onPageChange, messageList } = context;
 
           const e = new MessagePageDialog({
             target: managerDiv,
             props: {
               zIndex,
-              title: title ?? '',
-              descriptions,
+              messageList,
               canIgnore: canIgnore ?? true,
             },
           });
@@ -106,9 +105,18 @@
         this.sort();
       });
 
+      let resolver: (args: [() => void, ...any[]]) => void;
+
+      element.$on('submit', ({ detail }) => {
+        resolver?.(detail);
+      });
+
       activeDialogs.push(element);
 
-      return element;
+      return Object.assign(
+        new Promise<[() => void, ...any[]]>((res) => (resolver = res)),
+        element
+      );
     },
     sort() {
       for (let i = 0; i < activeDialogs.length; i++) {
