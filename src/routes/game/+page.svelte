@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { initOrientation } from './data/Orientation';
+  import { initOrientation } from './data/IrradiatedMutant/index';
   import Adventure from './activities/adventure/Adventure.svelte';
   import Basement from './activities/basement/Basement.svelte';
   import Logger from './Logger.svelte';
@@ -14,7 +14,7 @@
   } from '$lib/game';
   import { writable } from 'svelte/store';
 
-  let gameName = '';
+  let gameName = writable('Preparing...');
   let activity: ActivityNames,
     logger: LoggerType,
     dialogManager: DialogManagerType;
@@ -48,12 +48,12 @@
   let pauseLevel = writable(0);
 
   onMount(() => {
-    initOrientation(activityChanger, dialogManager, logger);
+    initOrientation(activityChanger, dialogManager, logger, gameName);
   });
 </script>
 
 <svelte:head>
-  <title>{gameName} - {activity}</title>
+  <title>Flat Player [{$gameName}]</title>
 </svelte:head>
 
 <section bind:this={root}>
