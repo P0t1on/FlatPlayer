@@ -1,6 +1,7 @@
 <script lang="ts">
+  import { read } from '$app/server';
   import SvgIcon from '$lib/SVGIcon.svelte';
-  import { createEventDispatcher, onMount, tick } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
 
   const dispatch = createEventDispatcher<{
     focus: void;
@@ -22,10 +23,12 @@
     isDrag = false,
     descAnim: NodeJS.Timeout,
     x = 0,
-    y = 0;
+    y = 0,
+    readySubmit = false;
 
   function skipDescAnim() {
     if (overrideContent) return;
+    readySubmit = true;
     isDescAnimPlaying = false;
     if (descAnim) clearInterval(descAnim);
     desc.innerText = description;
@@ -63,10 +66,22 @@
     isDrag = false;
   }
 
+  function onKeyDown(
+    e: KeyboardEvent & {
+      currentTarget: EventTarget & Document;
+    }
+  ) {
+    if (e.keyCode === 32) skipDescAnim();
+  }
+
   export function submit() {
-    let submitDelete = true;
-    dispatch('submit', [() => (submitDelete = false)]);
-    if (submitDelete) dispatch('destroy');
+    if (isDescAnimPlaying) {
+      skipDescAnim();
+    } else {
+      let close = true;
+      dispatch('submit', [() => (close = false)]);
+      if (close) dispatch('destroy');
+    }
   }
 
   onMount(() => {
@@ -83,22 +98,13 @@
       descAnim = setInterval(() => {
         desc.innerText += description[i];
         i++;
-        if (i >= m) {
-          isDescAnimPlaying = false;
-          clearInterval(descAnim);
-        }
+        if (i >= m) skipDescAnim();
       }, textSpeed);
     }
   });
 </script>
 
-<svelte:document
-  on:mousemove={move}
-  on:mouseup={up}
-  on:keydown={(e) => {
-    if (e.keyCode === 32) skipDescAnim();
-  }}
-/>
+<svelte:document on:mousemove={move} on:mouseup={up} on:keydown={onKeyDown} />
 
 <dialog
   bind:this={main}
@@ -110,14 +116,13 @@
     <div class="tab" on:mousedown={tabMouseDown} role="presentation">
       <span>{title}&nbsp;</span>
       {#if canIgnore}
-        <span
-          class="nodrag button"
+        <button
+          class="nodrag"
           bind:this={closer}
           on:click={() => dispatch('destroy')}
-          role="presentation"
         >
           <SvgIcon type="close" color="white" />
-        </span>
+        </button>
       {/if}
     </div>
   </slot>
@@ -130,11 +135,11 @@
     />
     <div
       class="interactions"
-      style={isDescAnimPlaying ? 'cursor: pointer;' : 'cursor: auto;'}
       on:click={skipDescAnim}
+      style={isDescAnimPlaying ? 'cursor: pointer;' : 'cursor: auto;'}
       role="presentation"
     >
-      <button class="nodrag" on:click={submit}>
+      <button class:ready={readySubmit} class="nodrag" on:click={submit}>
         <SvgIcon type="done" color="white" />
       </button>
     </div>
@@ -169,11 +174,16 @@
       justify-content: space-between;
       outline: 4px double white;
 
-      span.button {
+      button {
+        padding: 0;
         height: 24px;
+        width: 24px;
         cursor: pointer;
         transition: all ease 0.5s;
+
+        border: none;
         border-radius: 4px;
+        background-color: transparent;
 
         &:hover {
           box-shadow: 0 0 1px 1px gray;
@@ -203,6 +213,7 @@
       padding: 6px;
 
       button {
+        transition: all ease 0.5s;
         height: 32px;
         width: 32px;
         border-radius: 4px;
@@ -210,18 +221,20 @@
         background-color: transparent;
         border: none;
         padding: 4px;
+        opacity: 30%;
 
-        transition: all ease 0.5s;
+        &.ready {
+          opacity: 100%;
+          &:hover {
+            box-shadow: 0 0 3px 3px gray;
+            color: white;
+          }
 
-        &:hover {
-          box-shadow: 0 0 3px 3px gray;
-          color: white;
-        }
-
-        &:active {
-          filter: invert(100%);
-          box-shadow: none;
-          background-color: gray;
+          &:active {
+            filter: invert(100%);
+            box-shadow: none;
+            background-color: gray;
+          }
         }
       }
     }
