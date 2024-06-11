@@ -41,6 +41,6 @@ export type DialogType = SvelteComponent<
 >;
 
 export type DialogManagerType = {
-  show(context: DialogContext): DialogType & Promise<[() => void, ...any[]]>;
+  show(context: DialogContext): DialogType & Promise<any[]>;
   sort(): void;
 };

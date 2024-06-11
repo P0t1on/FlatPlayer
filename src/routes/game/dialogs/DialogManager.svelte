@@ -105,16 +105,16 @@
         this.sort();
       });
 
-      let resolver: (args: [() => void, ...any[]]) => void;
+      let resolver: (args: any[]) => void;
 
-      element.$on('submit', ({ detail }) => {
-        resolver?.(detail);
+      element.$on('submit', ({ detail: [_, ...args] }) => {
+        resolver?.(args);
       });
 
       activeDialogs.push(element);
 
       return Object.assign(
-        new Promise<[() => void, ...any[]]>((res) => (resolver = res)),
+        new Promise<any[]>((res) => (resolver = res)),
         element
       );
     },
