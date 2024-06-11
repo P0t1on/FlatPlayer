@@ -26,7 +26,6 @@
 
   // bindings
   let descDiv: HTMLDivElement, interactionsDiv: HTMLDivElement;
-  let submit: () => void;
 
   function skipDescAnim() {
     isDescAnimPlaying = false;
@@ -36,6 +35,15 @@
     canNext = pageIndex < messageList.length - 1;
 
     anim_i = 0;
+  }
+
+  function submit() {
+    if (isDescAnimPlaying) skipDescAnim();
+    else if (pageIndex === messageList.length - 1) {
+      let close = true;
+      dispatch('submit', [() => (close = false)]);
+      if (close) dispatch('destroy');
+    }
   }
 
   function changePage(index: number) {
@@ -107,10 +115,8 @@
 <DialogBase
   {...{ zIndex, canIgnore, overrideContent: true }}
   title={messageList[pageIndex]?.[0] ?? ''}
-  bind:submit
   on:destroy={() => dispatch('destroy')}
   on:focus={() => dispatch('focus')}
-  on:submit={({ detail }) => dispatch('submit', detail)}
 >
   <div slot="content">
     <div
