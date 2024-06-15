@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { read } from '$app/server';
   import SvgIcon from '$lib/SVGIcon.svelte';
   import { createEventDispatcher, onMount } from 'svelte';
 
