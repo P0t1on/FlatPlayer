@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { initOrientation } from './data/IrradiatedMutant/index';
+  import { initOrientation } from './data/GroundZero/index';
   import Adventure from './activities/adventure/Adventure.svelte';
   import Basement from './activities/basement/Basement.svelte';
   import Logger from './Logger.svelte';
