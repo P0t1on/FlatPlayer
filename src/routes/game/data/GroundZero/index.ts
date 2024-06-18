@@ -1,6 +1,7 @@
 import type { ActivityChangerType } from '$lib/game';
 import type { DialogManagerType, LoggerType } from '$lib/game/Dialogs';
-import type { Writable } from 'svelte/store';
+import { createEntity, type EntityType } from '$lib/game/Entity';
+import { writable, type Writable } from 'svelte/store';
 
 export async function initOrientation(
   activityChanger: ActivityChangerType,
@@ -31,6 +32,22 @@ export async function initOrientation(
     ],
     pauseGame: true,
     canIgnore: false,
+  });
+
+  const lily = createEntity({
+      name: 'lily',
+      health: 10,
+    }),
+    enemy = createEntity({
+      name: 'dotage',
+      health: NaN,
+      atk: NaN,
+    });
+
+  await dialogManager.show({
+    type: 'battle',
+    playerTeam: [lily],
+    oppoTeam: [enemy],
   });
 
   await dialogManager.show({
