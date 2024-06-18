@@ -1,4 +1,5 @@
 import type { SvelteComponent } from 'svelte';
+import type { EntityTeamType } from './Entity';
 
 export type LoggerType = {
   log(sender: string, msg: string): void;
@@ -6,30 +7,55 @@ export type LoggerType = {
   delete(index: number): void;
 };
 
-export type DialogContext = {
-  canIgnore?: boolean;
-  pauseGame?: boolean;
-} & (
+export type BattleDialogReturnType =
   | {
-      type: 'message';
-      title?: string;
-      description?: string;
-      onSubmit?(preventDefault: () => void): void;
+      type: 'escape';
+      entities: EntityTeamType;
     }
   | {
-      type: 'messagePage';
-      messageList: [string, string][];
-      onPageChange?(index: number): void;
-      onSubmit?(preventDefault: () => void): void;
+      type: 'win';
+      entities: EntityTeamType;
+      loots: { [key: string]: number };
     }
   | {
-      type: 'selection';
-      title?: string;
-      description?: string;
-      menu: string[];
-      onSubmit?(preventDefault: () => void, selected: number): void;
-    }
-);
+      type: 'lose';
+      entities: EntityTeamType;
+    };
+
+export type DialogContext =
+  | ({
+      canIgnore?: boolean;
+      pauseGame?: boolean;
+    } & (
+      | {
+          type: 'message';
+          title?: string;
+          description?: string;
+          onSubmit?(preventDefault: () => void): void;
+        }
+      | {
+          type: 'messagePage';
+          messageList: [string, string][];
+          onPageChange?(index: number): void;
+          onSubmit?(preventDefault: () => void): void;
+        }
+      | {
+          type: 'selection';
+          title?: string;
+          description?: string;
+          menu: string[];
+          onSubmit?(preventDefault: () => void, selected: number): void;
+        }
+    ))
+  | {
+      type: 'battle';
+      playerTeam: EntityTeamType;
+      oppoTeam: EntityTeamType;
+      onSubmit?(
+        preventDefault: () => void,
+        result: BattleDialogReturnType
+      ): void;
+    };
 
 export type DialogType = SvelteComponent<
   { zIndex: number },

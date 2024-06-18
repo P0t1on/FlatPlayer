@@ -8,6 +8,7 @@
   import MessageDialog from './MessageDialog.svelte';
   import SelectionDialog from './SelectionDialog.svelte';
   import MessagePageDialog from './MessagePageDialog.svelte';
+  import BattleDialog from './BattleDialog.svelte';
 
   export let pauseLevel: Writable<number>, managerDiv: HTMLElement;
 
@@ -18,7 +19,7 @@
       const { canIgnore, pauseGame } = context,
         zIndex = activeDialogs.length + 500,
         pause = pauseGame !== undefined ? pauseGame : false;
-      let element: DialogType;
+      let dialogRef: DialogType;
 
       if (pause) {
         pauseLevel.update((v) => v + 1);
@@ -27,7 +28,7 @@
       switch (context.type) {
         case 'message': {
           const { title, onSubmit, description } = context;
-          let e = new MessageDialog({
+          let dialog = new MessageDialog({
             target: managerDiv,
             props: {
               zIndex,
@@ -37,16 +38,16 @@
             },
           });
 
-          e.$on('submit', ({ detail }) => onSubmit?.(...detail));
+          dialog.$on('submit', ({ detail }) => onSubmit?.(...detail));
 
-          element = e;
+          dialogRef = dialog;
 
           break;
         }
 
         case 'selection': {
           const { title, onSubmit, description, menu } = context;
-          const e = new SelectionDialog({
+          const dialog = new SelectionDialog({
             target: managerDiv,
             props: {
               zIndex,
@@ -57,9 +58,9 @@
             },
           });
 
-          e.$on('submit', ({ detail }) => onSubmit?.(...detail));
+          dialog.$on('submit', ({ detail }) => onSubmit?.(...detail));
 
-          element = e;
+          dialogRef = dialog;
 
           break;
         }
@@ -67,7 +68,7 @@
         case 'messagePage': {
           const { onSubmit, onPageChange, messageList } = context;
 
-          const e = new MessagePageDialog({
+          const dialog = new MessagePageDialog({
             target: managerDiv,
             props: {
               zIndex,
@@ -76,46 +77,66 @@
             },
           });
 
-          e.$on('submit', ({ detail }) => onSubmit?.(...detail));
-          e.$on('pageChange', ({ detail }) => onPageChange?.(detail));
-          element = e;
+          dialog.$on('submit', ({ detail }) => onSubmit?.(...detail));
+          dialog.$on('pageChange', ({ detail }) => onPageChange?.(detail));
+          dialogRef = dialog;
+
+          break;
+        }
+
+        case 'battle': {
+          const { onSubmit, playerTeam, oppoTeam } = context;
+
+          const dialog = new BattleDialog({
+            target: managerDiv,
+            props: {
+              zIndex,
+              playerSlot: playerTeam,
+              opponentSlot: oppoTeam,
+            },
+          });
+
+          dialog.$on('submit', ({ detail }) => onSubmit?.(...detail));
+
+          dialogRef = dialog;
+          break;
         }
       }
 
-      element.$on('focus', () => {
+      dialogRef.$on('focus', () => {
         activeDialogs.forEach((dialog, i, list) => {
-          if (dialog === element) {
+          if (dialog === dialogRef) {
             list.splice(i, 1);
           }
         });
 
-        activeDialogs.push(element);
+        activeDialogs.push(dialogRef);
         this.sort();
       });
 
-      element.$on('destroy', () => {
+      dialogRef.$on('destroy', () => {
         activeDialogs.forEach((dialog, i, list) => {
-          if (dialog === element) {
+          if (dialog === dialogRef) {
             list.splice(i, 1);
           }
         });
 
         if (pause) pauseLevel.update((v) => (v > 0 ? v - 1 : v));
-        element.$destroy();
+        dialogRef.$destroy();
         this.sort();
       });
 
       let resolver: (args: any[]) => void;
 
-      element.$on('submit', ({ detail: [_, ...args] }) => {
+      dialogRef.$on('submit', ({ detail: [_, ...args] }) => {
         resolver?.(args);
       });
 
-      activeDialogs.push(element);
+      activeDialogs.push(dialogRef);
 
       return Object.assign(
         new Promise<any[]>((res) => (resolver = res)),
-        element
+        dialogRef
       );
     },
     sort() {
