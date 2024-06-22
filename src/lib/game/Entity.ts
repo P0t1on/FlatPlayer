@@ -1,5 +1,7 @@
 import { writable, type Writable } from 'svelte/store';
 
+export type SkillType = {};
+
 export type EntityType = {
   name: Writable<string>;
   level: Writable<number>;
@@ -11,6 +13,7 @@ export type EntityType = {
   speed: Writable<number>;
   status: { [key: string]: Writable<number> };
   description: string;
+  skillset: [SkillType?, SkillType?, SkillType?, SkillType?];
 };
 
 export type EntityTeamType = [
@@ -29,6 +32,7 @@ export function createEntity({
   speed,
   status,
   description,
+  skillset,
 }: {
   name: string;
   level?: number;
@@ -42,11 +46,13 @@ export function createEntity({
   speed?: number;
   status?: { [key: string]: number };
   description?: string;
+  skillset?: [SkillType?, SkillType?, SkillType?, SkillType?];
 }): EntityType {
   let hp = {
     max: writable(1),
     current: writable(1),
   };
+  skillset = skillset !== undefined ? skillset : [];
 
   const buff: { [key: string]: Writable<number> } = {};
 
@@ -72,5 +78,6 @@ export function createEntity({
     speed: writable(speed !== undefined ? speed : 1),
     status: buff,
     description: description !== undefined ? description : '',
+    skillset,
   };
 }

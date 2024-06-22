@@ -8,7 +8,7 @@
   import MessageDialog from './MessageDialog.svelte';
   import SelectionDialog from './SelectionDialog.svelte';
   import MessagePageDialog from './MessagePageDialog.svelte';
-  import BattleDialog from './BattleDialog.svelte';
+  import BattleDialog from './BattleDialog/BattleDialog.svelte';
 
   export let pauseLevel: Writable<number>, managerDiv: HTMLElement;
 
@@ -16,18 +16,15 @@
 
   export const manager: DialogManagerType = {
     show(context: DialogContext) {
-      const { canIgnore, pauseGame } = context,
-        zIndex = activeDialogs.length + 500,
-        pause = pauseGame !== undefined ? pauseGame : false;
-      let dialogRef: DialogType;
-
-      if (pause) {
-        pauseLevel.update((v) => v + 1);
-      }
+      const zIndex = activeDialogs.length + 500;
+      let dialogRef: DialogType,
+        pause = false;
 
       switch (context.type) {
         case 'message': {
-          const { title, onSubmit, description } = context;
+          const { canIgnore, pauseGame, title, onSubmit, description } =
+            context;
+          pause = pauseGame !== undefined ? pauseGame : pause;
           let dialog = new MessageDialog({
             target: managerDiv,
             props: {
@@ -46,7 +43,9 @@
         }
 
         case 'selection': {
-          const { title, onSubmit, description, menu } = context;
+          const { canIgnore, pauseGame, title, onSubmit, description, menu } =
+            context;
+          pause = pauseGame !== undefined ? pauseGame : pause;
           const dialog = new SelectionDialog({
             target: managerDiv,
             props: {
@@ -66,7 +65,9 @@
         }
 
         case 'messagePage': {
-          const { onSubmit, onPageChange, messageList } = context;
+          const { canIgnore, pauseGame, onSubmit, onPageChange, messageList } =
+            context;
+          pause = pauseGame !== undefined ? pauseGame : pause;
 
           const dialog = new MessagePageDialog({
             target: managerDiv,
@@ -86,6 +87,7 @@
 
         case 'battle': {
           const { onSubmit, playerTeam, oppoTeam } = context;
+          pause = true;
 
           const dialog = new BattleDialog({
             target: managerDiv,
@@ -101,6 +103,10 @@
           dialogRef = dialog;
           break;
         }
+      }
+
+      if (pause) {
+        pauseLevel.update((v) => v + 1);
       }
 
       dialogRef.$on('focus', () => {

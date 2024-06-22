@@ -13,6 +13,22 @@ export async function initOrientation(
 
   gameName.set('Prologue');
 
+  const lily = createEntity({
+      name: 'lily',
+      health: 10,
+    }),
+    enemy = createEntity({
+      name: 'dotage',
+      health: NaN,
+      atk: NaN,
+    });
+
+  await dialogManager.show({
+    type: 'battle',
+    playerTeam: [lily],
+    oppoTeam: [enemy],
+  });
+
   await dialogManager.show({
     type: 'messagePage',
     messageList: [
@@ -32,22 +48,6 @@ export async function initOrientation(
     ],
     pauseGame: true,
     canIgnore: false,
-  });
-
-  const lily = createEntity({
-      name: 'lily',
-      health: 10,
-    }),
-    enemy = createEntity({
-      name: 'dotage',
-      health: NaN,
-      atk: NaN,
-    });
-
-  await dialogManager.show({
-    type: 'battle',
-    playerTeam: [lily],
-    oppoTeam: [enemy],
   });
 
   await dialogManager.show({
