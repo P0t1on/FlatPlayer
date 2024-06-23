@@ -15,11 +15,11 @@ export async function initOrientation(
 
   const lily = createEntity({
       name: 'lily',
-      health: 10,
+      stamina: 10,
     }),
     enemy = createEntity({
       name: 'dotage',
-      health: NaN,
+      stamina: NaN,
       atk: NaN,
     });
 

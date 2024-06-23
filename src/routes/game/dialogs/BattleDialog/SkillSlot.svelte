@@ -1,16 +1,22 @@
 <script lang="ts">
   import type { SkillType } from '$lib/game/Entity';
 
-  export let skillInfo: SkillType | undefined = undefined;
+  export let skill: SkillType = {};
 </script>
 
-<div class="skillSlot">test</div>
+<button class="skillSlot">test</button>
 
 <style lang="scss" module>
-  div.skillslot {
-    width: 50px;
-    margin: 8px;
-    padding: 8px;
+  button.skillSlot {
+    justify-content: center;
+    width: 100%;
+    margin: 4px;
+    padding: 4px;
+
+    background-color: black;
+    color: white;
+    font-family: 'Noto Sans KR';
+    font-size: medium;
     border: 1px solid white;
     border-radius: 5px;
   }

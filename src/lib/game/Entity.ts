@@ -1,11 +1,35 @@
 import { writable, type Writable } from 'svelte/store';
 
-export type SkillType = {};
+export type SkillType = {
+  name: string;
+} & (
+  | {
+      type: 'attack';
+      power: number;
+    }
+  | {
+      type: 'bless';
+      positive: boolean;
+    }
+  | {
+      type: 'defense';
+      power: number;
+      evade: boolean;
+      counter: boolean;
+    }
+  | {
+      type: 'special';
+    }
+);
 
 export type EntityType = {
   name: Writable<string>;
   level: Writable<number>;
-  health: {
+  stamina: {
+    max: Writable<number>;
+    current: Writable<number>;
+  };
+  stellarWill: {
     max: Writable<number>;
     current: Writable<number>;
   };
@@ -27,7 +51,7 @@ export type EntityTeamType = [
 export function createEntity({
   name,
   level,
-  health,
+  stamina,
   atk,
   speed,
   status,
@@ -36,7 +60,7 @@ export function createEntity({
 }: {
   name: string;
   level?: number;
-  health:
+  stamina:
     | {
         max: number;
         current: number;
@@ -56,12 +80,12 @@ export function createEntity({
 
   const buff: { [key: string]: Writable<number> } = {};
 
-  if (typeof health === 'number') {
-    hp.max.set(health);
-    hp.current.set(health);
+  if (typeof stamina === 'number') {
+    hp.max.set(stamina);
+    hp.current.set(stamina);
   } else {
-    hp.max.set(health.max);
-    hp.current.set(health.current);
+    hp.max.set(stamina.max);
+    hp.current.set(stamina.current);
   }
 
   if (status !== undefined) {
@@ -73,7 +97,7 @@ export function createEntity({
   return {
     name: writable(name),
     level: writable(level !== undefined ? level : 1),
-    health: hp,
+    stamina: hp,
     atk: writable(atk !== undefined ? atk : 1),
     speed: writable(speed !== undefined ? speed : 1),
     status: buff,

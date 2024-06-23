@@ -165,13 +165,14 @@
     user-select: none;
 
     div.tab {
+      display: flex;
+      justify-content: space-between;
+
+      border: 4px double white;
       border-radius: 8px 8px 0 0;
       padding: 4px 8px 4px 8px;
       min-width: 12vw;
       background-color: black;
-      display: flex;
-      justify-content: space-between;
-      outline: 4px double white;
 
       button {
         padding: 0;
