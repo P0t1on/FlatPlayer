@@ -1,26 +1,5 @@
 import { writable, type Writable } from 'svelte/store';
-
-export type SkillType = {
-  name: string;
-} & (
-  | {
-      type: 'attack';
-      power: number;
-    }
-  | {
-      type: 'bless';
-      positive: boolean;
-    }
-  | {
-      type: 'defense';
-      power: number;
-      evade: boolean;
-      counter: boolean;
-    }
-  | {
-      type: 'special';
-    }
-);
+import type { ModuleTypes, SkillType } from './Skills';
 
 export type EntityType = {
   name: Writable<string>;
@@ -29,7 +8,7 @@ export type EntityType = {
     max: Writable<number>;
     current: Writable<number>;
   };
-  stellarWill: {
+  power: {
     max: Writable<number>;
     current: Writable<number>;
   };
@@ -37,7 +16,12 @@ export type EntityType = {
   speed: Writable<number>;
   status: { [key: string]: Writable<number> };
   description: string;
-  skillset: [SkillType?, SkillType?, SkillType?, SkillType?];
+  skillset: [
+    SkillType<ModuleTypes>?,
+    SkillType<ModuleTypes>?,
+    SkillType<ModuleTypes>?,
+    SkillType<ModuleTypes>?
+  ];
 };
 
 export type EntityTeamType = [
@@ -52,6 +36,7 @@ export function createEntity({
   name,
   level,
   stamina,
+  power,
   atk,
   speed,
   status,
@@ -66,16 +51,31 @@ export function createEntity({
         current: number;
       }
     | number;
+  power:
+    | {
+        max: number;
+        current: number;
+      }
+    | number;
   atk?: number;
   speed?: number;
   status?: { [key: string]: number };
   description?: string;
-  skillset?: [SkillType?, SkillType?, SkillType?, SkillType?];
+  skillset?: [
+    SkillType<ModuleTypes>?,
+    SkillType<ModuleTypes>?,
+    SkillType<ModuleTypes>?,
+    SkillType<ModuleTypes>?
+  ];
 }): EntityType {
   let hp = {
-    max: writable(1),
-    current: writable(1),
-  };
+      max: writable(1),
+      current: writable(1),
+    },
+    stellar = {
+      max: writable(1),
+      current: writable(1),
+    };
   skillset = skillset !== undefined ? skillset : [];
 
   const buff: { [key: string]: Writable<number> } = {};
@@ -88,6 +88,14 @@ export function createEntity({
     hp.current.set(stamina.current);
   }
 
+  if (typeof power === 'number') {
+    stellar.max.set(power);
+    stellar.current.set(power);
+  } else {
+    stellar.max.set(power.max);
+    stellar.current.set(power.current);
+  }
+
   if (status !== undefined) {
     for (const id in status) {
       buff[id] = writable(status[id]);
@@ -98,6 +106,7 @@ export function createEntity({
     name: writable(name),
     level: writable(level !== undefined ? level : 1),
     stamina: hp,
+    power: stellar,
     atk: writable(atk !== undefined ? atk : 1),
     speed: writable(speed !== undefined ? speed : 1),
     status: buff,

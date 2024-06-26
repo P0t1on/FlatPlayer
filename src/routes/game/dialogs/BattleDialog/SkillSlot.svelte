@@ -1,7 +1,5 @@
 <script lang="ts">
-  import type { SkillType } from '$lib/game/Entity';
-
-  export let skill: SkillType = {};
+  import type { SkillType } from '$lib/game/Skills';
 </script>
 
 <button class="skillSlot">test</button>
