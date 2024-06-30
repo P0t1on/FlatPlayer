@@ -1,9 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
-  import { get } from 'svelte/store';
   import DialogBase from '../DialogBase.svelte';
   import SkillSlot from './SkillSlot.svelte';
-  import type { EntityTeamType, EntityType } from '$lib/game/Entity';
+  import type { EntityTeamType, EntityInstanceType } from '$lib/game/Entity';
   import type { BattleDialogReturnType } from '$lib/game/Dialogs';
 
   const dispatch = createEventDispatcher<{
@@ -16,9 +15,9 @@
     playerSlot: EntityTeamType,
     opponentSlot: EntityTeamType;
 
-  let selected: EntityType;
+  let selected: EntityInstanceType;
 
-  const title = get(playerSlot[0].name) + ' vs ' + get(opponentSlot[0].name);
+  const title = playerSlot[0].name + ' vs ' + opponentSlot[0].name;
 
   onMount(() => {
     selected = playerSlot[0];
@@ -35,14 +34,16 @@
     <div id="interactions">
       <div id="stage"></div>
       <div id="skillslot">
-        <div>
-          <SkillSlot />
-          <SkillSlot />
-        </div>
-        <div>
-          <SkillSlot />
-          <SkillSlot />
-        </div>
+        {#if selected !== undefined}
+          <div>
+            <SkillSlot skill={selected.skillset[0]} available={true} />
+            <SkillSlot skill={selected.skillset[1]} />
+          </div>
+          <div>
+            <SkillSlot skill={selected.skillset[2]} />
+            <SkillSlot skill={selected.skillset[3]} />
+          </div>
+        {/if}
       </div>
     </div>
     <div id="b" class="team">teamB</div>
@@ -71,13 +72,13 @@
         flex-direction: column;
         align-items: center;
         width: 100%;
-        padding: 4px;
+        padding: 8px 0 8px 0;
 
         div {
           display: flex;
-          align-items: center;
-          padding: 0 4px 0 4px;
-          width: 100%;
+          justify-content: center;
+          padding: 0 8px 0 8px;
+          width: min-content;
         }
       }
     }

@@ -7,7 +7,7 @@ export type SkillType<T extends ModuleTypes> = {
 export type ModuleTypes =
   | AttackModule
   | DefenseModule
-  | BlessModule
+  | BuffModule
   | Specialmodule;
 
 export type AttackModule = {
@@ -22,13 +22,13 @@ export type DefenseModule = {
   counter: boolean;
 };
 
-export type BlessModule = {
-  type: 'bless';
+export type BuffModule = {
+  type: 'buff';
   power: number;
 };
 
 export type Specialmodule = {
-  type: 'special';
+  type: 'etc';
 };
 
 export function registerSkill<T extends ModuleTypes>(skillData: SkillType<T>) {

@@ -1,6 +1,6 @@
 import type { ActivityChangerType } from '$lib/game';
 import type { DialogManagerType, LoggerType } from '$lib/game/Dialogs';
-import { createEntity, type EntityType } from '$lib/game/Entity';
+import { Entity } from '$lib/game/Entity';
 import { writable, type Writable } from 'svelte/store';
 
 export async function initOrientation(
@@ -13,20 +13,40 @@ export async function initOrientation(
 
   gameName.set('Prologue');
 
-  const lily = createEntity({
-      name: 'lily',
-      stamina: 10,
-    }),
-    enemy = createEntity({
-      name: 'dotage',
-      stamina: NaN,
+  const lily = new Entity('릴리', '축복받은 마족', {}, [
+      {
+        type: 'attack',
+        name: '내려치기',
+        description: '',
+        power: 1,
+        sideEffect() {},
+      },
+      {
+        type: 'defense',
+        evade: true,
+        counter: false,
+        name: '도망치기',
+        description: '',
+        power: 1,
+        sideEffect() {},
+      },
+      {
+        type: 'etc',
+        name: '기도',
+        description: '',
+        sideEffect() {},
+      },
+    ]),
+    dotage = new Entity('망령', '', {
       atk: NaN,
+      hp: NaN,
+      sp: 10,
     });
 
   await dialogManager.show({
     type: 'battle',
-    playerTeam: [lily],
-    oppoTeam: [enemy],
+    playerTeam: [lily.instantiate()],
+    oppoTeam: [dotage.instantiate({ level: NaN })],
   });
 
   await dialogManager.show({
