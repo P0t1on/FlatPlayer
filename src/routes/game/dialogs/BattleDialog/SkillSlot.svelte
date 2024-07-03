@@ -1,14 +1,16 @@
 <script lang="ts">
   import type { ModuleTypes, SkillType } from '$lib/game/Skills';
+  import type { Writable } from 'svelte/store';
 
   export let skill: SkillType<ModuleTypes> | undefined = undefined,
-    available = false;
+    available = true,
+    sp: Writable<number>;
 
   let button: HTMLButtonElement;
 </script>
 
 <button
-  class:available
+  class:available={skill !== undefined && available && $sp >= skill.cost}
   class:disabled={skill === undefined}
   class:atk={skill?.type === 'attack'}
   class:buf={skill?.type === 'buff'}

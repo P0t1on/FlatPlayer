@@ -48,10 +48,10 @@ export class Entity {
 
     level = level !== undefined ? level : 1;
 
-    maxHp = maxHp * (2 ^ level);
+    maxHp = maxHp * 2 ** (level - 1);
     hp = hp !== undefined ? (hp > maxHp ? maxHp : hp) : maxHp;
 
-    maxSp = maxSp * (2 ^ level);
+    maxSp = maxSp * 2 ** (level - 1);
     sp = sp !== undefined ? (sp > maxSp ? maxSp : sp) : maxSp;
 
     return {
@@ -63,11 +63,11 @@ export class Entity {
         current: writable(hp),
       },
       sp: {
-        max: writable(sp * (2 ^ level)),
-        current: writable(sp * (2 ^ level)),
+        max: writable(maxSp),
+        current: writable(sp),
       },
-      atk: writable(atk * (2 ^ level)),
-      def: writable(def * (2 ^ level)),
+      atk: writable(atk * 2 ** level),
+      def: writable(def * 2 ** level),
       speed: writable(speed + level),
       status: status !== undefined ? status : {},
       skillset: [...this.skillset],
@@ -103,11 +103,6 @@ export type SkillSetType = [
 
 export type EntityTeamType = [
   EntityInstanceType,
-  EntityInstanceType?,
-  EntityInstanceType?,
-  EntityInstanceType?,
-  EntityInstanceType?,
-  EntityInstanceType?,
   EntityInstanceType?,
   EntityInstanceType?,
   EntityInstanceType?,

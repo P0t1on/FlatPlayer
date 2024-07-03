@@ -1,7 +1,7 @@
 import type { ActivityChangerType } from '$lib/game';
 import type { DialogManagerType, LoggerType } from '$lib/game/Dialogs';
 import { Entity } from '$lib/game/Entity';
-import { writable, type Writable } from 'svelte/store';
+import { get, writable, type Writable } from 'svelte/store';
 
 export async function initOrientation(
   activityChanger: ActivityChangerType,
@@ -18,6 +18,7 @@ export async function initOrientation(
         type: 'attack',
         name: '내려치기',
         description: '',
+        cost: 0,
         power: 1,
         sideEffect() {},
       },
@@ -27,6 +28,7 @@ export async function initOrientation(
         counter: false,
         name: '도망치기',
         description: '',
+        cost: 1,
         power: 1,
         sideEffect() {},
       },
@@ -34,6 +36,7 @@ export async function initOrientation(
         type: 'etc',
         name: '기도',
         description: '',
+        cost: 11,
         sideEffect() {},
       },
     ]),

@@ -1,7 +1,10 @@
+import type { Writable } from 'svelte/store';
+
 export type SkillType<T extends ModuleTypes> = {
   name: string;
   description: string;
   sideEffect: () => void;
+  cost: number;
 } & T;
 
 export type ModuleTypes =

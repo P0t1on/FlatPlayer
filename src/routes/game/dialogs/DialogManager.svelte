@@ -93,8 +93,8 @@
             target: managerDiv,
             props: {
               zIndex,
-              playerSlot: playerTeam,
-              opponentSlot: oppoTeam,
+              aTeam: playerTeam,
+              bTeam: oppoTeam,
             },
           });
 
