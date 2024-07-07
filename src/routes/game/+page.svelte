@@ -47,8 +47,48 @@
   // Game Logic
   let pauseLevel = writable(0);
 
+  // 발광하는 별의 배경화면
+
+  const starEmojiList = ['⭐', '🌟', '✨', '🌠', '🌌', '💫', '🎇'];
+  function getStarEmoji() {
+    return starEmojiList[
+      Math.floor(Math.random() * starEmojiList.length)
+    ] as string;
+  }
+  let stars = new Set<HTMLDivElement>();
+
   onMount(() => {
     initOrientation(activityChanger, dialogManager, logger, gameName);
+
+    function startSpawnStar(next: typeof startSpawnStar) {
+      const starElement = document.createElement('div'),
+        delay = Math.random() * 2,
+        repeat = Math.floor(Math.random() * (3 - 1) + 1);
+
+      starElement.classList.add('star');
+      starElement.innerText = getStarEmoji();
+      starElement.style.top = Math.random() * 100 + '%';
+      starElement.style.left = Math.random() * 100 + '%';
+      starElement.style.animation = `twinkle ${delay * 2}s infinite`;
+
+      root.append(starElement);
+      stars.add(starElement);
+
+      setTimeout(
+        () => {
+          root.removeChild(starElement);
+          starElement.remove();
+          stars.delete(starElement);
+
+          next(next);
+        },
+        delay * 2000 * repeat
+      );
+    }
+
+    for (let i = 0; i < 50; i++) {
+      startSpawnStar(startSpawnStar);
+    }
   });
 </script>
 
@@ -73,8 +113,7 @@
 
 <style lang="scss">
   :global(body) {
-    overflow-x: hidden;
-    overflow-y: hidden;
+    overflow: hidden;
   }
 
   section {
@@ -83,5 +122,22 @@
     height: 100%;
     width: 100%;
     top: 0;
+
+    :global(.star) {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+    }
+  }
+
+  @keyframes -global-twinkle {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.8;
+    }
   }
 </style>
