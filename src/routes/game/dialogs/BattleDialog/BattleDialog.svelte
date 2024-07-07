@@ -75,7 +75,6 @@
       flex-direction: column;
       align-items: center;
 
-      width: 100%;
       border: 1px solid white;
 
       div#skillslot {

@@ -48,7 +48,11 @@ export async function initOrientation(
 
   await dialogManager.show({
     type: 'battle',
-    playerTeam: [lily.instantiate()],
+    playerTeam: [
+      lily.instantiate({
+        hp: 5,
+      }),
+    ],
     oppoTeam: [dotage.instantiate({ level: NaN })],
   });
 
