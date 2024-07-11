@@ -12,7 +12,7 @@
     ActivityChangerType,
     ActivityNames,
   } from '$lib/game';
-  import { writable } from 'svelte/store';
+  import { get, writable, type Writable } from 'svelte/store';
 
   let gameName = writable('Preparing...');
   let activity: ActivityNames,
@@ -55,38 +55,51 @@
       Math.floor(Math.random() * starEmojiList.length)
     ] as string;
   }
-  let stars = new Set<HTMLDivElement>();
 
   onMount(() => {
     initOrientation(activityChanger, dialogManager, logger, gameName);
 
-    function startSpawnStar(next: typeof startSpawnStar) {
-      const starElement = document.createElement('div'),
-        delay = Math.random() * 2,
+    function startSpawnStar(
+      next: typeof startSpawnStar,
+      origin?: HTMLDivElement,
+      closer?: Writable<boolean>
+    ) {
+      if (closer === undefined) closer = writable(false);
+      else if (get(closer) === true) {
+        if (origin !== undefined) {
+          root.removeChild(origin);
+          origin.remove();
+        }
+        return () => console.debug('이미 종료된 대상입니다.');
+      }
+
+      let starElement: HTMLDivElement;
+      if (origin === undefined) {
+        starElement = document.createElement('div');
+
+        starElement.classList.add('star');
+        root.append(starElement);
+      } else starElement = origin;
+
+      const delay = Math.random() * 2,
         repeat = Math.floor(Math.random() * (3 - 1) + 1);
 
-      starElement.classList.add('star');
       starElement.innerText = getStarEmoji();
       starElement.style.top = Math.random() * 100 + '%';
       starElement.style.left = Math.random() * 100 + '%';
       starElement.style.animation = `twinkle ${delay * 2}s infinite`;
 
-      root.append(starElement);
-      stars.add(starElement);
-
       setTimeout(
         () => {
-          root.removeChild(starElement);
-          starElement.remove();
-          stars.delete(starElement);
-
-          next(next);
+          next(next, starElement, closer);
         },
         delay * 2000 * repeat
       );
+
+      return () => closer.set(true);
     }
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 10; i++) {
       startSpawnStar(startSpawnStar);
     }
   });
