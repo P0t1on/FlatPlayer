@@ -141,6 +141,7 @@
       width: 2px;
       height: 2px;
       border-radius: 50%;
+      user-select: none;
     }
   }
 

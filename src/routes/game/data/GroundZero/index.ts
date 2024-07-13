@@ -51,6 +51,7 @@ export async function initOrientation(
     playerTeam: [
       lily.instantiate({
         hp: 5,
+        sp: 5,
       }),
     ],
     oppoTeam: [dotage.instantiate({ level: NaN })],
