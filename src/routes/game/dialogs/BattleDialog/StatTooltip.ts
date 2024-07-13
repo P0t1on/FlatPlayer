@@ -1,7 +1,10 @@
+import type { Action } from 'svelte/action';
 import StatTooltip from './StatTooltip.svelte';
 
-export function statTooltip(element: HTMLElement) {
-  let div, title: string, tooltipComponent: StatTooltip;
+let destroyBefore: ((event?: MouseEvent) => void) | undefined;
+
+export const statTooltip: Action<HTMLElement> = (element) => {
+  let title: string, tooltipComponent: StatTooltip;
 
   let attr = element.getAttribute('title');
   if (attr === null) {
@@ -16,6 +19,8 @@ export function statTooltip(element: HTMLElement) {
     title = attr ?? '';
     element.removeAttribute('title');
 
+    if (destroyBefore !== undefined) destroyBefore();
+
     tooltipComponent = new StatTooltip({
       props: {
         title: title,
@@ -24,17 +29,24 @@ export function statTooltip(element: HTMLElement) {
       },
       target: document.body,
     });
+
+    destroyBefore = () => {
+      tooltipComponent?.$destroy();
+      element.setAttribute('title', title);
+      destroyBefore = undefined;
+    };
   }
   function mouseMove(event: MouseEvent) {
-    tooltipComponent.$set({
+    tooltipComponent?.$set({
       x: event.pageX,
       y: event.pageY,
     });
   }
-  function mouseLeave() {
-    tooltipComponent.$destroy();
+  function mouseLeave(event?: MouseEvent) {
+    tooltipComponent?.$destroy();
     // NOTE: restore the `title` attribute
     element.setAttribute('title', title);
+    destroyBefore = undefined;
   }
 
   element.addEventListener('mouseover', mouseOver);
@@ -48,4 +60,4 @@ export function statTooltip(element: HTMLElement) {
       element.removeEventListener('mousemove', mouseMove);
     },
   };
-}
+};
