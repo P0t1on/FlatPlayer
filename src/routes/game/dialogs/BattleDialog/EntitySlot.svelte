@@ -57,14 +57,20 @@
 <style lang="scss" module>
   div.entitySlot {
     display: flex;
+    padding: 2px;
+    border: white solid 1px;
+    border-radius: 8px;
 
     div.status {
-      width: min-content;
+      padding: 4px;
+
+      div.progress + div.progress {
+        margin-top: 4px;
+      }
 
       div.progress {
         min-width: 150px;
         width: 100%;
-        margin: 4px;
         padding: 0;
         background-color: rgba(128, 128, 128, 0.4);
         border-radius: 12px;

@@ -30,11 +30,11 @@
 >
   <div id="contents" slot="content">
     <div id="a" class="team">
-      <EntitySlot entity={aTeam[0]} />
-      <EntitySlot entity={aTeam[1]} />
-      <EntitySlot entity={aTeam[2]} />
-      <EntitySlot entity={aTeam[3]} />
-      <EntitySlot entity={aTeam[4]} />
+      {#each aTeam as entity}
+        {#if entity !== undefined}
+          <EntitySlot {entity} />
+        {/if}
+      {/each}
     </div>
     <div id="interactions">
       <div id="stage"></div>
@@ -52,11 +52,11 @@
       </div>
     </div>
     <div id="b" class="team">
-      <EntitySlot entity={bTeam[0]} />
-      <EntitySlot entity={bTeam[1]} />
-      <EntitySlot entity={bTeam[2]} />
-      <EntitySlot entity={bTeam[3]} />
-      <EntitySlot entity={bTeam[4]} />
+      {#each bTeam as entity}
+        {#if entity !== undefined}
+          <EntitySlot {entity} />
+        {/if}
+      {/each}
     </div>
   </div>
 </DialogBase>
