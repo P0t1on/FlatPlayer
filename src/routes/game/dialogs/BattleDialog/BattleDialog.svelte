@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { EventEmitter } from 'events';
   import { createEventDispatcher, onMount } from 'svelte';
   import DialogBase from '../DialogBase.svelte';
   import SkillSlot from './SkillSlot.svelte';
