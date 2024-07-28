@@ -1,7 +1,12 @@
 import { writable, type Writable } from 'svelte/store';
-import type { ModuleTypes, SkillType } from './Skills';
+import type { SkillModuleTypes, SkillType } from './Skills';
 
-export class Entity {
+export class Entity<
+  S1 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
+  S2 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
+  S3 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
+  S4 extends keyof SkillModuleTypes = keyof SkillModuleTypes
+> {
   public readonly status: {
     hp: number;
     sp: number;
@@ -20,7 +25,7 @@ export class Entity {
       def?: number;
       speed?: number;
     } = {},
-    public skillset: SkillSetType = [, , ,]
+    public skillset: SkillSetType<S1, S2, S3, S4> = [, , ,]
   ) {
     const { hp, sp, atk, def, speed } = status;
 
@@ -43,7 +48,7 @@ export class Entity {
     hp?: number;
     sp?: number;
     status?: { [key: string]: Writable<number> };
-  } = {}): EntityInstanceType {
+  } = {}): EntityInstanceType<S1, S2, S3, S4> {
     let { hp: maxHp, sp: maxSp, atk, def, speed } = this.status;
 
     level = level !== undefined ? level : 1;
@@ -75,7 +80,28 @@ export class Entity {
   }
 }
 
-export type EntityInstanceType = {
+const test = new Entity<'attack'>('t', '', {}, [
+  {
+    type: 'attack',
+    name: '',
+    description: '',
+    cost: 1,
+    power: 1,
+    sideEffect() {},
+  },
+]);
+
+const temp = test.instantiate();
+
+const t1 = temp.skillset;
+const t2 = t1[0];
+
+export type EntityInstanceType<
+  S1 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
+  S2 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
+  S3 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
+  S4 extends keyof SkillModuleTypes = keyof SkillModuleTypes
+> = {
   name: string;
   description: string;
   level: Writable<number>;
@@ -91,15 +117,15 @@ export type EntityInstanceType = {
   def: Writable<number>;
   speed: Writable<number>;
   status: { [key: string]: Writable<number> };
-  skillset: SkillSetType;
+  skillset: SkillSetType<S1, S2, S3, S4>;
 };
 
-export type SkillSetType = [
-  SkillType<ModuleTypes>?,
-  SkillType<ModuleTypes>?,
-  SkillType<ModuleTypes>?,
-  SkillType<ModuleTypes>?
-];
+export type SkillSetType<
+  S1 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
+  S2 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
+  S3 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
+  S4 extends keyof SkillModuleTypes = keyof SkillModuleTypes
+> = [SkillType<S1>?, SkillType<S2>?, SkillType<S3>?, SkillType<S4>?];
 
 export type EntityTeamType = [
   EntityInstanceType,
