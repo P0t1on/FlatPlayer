@@ -1,6 +1,6 @@
 import { EventManager } from '$lib/Util';
 import type { EntityInstanceType, EntityTeamType } from '$lib/game/Entity';
-import type { ModuleTypes, SkillType } from '$lib/game/Skills';
+import type { SkillModuleTypes, SkillType } from '$lib/game/Skills';
 
 export class Battle {
   public events = new EventManager<{
@@ -17,7 +17,7 @@ export class Battle {
 
   public useSkill(
     user: EntityInstanceType,
-    skill: SkillType<ModuleTypes>,
+    skill: SkillType<keyof SkillModuleTypes>,
     ...target: EntityInstanceType[]
   ): void {}
 }

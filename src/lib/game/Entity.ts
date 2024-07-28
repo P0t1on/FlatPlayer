@@ -14,6 +14,7 @@ export class Entity<
     def: number;
     speed: number;
   };
+  public skillset: SkillSetType<S1, S2, S3, S4>;
 
   public constructor(
     public name: string,
@@ -25,7 +26,7 @@ export class Entity<
       def?: number;
       speed?: number;
     } = {},
-    public skillset: SkillSetType<S1, S2, S3, S4> = [, , ,]
+    skillset: SkillSetType<S1, S2, S3, S4> = [, , ,]
   ) {
     const { hp, sp, atk, def, speed } = status;
 
@@ -36,6 +37,7 @@ export class Entity<
       def: def ?? 1,
       speed: speed ?? 1,
     };
+    this.skillset = skillset;
   }
 
   public instantiate({
@@ -79,22 +81,6 @@ export class Entity<
     };
   }
 }
-
-const test = new Entity<'attack'>('t', '', {}, [
-  {
-    type: 'attack',
-    name: '',
-    description: '',
-    cost: 1,
-    power: 1,
-    sideEffect() {},
-  },
-]);
-
-const temp = test.instantiate();
-
-const t1 = temp.skillset;
-const t2 = t1[0];
 
 export type EntityInstanceType<
   S1 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
