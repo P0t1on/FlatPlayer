@@ -5,6 +5,8 @@ export type SkillType<T extends keyof SkillModuleTypes> = {
   description: string;
   sideEffect(user: EntityInstanceType, target: EntityInstanceType): void;
   cost: number;
+  restoreTurn: number;
+  prepareTurn: number;
 } & SkillModuleTypes[T];
 
 export type SkillModuleTypes = {
@@ -40,6 +42,8 @@ type DefaultModuleProp = {
   description?: string;
   sideEffect?(user: EntityInstanceType, target: EntityInstanceType): void;
   cost?: number;
+  restoreTurn?: number;
+  prepareTurn?: number;
 };
 
 type ModuleProps = {
@@ -61,7 +65,8 @@ export function createSkill<T extends keyof SkillModuleTypes>(
   type: T,
   skillProps: ModuleProps[T] & DefaultModuleProp
 ) {
-  let { name, description, sideEffect, cost } = skillProps,
+  let { name, description, sideEffect, cost, restoreTurn, prepareTurn } =
+      skillProps,
     result: SkillModuleTypes[T];
 
   name = name !== undefined ? name : type + 'Skill';
@@ -75,12 +80,16 @@ export function createSkill<T extends keyof SkillModuleTypes>(
       : () =>
           console.log(`${type} skill [${name}] used. but, nothing happened.`);
   cost = cost !== undefined ? cost : 1;
+  restoreTurn = restoreTurn !== undefined ? restoreTurn : 1;
+  prepareTurn = prepareTurn !== undefined ? prepareTurn : 0;
 
   const skillBase = {
     name,
     description,
     sideEffect,
     cost,
+    restoreTurn,
+    prepareTurn,
   };
 
   // ㅋㅋ
@@ -136,5 +145,3 @@ export function createSkill<T extends keyof SkillModuleTypes>(
   }
   return Object.assign(result, skillBase);
 }
-
-const test = createSkill('defense', {});
