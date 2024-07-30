@@ -1,7 +1,8 @@
 import type { ActivityChangerType } from '$lib/game';
 import type { DialogManagerType, LoggerType } from '$lib/game/Dialogs';
 import { Entity } from '$lib/game/Entity';
-import { get, writable, type Writable } from 'svelte/store';
+import skills from './SkillDefinitions';
+import { type Writable } from 'svelte/store';
 
 export async function initOrientation(
   activityChanger: ActivityChangerType,
@@ -14,31 +15,9 @@ export async function initOrientation(
   gameName.set('Prologue');
 
   const lily = new Entity('릴리', '축복받은 마족', {}, [
-      {
-        type: 'attack',
-        name: '내려치기',
-        description: '',
-        cost: 0,
-        power: 1,
-        sideEffect() {},
-      },
-      {
-        type: 'defense',
-        evade: true,
-        counter: false,
-        name: '도망치기',
-        description: '',
-        cost: 1,
-        power: 1,
-        sideEffect() {},
-      },
-      {
-        type: 'etc',
-        name: '기도',
-        description: '',
-        cost: 11,
-        sideEffect() {},
-      },
+      skills['hit_down'],
+      skills['run_run_run'],
+      skills['pray'],
     ]),
     dotage = new Entity('망령', '', {
       atk: NaN,
