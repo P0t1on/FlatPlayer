@@ -15,10 +15,11 @@ const run_run_run = createSkill('defense', {
   evade: true,
 });
 
-const pray = createSkill('etc', {
-  name: '기도',
-  description: '기도하기',
-  cost: 11,
+const enforce_sense = createSkill('buff', {
+  name: '기모으기',
+  description: '기를 모아 공격력을 높인다',
+  cost: 5,
+  prepareTurn: 2,
 });
 
 const chase = createSkill('etc', {
@@ -31,7 +32,9 @@ const strage_fear = createSkill('buff', {});
 const skills = {
   hit_down,
   run_run_run,
-  pray,
+  enforce_sense,
+  chase,
+  strage_fear,
 };
 
 export default skills;

@@ -1,8 +1,14 @@
 <script lang="ts">
-  import type { ModuleTypes, SkillType } from '$lib/game/Skills';
+  import type { SkillType, SkillModuleTypes } from '$lib/game/Skills';
+  import { createEventDispatcher } from 'svelte';
   import type { Writable } from 'svelte/store';
 
-  export let skill: SkillType<ModuleTypes> | undefined = undefined,
+  let dispatch = createEventDispatcher<{
+    use: void;
+    hover: boolean;
+  }>();
+
+  export let skill: SkillType<keyof SkillModuleTypes> | undefined = undefined,
     available = true,
     sp: Writable<number>;
 
@@ -18,7 +24,9 @@
   class:etc={skill?.type === 'etc'}
   class="skillSlot"
   bind:this={button}
-  on:click={skill?.sideEffect}
+  on:click={() => dispatch('use')}
+  on:mouseenter={() => dispatch('hover', true)}
+  on:mouseleave={() => dispatch('hover', false)}
 >
   {#if skill !== undefined}
     {skill.name}

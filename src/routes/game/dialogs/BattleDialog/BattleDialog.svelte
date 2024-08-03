@@ -3,6 +3,7 @@
   import DialogBase from '../DialogBase.svelte';
   import SkillSlot from './SkillSlot.svelte';
   import EntitySlot from './EntitySlot.svelte';
+  import { Battle } from './Battle';
   import type { EntityTeamType, EntityInstanceType } from '$lib/game/Entity';
   import type { BattleDialogReturnType } from '$lib/game/Dialogs';
 
@@ -15,16 +16,21 @@
   export let zIndex: number, aTeam: EntityTeamType, bTeam: EntityTeamType;
 
   let selected: EntityInstanceType;
-
-  const title = aTeam[0].name + ' vs ' + bTeam[0].name;
+  let battleSeq: Battle;
 
   onMount(() => {
+    battleSeq = new Battle(aTeam, bTeam);
     selected = aTeam[0];
   });
 </script>
 
 <DialogBase
-  {...{ zIndex, canIgnore: false, overrideContent: true, title }}
+  {...{
+    zIndex,
+    canIgnore: false,
+    overrideContent: true,
+    title: aTeam[0].name + ' vs ' + bTeam[0].name,
+  }}
   on:destroy={() => dispatch('destroy')}
   on:focus={() => dispatch('focus')}
 >
@@ -41,7 +47,11 @@
       <div id="skillslot">
         {#if selected !== undefined}
           <div>
-            <SkillSlot skill={selected.skillset[0]} sp={selected.sp.current} />
+            <SkillSlot
+              skill={selected.skillset[0]}
+              sp={selected.sp.current}
+              on:hover={(v) => console.log(v)}
+            />
             <SkillSlot skill={selected.skillset[1]} sp={selected.sp.current} />
           </div>
           <div>
