@@ -1,9 +1,19 @@
 <script lang="ts">
   import type { EntityInstanceType } from '$lib/game/Entity';
-  import { get } from 'svelte/store';
+  import { get, type Writable } from 'svelte/store';
   import { statTooltip } from './StatTooltip';
 
-  export let entity: EntityInstanceType | undefined = undefined;
+  export let entity: EntityInstanceType | undefined = undefined,
+    glow: Writable<boolean> | undefined;
+
+  let gSub: () => void;
+
+  $: {
+    gSub?.();
+
+    if (glow !== undefined) {
+    }
+  }
 
   let hpSub: () => void,
     hpVal = '0%',
@@ -38,7 +48,7 @@
   }
 </script>
 
-<div class="entitySlot">
+<div class="entitySlot" class:glow={glow != undefined && $glow}>
   {#if entity !== undefined}
     <span class="portrait">
       {entity.name}
@@ -55,6 +65,10 @@
 </div>
 
 <style lang="scss" module>
+  .glow {
+    animation: glowing 2s infinite;
+  }
+
   div.entitySlot {
     display: flex;
     padding: 2px;
@@ -127,6 +141,16 @@
     }
     100% {
       background-position: 200% 0;
+    }
+  }
+
+  @keyframes glowing {
+    0%,
+    100% {
+      background-color: rgba(220, 20, 60, 0.5);
+    }
+    50% {
+      background-color: rgba(220, 20, 60, 0.1);
     }
   }
 </style>

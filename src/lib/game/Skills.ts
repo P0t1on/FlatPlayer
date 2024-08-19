@@ -3,7 +3,7 @@ import type { EntityInstanceType } from './Entity';
 export type SkillType<T extends keyof SkillModuleTypes> = {
   name: string;
   description: string;
-  sideEffect(user: EntityInstanceType, target: EntityInstanceType): void;
+  sideEffect(user: EntityInstanceType, ...target: EntityInstanceType[]): void;
   cost: number;
   restoreTurn: number;
   prepareTurn: number;
@@ -40,7 +40,7 @@ export type Specialmodule = {
 type DefaultModuleProp = {
   name?: string;
   description?: string;
-  sideEffect?(user: EntityInstanceType, target: EntityInstanceType): void;
+  sideEffect?(user: EntityInstanceType, ...target: EntityInstanceType[]): void;
   cost?: number;
   restoreTurn?: number;
   prepareTurn?: number;

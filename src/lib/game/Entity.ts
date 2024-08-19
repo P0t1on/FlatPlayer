@@ -72,6 +72,7 @@ export class Entity<
       sp: {
         max: writable(maxSp),
         current: writable(sp),
+        assigned: [],
       },
       atk: writable(atk * 2 ** level),
       def: writable(def * 2 ** level),
@@ -98,6 +99,11 @@ export type EntityInstanceType<
   sp: {
     max: Writable<number>;
     current: Writable<number>;
+    assigned: {
+      reason: Symbol;
+      turn: number;
+      amount: number;
+    }[];
   };
   atk: Writable<number>;
   def: Writable<number>;

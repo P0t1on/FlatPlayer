@@ -38,9 +38,25 @@ export class Battle {
     }
   }
 
+  public getTargetList(
+    user: EntityInstanceType,
+    userTeam: EntityTeamType,
+    targetTeam: EntityTeamType,
+    skill?: SkillType<keyof SkillModuleTypes>
+  ) {
+    const result = new Set<0 | 1 | 2 | 3 | 4>();
+
+    userTeam.findIndex((v) => v === user);
+    return result;
+  }
+
   public useSkill(
     user: EntityInstanceType,
-    skill: SkillType<keyof SkillModuleTypes>,
+    skill?: SkillType<keyof SkillModuleTypes>,
     ...target: EntityInstanceType[]
-  ): void {}
+  ): void {
+    if (skill === undefined) return;
+
+    skill.sideEffect(user, ...target);
+  }
 }
