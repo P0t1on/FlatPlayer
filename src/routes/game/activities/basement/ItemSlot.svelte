@@ -61,14 +61,15 @@
       text-align: center;
 
       &.max {
-        span {
-          mix-blend-mode: difference;
-        }
         background: linear-gradient(
           to top,
           white 0 bind(fill),
           black bind(fill) 100%
         );
+
+        span {
+          mix-blend-mode: difference;
+        }
       }
     }
   }

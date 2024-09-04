@@ -90,6 +90,9 @@
 
 <style lang="scss" module>
   li.actionSlot {
+    display: flex;
+    flex-direction: column;
+
     div.summary {
       background: linear-gradient(
         to right,
@@ -148,9 +151,6 @@
     &:last-child > div.detail {
       margin-bottom: 10px;
     }
-
-    display: flex;
-    flex-direction: column;
 
     div.detail {
       transition: all ease 0.5s;
