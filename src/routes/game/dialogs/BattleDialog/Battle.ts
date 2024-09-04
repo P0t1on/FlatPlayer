@@ -38,16 +38,15 @@ export class Battle {
     }
   }
 
-  public getTargetList(
+  public findTargets(
     user: EntityInstanceType,
     userTeam: EntityTeamType,
     targetTeam: EntityTeamType,
     skill?: SkillType<keyof SkillModuleTypes>
-  ) {
-    const result = new Set<0 | 1 | 2 | 3 | 4>();
+  ): boolean[] {
+    if (skill === undefined) throw 'undefined skill error';
 
-    userTeam.findIndex((v) => v === user);
-    return result;
+    return skill.findTargets(user, userTeam, targetTeam);
   }
 
   public useSkill(

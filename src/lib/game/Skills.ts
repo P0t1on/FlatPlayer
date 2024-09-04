@@ -1,9 +1,14 @@
-import type { EntityInstanceType } from './Entity';
+import type { EntityInstanceType, EntityTeamType } from './Entity';
 
 export type SkillType<T extends keyof SkillModuleTypes> = {
   name: string;
   description: string;
   sideEffect(user: EntityInstanceType, ...target: EntityInstanceType[]): void;
+  findTargets(
+    user: EntityInstanceType,
+    userTeam: EntityTeamType,
+    targetTeam: EntityTeamType
+  ): boolean[];
   cost: number;
   restoreTurn: number;
   prepareTurn: number;
@@ -41,6 +46,11 @@ type DefaultModuleProp = {
   name?: string;
   description?: string;
   sideEffect?(user: EntityInstanceType, ...target: EntityInstanceType[]): void;
+  findTargets(
+    user: EntityInstanceType,
+    userTeam: EntityTeamType,
+    targetTeam: EntityTeamType
+  ): boolean[];
   cost?: number;
   restoreTurn?: number;
   prepareTurn?: number;
@@ -145,3 +155,5 @@ export function createSkill<T extends keyof SkillModuleTypes>(
   }
   return Object.assign(result, skillBase);
 }
+
+export const targetOperators = {};

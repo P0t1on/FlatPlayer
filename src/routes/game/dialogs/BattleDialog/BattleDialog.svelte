@@ -27,8 +27,22 @@
     skill?: SkillType<keyof SkillModuleTypes>
   ) {
     return function (param: CustomEvent<boolean>) {
-      if (skill === undefined) return;
+      if (skill === undefined) {
+        for (const t of targets) {
+          t.set(false);
+        }
+
+        return;
+      }
+
       if (param.detail) {
+        const result = battle.findTargets(user, aTeam, bTeam, skill);
+
+        for (let i = 0; i < 10 && i < result.length; i++) {
+          const b = result[i] as boolean;
+
+          (targets[i] as Writable<boolean>).set(b);
+        }
       } else {
         for (const t of targets) {
           t.set(false);

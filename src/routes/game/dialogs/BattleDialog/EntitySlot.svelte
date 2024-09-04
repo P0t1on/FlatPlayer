@@ -6,15 +6,6 @@
   export let entity: EntityInstanceType | undefined = undefined,
     glow: Writable<boolean> | undefined;
 
-  let gSub: () => void;
-
-  $: {
-    gSub?.();
-
-    if (glow !== undefined) {
-    }
-  }
-
   let hpSub: () => void,
     hpVal = '0%',
     hpTitle = '',

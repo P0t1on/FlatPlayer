@@ -1,12 +1,7 @@
 import { writable, type Writable } from 'svelte/store';
 import type { SkillModuleTypes, SkillType } from './Skills';
 
-export class Entity<
-  S1 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
-  S2 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
-  S3 extends keyof SkillModuleTypes = keyof SkillModuleTypes,
-  S4 extends keyof SkillModuleTypes = keyof SkillModuleTypes
-> {
+export class Entity {
   public readonly status: {
     hp: number;
     sp: number;
@@ -14,7 +9,7 @@ export class Entity<
     def: number;
     speed: number;
   };
-  public skillset: SkillSetType<S1, S2, S3, S4>;
+  public skillset: SkillSetType;
 
   public constructor(
     public name: string,
@@ -26,7 +21,7 @@ export class Entity<
       def?: number;
       speed?: number;
     } = {},
-    skillset: SkillSetType<S1, S2, S3, S4> = [, , ,]
+    skillset: SkillSetType = [, , ,]
   ) {
     const { hp, sp, atk, def, speed } = status;
 
@@ -50,7 +45,7 @@ export class Entity<
     hp?: number;
     sp?: number;
     status?: { [key: string]: Writable<number> };
-  } = {}): EntityInstanceType<S1, S2, S3, S4> {
+  } = {}): EntityInstanceType {
     let { hp: maxHp, sp: maxSp, atk, def, speed } = this.status;
 
     level = level !== undefined ? level : 1;
